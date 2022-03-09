@@ -1,0 +1,13 @@
+{
+  "name": "hearing-test",
+  "scripts": {
+    "build": "esbuild ./src/App.tsx --minify --bundle --watch --outfile=./dist/out.js"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.25"
+  }
+}
