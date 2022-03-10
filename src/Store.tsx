@@ -3,39 +3,40 @@ import * as Au from "./Types";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
-export enum Actions { Test, Frequency, Volume, Channel, Record };
-export type Action =
+export enum Actions { Test, Freq, dBHL, Chan, Mark };
+
+type Action =
 {
   Type:Actions,
-  Payload?:any
+  Payload:number
 };
 
-const limitToArray = (index:number, array:Array):number =>
+const limit = (min:number, val:number, max:number):number =>
 {
-    if(index < 0){ return 0; }
-    if(index > array.length-1){ return array.length-1; }
-    return index;
-}
+    if(val < min) { return min; }
+    if(val > max) { return max; }
+    return val;
+};
 
-const reducer = (state:Au.Session, action:Action) =>
+const reducer = (state:Au.Session, action:Action):Au.Session =>
 {
+
+  var max;
   switch(action.Type)
   {
-
     case Actions.Test :
+        max = state.List.length-1;
+        return {...state, Test: limit(0, action.Payload, max)};
 
-        return {...state, Test: action.Payload};
+    case Actions.Freq :
+        max = state.list[state.Test].Freq.length-1;
+        return {...state, Freq: limit(0, action.Payload, max)};
 
-    case Actions.Frequency :
-        return {...state, Freq: action.Payload};
+    case Action.dBHL :
+        return {...state, dBHL: limit(-10, action.Payload, 100)};
 
-    case Action.Volume :
-        return {...state, dBHL: action.Payload};
-
-    case Action.Channel :
-        return {...state, Left: action.Payload};
-
-    
+    case Action.Chan :
+        return {...state, Left: limit(0, action.Payload, 1)};
 
     default:
       return state;
@@ -44,7 +45,7 @@ const reducer = (state:Au.Session, action:Action) =>
 
 const model:Au.Session =
 {
-  Left: false,
+  Chan: 0,
   dBHL: 50,
   Freq: 0,
   Test: 0,
@@ -85,22 +86,19 @@ const model:Au.Session =
   ]
 };
 
-export default {
-  Provide(props:any)
-  {
+export const Provide = (props:any) =>
+{
     const binding = useReducer(reducer, model);
     return <CTX.Provider value={binding} children={props.children}/>;
-  },
-  Consume()
-  {
+}
+export const Consume = () =>
+{
     const [state, dispatch] = useContext(CTX);
-
     return {
-      State:state,
-      Dispatch(inType:Actions, inPayload?:any)
-      {
-        dispatch({Type:inType, Payload:inPayload});
-      }
+        State:state,
+        Dispatch(inType:Actions, inPayload:number)
+        {
+            dispatch({Type:inType, Payload:inPayload});
+        }
     };
-  }
 }

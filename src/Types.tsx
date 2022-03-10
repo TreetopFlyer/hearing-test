@@ -1,6 +1,6 @@
 export type Session =
 {
-  Left: boolean,
+  Chan: boolean,
   dBHL: number,
   Freq: number,
   Test: number,
