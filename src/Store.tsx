@@ -1,15 +1,35 @@
 import React, { createContext, useContext, useReducer } from "react";
-import * as Au from "./Types";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
 export enum Actions { Test, Freq, dBHL, Chan, Mark };
-
-type Action =
+export type Action = { Type:Actions, Payload:number };
+export type Session =
 {
-  Type:Actions,
-  Payload:number
+  Tone: number,
+  Chan: number,
+  dBHL: number,
+  Freq: number,
+  Test: number,
+  List: Array<Test>
 };
+export type Test =
+{
+  Name: string,
+  Freq: Array<Frequency>
+};
+export type Frequency = 
+{
+  Hz: number;
+  AL: SamplePair,
+  AR: SamplePair
+};
+export type SamplePair =
+{
+  Sample: Sample,
+  Answer: Sample | null
+};
+export type Sample = [ number | null, number | null, boolean ];
 
 const limit = (min:number, val:number, max:number):number =>
 {
@@ -18,33 +38,33 @@ const limit = (min:number, val:number, max:number):number =>
     return val;
 };
 
-const reducer = (state:Au.Session, action:Action):Au.Session =>
+const reducer = (state:Session, action:Action):Session =>
 {
-
-  var max;
   switch(action.Type)
   {
     case Actions.Test :
-        max = state.List.length-1;
-        return {...state, Test: limit(0, action.Payload, max)};
+        let clipTest = limit(0, action.Payload, state.List.length-1);
+        let clipFreq = limit(0, state.Freq, state.List[clipTest].Freq.length-1);
+        return { ...state, Test: clipTest, Freq: clipFreq };
 
     case Actions.Freq :
-        max = state.list[state.Test].Freq.length-1;
-        return {...state, Freq: limit(0, action.Payload, max)};
+        let maxFreq = state.List[state.Test].Freq.length-1;
+        return {...state, Freq: limit(0, action.Payload, maxFreq) };
 
-    case Action.dBHL :
-        return {...state, dBHL: limit(-10, action.Payload, 100)};
+    case Actions.dBHL :
+        return {...state, dBHL: limit(-10, action.Payload, 100) };
 
-    case Action.Chan :
-        return {...state, Left: limit(0, action.Payload, 1)};
+    case Actions.Chan :
+        return {...state, Chan: limit(0, action.Payload, 1) };
 
     default:
       return state;
   }
 };
 
-const model:Au.Session =
+const model:Session =
 {
+  Tone: 0,
   Chan: 0,
   dBHL: 50,
   Freq: 0,
@@ -62,6 +82,11 @@ const model:Au.Session =
         },
         {
           Hz: 500,
+          AL: {Sample:[50, null, true], Answer:null},
+          AR: {Sample:[50, null, true], Answer:null},
+        },
+        {
+          Hz: 1000,
           AL: {Sample:[50, null, true], Answer:null},
           AR: {Sample:[50, null, true], Answer:null},
         },
@@ -98,7 +123,7 @@ export const Consume = () =>
         State:state,
         Dispatch(inType:Actions, inPayload:number)
         {
-            dispatch({Type:inType, Payload:inPayload});
+          dispatch({Type:inType, Payload:inPayload});
         }
     };
 }
