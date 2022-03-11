@@ -29,7 +29,7 @@ export type SamplePair =
   Sample: Sample,
   Answer: Sample | null
 };
-export type Sample = [ number | null, number | null, boolean ];
+export type Sample = [ number | null, number | null, boolean ]; /* [ stim, mask, resp ] */
 
 const limit = (min:number, val:number, max:number):number =>
 {
@@ -43,19 +43,27 @@ const reducer = (state:Session, action:Action):Session =>
   switch(action.Type)
   {
     case Actions.Test :
-        let clipTest = limit(0, action.Payload, state.List.length-1);
-        let clipFreq = limit(0, state.Freq, state.List[clipTest].Freq.length-1);
-        return { ...state, Test: clipTest, Freq: clipFreq };
+      let clipTest = limit(0, action.Payload, state.List.length-1);
+      let clipFreq = limit(0, state.Freq, state.List[clipTest].Freq.length-1);
+      return { ...state, Test: clipTest, Freq: clipFreq };
 
     case Actions.Freq :
-        let maxFreq = state.List[state.Test].Freq.length-1;
-        return {...state, Freq: limit(0, action.Payload, maxFreq) };
+      let maxFreq = state.List[state.Test].Freq.length-1;
+      return {...state, Freq: limit(0, action.Payload, maxFreq) };
 
     case Actions.dBHL :
-        return {...state, dBHL: limit(-10, action.Payload, 100) };
+      return {...state, dBHL: limit(-10, action.Payload, 100) };
 
     case Actions.Chan :
-        return {...state, Chan: limit(0, action.Payload, 1) };
+      return {...state, Chan: limit(0, action.Payload, 1) };
+
+    case Actions.Mark :
+      let clone = {...state };
+      let currFreq:Frequency = clone.List[state.Test].Freq[state.Freq];
+      let currChan:SamplePair = state.Chan == 0 ? currFreq.AL : currFreq.AR; 
+      currChan.Answer =  [ state.dBHL, null, action.Payload == 1 ];
+
+      return clone;
 
     default:
       return state;
@@ -111,6 +119,12 @@ const model:Session =
   ]
 };
 
+export type Binding =
+{
+  State:Session,
+  Dispatch:(inType:Actions, inPayload:number) => void
+};
+
 export const Provide = (props:any) =>
 {
     const binding = useReducer(reducer, model);
@@ -118,7 +132,7 @@ export const Provide = (props:any) =>
 }
 export const Consume = () =>
 {
-    const [state, dispatch] = useContext(CTX);
+    const [state, dispatch]:[Session, (a:Action)=>void] = useContext(CTX);
     return {
         State:state,
         Dispatch(inType:Actions, inPayload:number)

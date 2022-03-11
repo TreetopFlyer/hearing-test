@@ -3,10 +3,10 @@ import * as Store from "./Store";
 
 export default () =>
 {
-    const {State, Dispatch} = Store.Consume();
+    const {State, Dispatch}:Store.Binding = Store.Consume();
 
-    const currentTest = State.List[State.Test];
-    const currentFreq = currentTest.Freq[State.Freq];
+    const currentTest:Store.Test = State.List[State.Test];
+    const currentFreq:Store.Frequency = currentTest.Freq[State.Freq];
 
     const handleSelect = (event:any) =>
     {
@@ -25,6 +25,15 @@ export default () =>
 
         <h3>{ currentTest.Name }</h3>
         <h4>{ currentFreq.Hz }</h4>
+        <button onClick={()=>Dispatch(Store.Actions.Mark, 1)}>Mark this</button>
+        <div>
+            { currentTest.Freq.map( (f:Store.Frequency)=><div style={{display:"inline-block", margin:"10px"}} key={f.Hz}>
+                {f.Hz}
+                <br/>
+                { f.AL.Answer ? f.AL.Answer[0] : "na"}
+                </div> )
+            }
+        </div>
 
         <dl>
             <dt>Frequency</dt>
