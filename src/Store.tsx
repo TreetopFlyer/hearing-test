@@ -123,6 +123,7 @@ export type Binding =
 {
   State:Session,
   Dispatch:(inType:Actions, inPayload:number) => void
+  Handler:(inType:Actions) => (e:{target:{value:"string" | "number"}}) => void
 };
 
 export const Provide = (props:any) =>
@@ -130,7 +131,7 @@ export const Provide = (props:any) =>
     const binding = useReducer(reducer, model);
     return <CTX.Provider value={binding} children={props.children}/>;
 }
-export const Consume = () =>
+export const Consume = ():Binding =>
 {
     const [state, dispatch]:[Session, (a:Action)=>void] = useContext(CTX);
     return {
@@ -138,6 +139,10 @@ export const Consume = () =>
         Dispatch(inType:Actions, inPayload:number)
         {
           dispatch({Type:inType, Payload:inPayload});
-        }
+        },
+        Handler(inType:Actions)
+        {
+          return (e) => dispatch({Type:inType, Payload:parseInt(e.target.value) || 0});
+        },
     };
 }

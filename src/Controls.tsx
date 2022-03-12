@@ -5,24 +5,15 @@ import Frequency from "./Frequency";
 
 export default () =>
 {
-    const {State, Dispatch}:Store.Binding = Store.Consume();
-
+    const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Freq[State.Freq];
-
-    const handleSelect = (event:any) =>
-    {
-        let index:number = parseInt(event.target.value) || 0;
-        Dispatch(Store.Actions.Test, index);
-    };
-
-    const inputNumber = (e:{target:{value:"string" | "number"}}):number => parseInt(e.target.value) || 0;
 
     return <div>
 
         <dl>
             <dt>test select</dt>
-            <select onChange={ handleSelect } value={State.Test}>
+            <select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
                 { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
             </select>
         </dl>
@@ -36,25 +27,26 @@ export default () =>
             <dd>{ State.Chan == 1 ? "Right" : "Left" }</dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan-1)}>L</button>
-                <input type="range" min={0} max={1} value={State.Chan} onChange={(e)=>{Dispatch(Store.Actions.Chan, inputNumber(e));}}/>
+                <input type="range" min={0} max={1} value={State.Chan} onChange={Handler(Store.Actions.Chan)}/>
                 <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan+1)}>R</button>
+
             </dd>
         </dl>
         <dl>
             <dt>Frequency</dt>
-            <dd>{ currentFreq.Hz }</dd>
+            <dd>{ currentFreq.Hz } Hz</dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>-</button>
-                <input type="range" min="0" max={currentTest.Freq.length-1} value={State.Freq} onChange={(e)=>Dispatch(Store.Actions.Freq, inputNumber(e))}/>
+                <input type="range" min="0" max={currentTest.Freq.length-1} value={State.Freq} onChange={Handler(Store.Actions.Freq)}/>
                 <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>+</button>
             </dd>
         </dl>
         <dl>
             <dt>Stimulus</dt>
-            <dd>{ State.dBHL }</dd>
+            <dd>{ State.dBHL } dBHL</dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>-</button>
-                <input type="range" min={-10} max={130} step={10} value={State.dBHL} onChange={(e)=>Dispatch(Store.Actions.dBHL, inputNumber(e))}/>
+                <input type="range" min={-10} max={130} step={10} value={State.dBHL} onChange={Handler(Store.Actions.dBHL)}/>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>+</button>
             </dd>
         </dl>
