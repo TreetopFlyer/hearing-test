@@ -3,18 +3,35 @@ import * as Store from "./Store";
 import styled from "styled-components";
 import Frequency from "./Frequency";
 
+enum DrawStyle { Light, Normal, Intense };
+
 const Rule = styled.div`
     position: absolute;
     left: 0;
-    top: ${props => props.pos*100}%;
     width: 100%;
     height: 0;
     border-top: 1px dashed black;
+    border-top: ${ (props:{look:DrawStyle}):string =>
+    {
+        switch(props.look)
+        {
+            case DrawStyle.Light:
+                return "1px solid #ddd";
+            case DrawStyle.Normal:
+                return "1px solid black";
+            case DrawStyle.Intense:
+                return "2px solid red";
+        }
+    }
+    };
 `;
 
 const Label = styled.div`
     position: absolute;
-    left: 0;
+    right: 100%;
+    text-align: right;
+    line-height: 0;
+    font-size: 10px;
 `;
 
 export default () =>
@@ -23,13 +40,13 @@ export default () =>
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
 
-    let start:number = Math.floor(currentTest.Clip[0]/10)*10;
-    let stop:number = Math.ceil(currentTest.Clip[1]/10)*10;
     let stride:number = 10;
+    let start:number = Math.floor(currentTest.Clip[0]/stride)*stride;
+    let stop:number = Math.floor(currentTest.Clip[1]/stride)*stride;
     let lines = [];
     for(let i=start; i<=stop; i+=stride)
     {
-        lines.push(<Rule pos={(i-start)/(stop-start)}><Label>{i}</Label></Rule>)
+        lines.push(<Rule style={{top: `${(i-start)/(stop-start)*100}%`}} look={ i==0 ? DrawStyle.Normal : DrawStyle.Light}><Label>{i}</Label></Rule>)
     }
 
     return <div>
@@ -41,9 +58,12 @@ export default () =>
             </select>
         </dl>
 
-        <div style={{ display:"flex", position:"relative", width:"500px", height:"300px", border:"1px solid black"}}>
+        <div style={{ display:"flex", position:"relative", width:"500px", height:"300px", margin:"20px"}}>
             { lines }
-            { currentTest.Plot.map( f=><Frequency freq={f} clip={currentTest.Clip} sample={false} answer={true} /> )}
+            { <Rule look={DrawStyle.Intense} style={{top: `${
+                (State.dBHL - currentTest.Clip[0])/(currentTest.Clip[1] - currentTest.Clip[0])*100
+            }%`}}/> }
+            { currentTest.Plot.map( (f:Store.Frequency, i:number)=><Frequency freq={f} clip={currentTest.Clip} active={f == currentFreq} sample={false} answer={true} /> )}
         </div>
 
         <dl>
@@ -53,7 +73,6 @@ export default () =>
                 <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan-1)}>L</button>
                 <input type="range" min={0} max={1} value={State.Chan} onChange={Handler(Store.Actions.Chan)}/>
                 <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan+1)}>R</button>
-
             </dd>
         </dl>
         <dl>

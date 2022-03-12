@@ -15,7 +15,7 @@ const Column = styled.div`
     width: 0px;
     height: 100%;
     left: 50%;
-    border-left: 1px dashed black;
+    border-left: ${ (props:{active:Boolean}):string => props.active ? `2px solid red` : `1px dashed black`}
   }
 `;
 
@@ -36,7 +36,7 @@ const Plot = styled.div`
   font-size: 20px;
 `;
 
-export default ( { freq, clip, sample, answer }:{freq:Frequency, clip:Range, sample:Boolean, answer:Boolean} ) =>
+export default ( { freq, clip, sample, answer, active }:{freq:Frequency, clip:Range, sample:Boolean, answer:Boolean, active:Boolean} ) =>
 {
 
   const iconAL = "✕";
@@ -45,7 +45,7 @@ export default ( { freq, clip, sample, answer }:{freq:Frequency, clip:Range, sam
   const iconNL = "🡦";
   const iconNR = "🡧";
 
-  return <Column>
+  return <Column active={active}>
     <Label>{ freq.Hz }</Label>
     { (sample && freq.AL.Sample) && <Plot style={{top:perc(clip[0], freq.AL.Sample[0], clip[1])}}>{iconAL}{ freq.AL.Sample[2] == false && iconNL }</Plot> }
     { (sample && freq.AR.Sample) && <Plot style={{top:perc(clip[0], freq.AR.Sample[0], clip[1])}}>{iconAR}{ freq.AR.Sample[2] == false && iconNR }</Plot> }
