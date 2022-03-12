@@ -3,11 +3,34 @@ import * as Store from "./Store";
 import styled from "styled-components";
 import Frequency from "./Frequency";
 
+const Rule = styled.div`
+    position: absolute;
+    left: 0;
+    top: ${props => props.pos*100}%;
+    width: 100%;
+    height: 0;
+    border-top: 1px dashed black;
+`;
+
+const Label = styled.div`
+    position: absolute;
+    left: 0;
+`;
+
 export default () =>
 {
     const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
+
+    let start:number = Math.floor(currentTest.Clip[0]/10)*10;
+    let stop:number = Math.ceil(currentTest.Clip[1]/10)*10;
+    let stride:number = 10;
+    let lines = [];
+    for(let i=start; i<=stop; i+=stride)
+    {
+        lines.push(<Rule pos={(i-start)/(stop-start)}><Label>{i}</Label></Rule>)
+    }
 
     return <div>
 
@@ -18,7 +41,8 @@ export default () =>
             </select>
         </dl>
 
-        <div style={{ display:"flex", width:"500px", height:"200px", border:"1px solid black"}}>
+        <div style={{ display:"flex", position:"relative", width:"500px", height:"300px", border:"1px solid black"}}>
+            { lines }
             { currentTest.Plot.map( f=><Frequency freq={f} clip={currentTest.Clip} sample={false} answer={true} /> )}
         </div>
 

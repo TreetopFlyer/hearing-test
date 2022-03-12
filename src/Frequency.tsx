@@ -7,6 +7,16 @@ const perc = (min: number, val: number, max: number): string => `${(val - min) /
 const Column = styled.div`
   position: relative;
   flex-grow: 1;
+  &::before
+  {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 0px;
+    height: 100%;
+    left: 50%;
+    border-left: 1px dashed black;
+  }
 `;
 
 const Label = styled.div`
