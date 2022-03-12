@@ -52,7 +52,7 @@ const reducer = (state:Session, action:Action):Session =>
       return {...state, Freq: limit(0, action.Payload, maxFreq) };
 
     case Actions.dBHL :
-      return {...state, dBHL: limit(-10, action.Payload, 100) };
+      return {...state, dBHL: limit(-10, action.Payload, 130) };
 
     case Actions.Chan :
       return {...state, Chan: limit(0, action.Payload, 1) };
@@ -60,7 +60,7 @@ const reducer = (state:Session, action:Action):Session =>
     case Actions.Mark :
       let clone = {...state };
       let currFreq:Frequency = clone.List[state.Test].Freq[state.Freq];
-      let currChan:SamplePair = state.Chan == 0 ? currFreq.AL : currFreq.AR; 
+      let currChan:SamplePair = state.Chan == 0 ? currFreq.AL: currFreq.AR; 
       currChan.Answer =  [ state.dBHL, null, action.Payload == 1 ];
 
       return clone;
@@ -85,7 +85,7 @@ const model:Session =
       [
         {
           Hz: 250,
-          AL: {Sample:[50, null, true], Answer:null},
+          AL: {Sample:[20, null, true], Answer:null},
           AR: {Sample:[50, null, true], Answer:null},
         },
         {

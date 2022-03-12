@@ -1,42 +1,45 @@
-import React, { ReactElement } from "react";
-import * as Au from "./types";
-import Store, { Actions } from "./store";
+import React from "react";
+import styled from "styled-components";
+import { Frequency, Sample } from "./Store";
 
-const perc = (min: number, val: number, max: number): string =>
-  `${((val - min) / (max - min)) * 100}%`;
+const perc = (min: number, val: number, max: number): string => `${(val - min) / (max - min) * 100}%`;
 
-export default ({ frequency }: { frequency: Au.Frequency }): ReactElement => {
-  const { Dispatch, State } = Store.Consume();
+const Column = styled.div`
+  position: relative;
+  flex-grow: 1;
+`;
 
-  
-  return (
-    <div style={{ display: "inline-block" }}>
-      <h2
-        onClick={() => {
-          Dispatch(Actions.SetFrequency, frequency.Hz);
-        }}
-      >
-        {frequency.Hz}
-      </h2>
-      <h3>{State.Freq}</h3>
-      <div
-        style={{
-          position: "relative",
-          height: "500px",
-          width: "50px",
-          border: "1px solid black"
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            left: 0,
-            top: perc(-10, frequency.AL.Sample[0] || 0, 130)
-          }}
-        >
-          AL
-        </div>
-      </div>
-    </div>
-  );
-};
+const Label = styled.div`
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  text-align: center;
+`;
+
+const Plot = styled.div`
+  position: absolute;
+  left: 50%;
+  border: 1px solid red;
+  line-height: 0;
+  letter-spacing: 0;
+  font-weight: 900;
+  font-size: 20px;
+`;
+
+export default ( { freq, sample, answer }:{freq:Frequency, sample:Boolean, answer:Boolean} ):React.ReactElement =>
+{
+
+  const iconAL = "✕";
+  const iconAR = "◯";
+
+  const iconNL = "🡦";
+  const iconNR = "🡧";
+
+  return <Column>
+    <Label>{ freq.Hz }</Label>
+    { (sample && freq.AL.Sample) && <Plot style={{top:perc(-10, freq.AL.Sample[0], 130)}}>{iconAL}{ freq.AL.Sample[2] == false && iconNL }</Plot> }
+    { (sample && freq.AR.Sample) && <Plot style={{top:perc(-10, freq.AR.Sample[0], 130)}}>{iconAR}{ freq.AR.Sample[2] == false && iconNR }</Plot> }
+    { (answer && freq.AL.Answer) && <Plot style={{top:perc(-10, freq.AL.Answer[0], 130)}}>{iconAL}{ freq.AL.Answer[2] == false && iconNL }</Plot> }
+    { (answer && freq.AR.Answer) && <Plot style={{top:perc(-10, freq.AR.Answer[0], 130)}}>{iconAR}{ freq.AR.Answer[2] == false && iconNR }</Plot> }
+  </Column>;
+}
