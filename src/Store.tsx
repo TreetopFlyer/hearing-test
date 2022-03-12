@@ -16,7 +16,8 @@ export type Session =
 export type Test =
 {
   Name: string,
-  Freq: Array<Frequency>
+  Clip: [ number, number],
+  Plot: Array<Frequency>
 };
 export type Frequency = 
 {
@@ -44,11 +45,11 @@ const reducer = (state:Session, action:Action):Session =>
   {
     case Actions.Test :
       let clipTest = limit(0, action.Payload, state.List.length-1);
-      let clipFreq = limit(0, state.Freq, state.List[clipTest].Freq.length-1);
+      let clipFreq = limit(0, state.Freq, state.List[clipTest].Plot.length-1);
       return { ...state, Test: clipTest, Freq: clipFreq };
 
     case Actions.Freq :
-      let maxFreq = state.List[state.Test].Freq.length-1;
+      let maxFreq = state.List[state.Test].Plot.length-1;
       return {...state, Freq: limit(0, action.Payload, maxFreq) };
 
     case Actions.dBHL :
@@ -59,7 +60,7 @@ const reducer = (state:Session, action:Action):Session =>
 
     case Actions.Mark :
       let clone = {...state };
-      let currFreq:Frequency = clone.List[state.Test].Freq[state.Freq];
+      let currFreq:Frequency = clone.List[state.Test].Plot[state.Freq];
       let currChan:SamplePair = state.Chan == 0 ? currFreq.AL: currFreq.AR; 
       currChan.Answer =  [ state.dBHL, null, action.Payload == 1 ];
 
@@ -81,7 +82,8 @@ const model:Session =
   [
     {
       Name:"CHL / Flat / Mid / Symmetric",
-      Freq:
+      Clip:[-10, 123],
+      Plot:
       [
         {
           Hz: 250,
@@ -102,7 +104,8 @@ const model:Session =
     },
     {
       Name:"SNHL / Sloping",
-      Freq:
+      Clip:[-10, 123],
+      Plot:
       [
         {
           Hz: 250,

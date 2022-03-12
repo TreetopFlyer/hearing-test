@@ -7,7 +7,7 @@ export default () =>
 {
     const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
-    const currentFreq:Store.Frequency = currentTest.Freq[State.Freq];
+    const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
 
     return <div>
 
@@ -19,7 +19,7 @@ export default () =>
         </dl>
 
         <div style={{ display:"flex", width:"500px", height:"200px", border:"1px solid black"}}>
-            { currentTest.Freq.map( f=><Frequency freq={f} sample={false} answer={true} /> )}
+            { currentTest.Plot.map( f=><Frequency freq={f} sample={false} answer={true} /> )}
         </div>
 
         <dl>
@@ -37,7 +37,7 @@ export default () =>
             <dd>{ currentFreq.Hz } Hz</dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>-</button>
-                <input type="range" min="0" max={currentTest.Freq.length-1} value={State.Freq} onChange={Handler(Store.Actions.Freq)}/>
+                <input type="range" min="0" max={currentTest.Plot.length-1} value={State.Freq} onChange={Handler(Store.Actions.Freq)}/>
                 <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>+</button>
             </dd>
         </dl>
