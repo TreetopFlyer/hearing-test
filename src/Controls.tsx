@@ -19,7 +19,7 @@ export default () =>
         </dl>
 
         <div style={{ display:"flex", width:"500px", height:"200px", border:"1px solid black"}}>
-            { currentTest.Plot.map( f=><Frequency freq={f} sample={false} answer={true} /> )}
+            { currentTest.Plot.map( f=><Frequency freq={f} clip={currentTest.Clip} sample={false} answer={true} /> )}
         </div>
 
         <dl>
@@ -46,7 +46,7 @@ export default () =>
             <dd>{ State.dBHL } dBHL</dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>-</button>
-                <input type="range" min={-10} max={130} step={10} value={State.dBHL} onChange={Handler(Store.Actions.dBHL)}/>
+                <input type="range" min={currentTest.Clip[0]} max={currentTest.Clip[1]} value={State.dBHL} onChange={Handler(Store.Actions.dBHL)}/>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>+</button>
             </dd>
         </dl>

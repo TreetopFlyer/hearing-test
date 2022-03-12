@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Frequency, Sample } from "./Store";
+import { Frequency, Range } from "./Store";
 
 const perc = (min: number, val: number, max: number): string => `${(val - min) / (max - min) * 100}%`;
 
@@ -26,7 +26,7 @@ const Plot = styled.div`
   font-size: 20px;
 `;
 
-export default ( { freq, sample, answer }:{freq:Frequency, sample:Boolean, answer:Boolean} ):React.ReactElement =>
+export default ( { freq, clip, sample, answer }:{freq:Frequency, clip:Range, sample:Boolean, answer:Boolean} ) =>
 {
 
   const iconAL = "✕";
@@ -37,9 +37,9 @@ export default ( { freq, sample, answer }:{freq:Frequency, sample:Boolean, answe
 
   return <Column>
     <Label>{ freq.Hz }</Label>
-    { (sample && freq.AL.Sample) && <Plot style={{top:perc(-10, freq.AL.Sample[0], 130)}}>{iconAL}{ freq.AL.Sample[2] == false && iconNL }</Plot> }
-    { (sample && freq.AR.Sample) && <Plot style={{top:perc(-10, freq.AR.Sample[0], 130)}}>{iconAR}{ freq.AR.Sample[2] == false && iconNR }</Plot> }
-    { (answer && freq.AL.Answer) && <Plot style={{top:perc(-10, freq.AL.Answer[0], 130)}}>{iconAL}{ freq.AL.Answer[2] == false && iconNL }</Plot> }
-    { (answer && freq.AR.Answer) && <Plot style={{top:perc(-10, freq.AR.Answer[0], 130)}}>{iconAR}{ freq.AR.Answer[2] == false && iconNR }</Plot> }
+    { (sample && freq.AL.Sample) && <Plot style={{top:perc(clip[0], freq.AL.Sample[0], clip[1])}}>{iconAL}{ freq.AL.Sample[2] == false && iconNL }</Plot> }
+    { (sample && freq.AR.Sample) && <Plot style={{top:perc(clip[0], freq.AR.Sample[0], clip[1])}}>{iconAR}{ freq.AR.Sample[2] == false && iconNR }</Plot> }
+    { (answer && freq.AL.Answer) && <Plot style={{top:perc(clip[0], freq.AL.Answer[0], clip[1])}}>{iconAL}{ freq.AL.Answer[2] == false && iconNL }</Plot> }
+    { (answer && freq.AR.Answer) && <Plot style={{top:perc(clip[0], freq.AR.Answer[0], clip[1])}}>{iconAR}{ freq.AR.Answer[2] == false && iconNR }</Plot> }
   </Column>;
 }

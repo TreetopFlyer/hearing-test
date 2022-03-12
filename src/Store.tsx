@@ -16,7 +16,7 @@ export type Session =
 export type Test =
 {
   Name: string,
-  Clip: [ number, number],
+  Clip: Range,
   Plot: Array<Frequency>
 };
 export type Frequency = 
@@ -30,9 +30,10 @@ export type SamplePair =
   Sample: Sample,
   Answer: Sample | null
 };
+export type Range = [ number, number];
 export type Sample = [ number | null, number | null, boolean ]; /* [ stim, mask, resp ] */
 
-const limit = (min:number, val:number, max:number):number =>
+const limit = (val:number, min:number, max:number):number =>
 {
     if(val < min) { return min; }
     if(val > max) { return max; }
@@ -44,19 +45,22 @@ const reducer = (state:Session, action:Action):Session =>
   switch(action.Type)
   {
     case Actions.Test :
-      let clipTest = limit(0, action.Payload, state.List.length-1);
-      let clipFreq = limit(0, state.Freq, state.List[clipTest].Plot.length-1);
-      return { ...state, Test: clipTest, Freq: clipFreq };
+
+      let clipTest:number = limit(action.Payload, 0, state.List.length-1);
+      let nextTest:Test = state.List[clipTest];
+      let clipFreq:number = limit(state.Freq, 0, nextTest.Plot.length-1);
+      let clipdBHL = limit(state.dBHL, ...nextTest.Clip);
+      return { ...state, Test: clipTest, Freq: clipFreq, dBHL: clipdBHL };
 
     case Actions.Freq :
       let maxFreq = state.List[state.Test].Plot.length-1;
-      return {...state, Freq: limit(0, action.Payload, maxFreq) };
+      return {...state, Freq: limit(action.Payload, 0, maxFreq) };
 
     case Actions.dBHL :
-      return {...state, dBHL: limit(-10, action.Payload, 130) };
+      return {...state, dBHL: limit(action.Payload, ...state.List[state.Test].Clip) };
 
     case Actions.Chan :
-      return {...state, Chan: limit(0, action.Payload, 1) };
+      return {...state, Chan: limit(action.Payload, 0, 1) };
 
     case Actions.Mark :
       let clone = {...state };
@@ -82,7 +86,7 @@ const model:Session =
   [
     {
       Name:"CHL / Flat / Mid / Symmetric",
-      Clip:[-10, 123],
+      Clip:[-10, 130],
       Plot:
       [
         {
@@ -104,7 +108,7 @@ const model:Session =
     },
     {
       Name:"SNHL / Sloping",
-      Clip:[-10, 123],
+      Clip:[-50, 200],
       Plot:
       [
         {
