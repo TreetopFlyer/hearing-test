@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import * as Store from "./Store";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import Frequency from "./Frequency";
 
 enum DrawStyle { Light, Normal, Intense };
+
+const BlinkAnim = keyframes`
+from { opacity: 1; }
+  to { opacity: 0; }
+`;
+
+const Blink = styled.div`
+    animation: ${BlinkAnim} 4s linear;
+    animation-fill-mode: both;
+`;
 
 const Rule = styled.div`
     position: absolute;
@@ -33,12 +43,26 @@ const Label = styled.div`
     line-height: 0;
     font-size: 10px;
 `;
-
+//      click  
+//```````|------|_|
 export default () =>
 {
+    const [askGet, askSet] = useState(0);
+    const [responseGet, responseSet] = useState(0);
+    useEffect(()=>{
+        let timer:number | undefined = undefined;
+        if(askGet == 1)
+        {
+            responseSet(State.dBHL - currentPair.Sample[0]);
+            timer = setTimeout(()=>{askSet(2);}, 1000);
+        }
+        return () => clearTimeout(timer);
+    }, [askGet])
+
     const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
+    const currentPair:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
 
     let stride:number = 10;
     let start:number = Math.floor(currentTest.Clip[0]/stride)*stride;
@@ -91,6 +115,14 @@ export default () =>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>-</button>
                 <input type="range" min={currentTest.Clip[0]} max={currentTest.Clip[1]} value={State.dBHL} onChange={Handler(Store.Actions.dBHL)}/>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>+</button>
+            </dd>
+        </dl>
+        <dl>
+            <dt>Play Tone</dt>
+            <dd>
+                { (askGet != 1) && <button onClick={()=>askSet(1)}>ask</button>}
+                { (askGet == 1) && <p>waiting...</p>}
+                { (askGet == 2) && <Blink>{responseGet > 0 ? "Heard it" : "Can't hear it"}</Blink>}
             </dd>
         </dl>
         <dl>
