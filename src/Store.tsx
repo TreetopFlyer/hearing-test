@@ -11,6 +11,7 @@ export type Session =
   dBHL: number,
   Freq: number,
   Test: number,
+  Draw: number,
   List: Array<Test>
 };
 export type Test =
@@ -50,7 +51,7 @@ const reducer = (state:Session, action:Action):Session =>
       let nextTest:Test = state.List[clipTest];
       let clipFreq:number = limit(state.Freq, 0, nextTest.Plot.length-1);
       let clipdBHL = limit(state.dBHL, ...nextTest.Clip);
-      return { ...state, Test: clipTest, Freq: clipFreq, dBHL: clipdBHL };
+      return { ...state, Test: clipTest, Freq: clipFreq, dBHL: clipdBHL, Draw:state.Draw+1 };
 
     case Actions.Freq :
       let maxFreq = state.List[state.Test].Plot.length-1;
@@ -63,7 +64,7 @@ const reducer = (state:Session, action:Action):Session =>
       return {...state, Chan: limit(action.Payload, 0, 1) };
 
     case Actions.Mark :
-      let clone = {...state };
+      let clone = {...state, Draw:state.Draw+1 };
       let currFreq:Frequency = clone.List[state.Test].Plot[state.Freq];
       let currChan:SamplePair = state.Chan == 0 ? currFreq.AL: currFreq.AR; 
       currChan.Answer =  [ state.dBHL, null, action.Payload == 1 ];
@@ -82,6 +83,7 @@ const model:Session =
   dBHL: 50,
   Freq: 0,
   Test: 0,
+  Draw: 0,
   List:
   [
     {

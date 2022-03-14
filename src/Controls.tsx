@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import * as Store from "./Store";
 import styled, { keyframes } from "styled-components";
 import Frequency from "./Frequency";
@@ -43,8 +43,48 @@ const Label = styled.div`
     line-height: 0;
     font-size: 10px;
 `;
-//      click  
-//```````|------|_|
+
+type Marked = {index:number, sample:Store.Sample}
+type PercentCoords = {x1:string, y1:string, x2:string, y2:string}
+const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answer"):Array<PercentCoords> =>
+{
+    /* reduce the list of frequencies to only those with marked responses for requested SamplePair */
+    let points:Array<Marked> = [];
+    test.Plot.forEach( (p:Store.Frequency, index:number) =>
+    {
+        let pair = p[pairKey];
+        if(pair)
+        {
+            let sample = pair[sampleKey]
+            if(sample)
+            {
+                points.push({index:index, sample:sample});
+            }
+        }
+    });
+
+    /* output a list of *adjacent* of marks with *positive* responses */
+    let output:Array<PercentCoords> = [];
+    for(let i=0; i<points.length-1; i++)
+    {
+        let from:Marked = points[i];
+        let to:Marked = points[i+1];
+        if(from.sample[2] && to.sample[2])
+        {
+            output.push({
+                x1: from.index/test.Plot.length * 100 + "%",
+                y1: (from.sample[0]-test.Clip[0])/(test.Clip[1]-test.Clip[0]) * 100 + "%",
+                x2: to.index/test.Plot.length * 100 + "%",
+                y2: (to.sample[0]-test.Clip[0])/(test.Clip[1]-test.Clip[0]) * 100 + "%",
+            });
+        }
+    }
+
+    console.log(output);
+    return output;
+};
+
+
 export default () =>
 {
     const [askGet, askSet] = useState(0);
@@ -63,6 +103,12 @@ export default () =>
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
     const currentPair:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
+
+    const path = useMemo(() =>
+    {
+        return Contiguous(currentTest, "AL", "Answer");
+    },
+    [State.Draw]);
 
     let stride:number = 10;
     let start:number = Math.floor(currentTest.Clip[0]/stride)*stride;
@@ -88,6 +134,9 @@ export default () =>
                 (State.dBHL - currentTest.Clip[0])/(currentTest.Clip[1] - currentTest.Clip[0])*100
             }%`}}/> }
             { currentTest.Plot.map( (f:Store.Frequency, i:number)=><Frequency freq={f} clip={currentTest.Clip} active={f == currentFreq} sample={false} answer={true} /> )}
+            <svg style={{position: "absolute", top:0, left:"16%", width:"100%", height:"100%"}} preserveAspectRatio="none" key={State.Draw}>
+                { path.map( (m:Marked) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
+            </svg>
         </div>
 
         <dl>
@@ -128,8 +177,8 @@ export default () =>
         <dl>
             <dt>Mark Chart</dt>
             <dd>
-                <button onClick={()=>Dispatch(Store.Actions.Mark, 1)}>Accept</button>
-                <button onClick={()=>Dispatch(Store.Actions.Mark, 0)}>No Response</button>
+                <button onClick={()=>{Dispatch(Store.Actions.Mark, 1)}}>Accept</button>
+                <button onClick={()=>{Dispatch(Store.Actions.Mark, 0)}}>No Response</button>
             </dd>
         </dl>
         
