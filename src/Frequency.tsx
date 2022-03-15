@@ -6,7 +6,7 @@ const perc = (min: number, val: number, max: number): string => `${(val - min) /
 
 const Column = styled.div`
   position: relative;
-  flex-grow: 1;
+  width:1px;
   &::before
   {
     content: " ";
@@ -15,15 +15,19 @@ const Column = styled.div`
     width: 0px;
     height: 100%;
     left: 50%;
-    border-left: ${ (props:{active:Boolean}):string => props.active ? `2px solid red` : `1px dashed black`}
+    border-left: ${ (props:{active:Boolean}):string => props.active ? `2px solid red` : `1px solid #aaa`};
+    box-shadow: ${ (props:{active:Boolean}):string => props.active ? `0px 0px 10px red` : `none`};
   }
 `;
 
 const Label = styled.div`
   position: absolute;
   top: 100%;
-  width: 100%;
+  left: -25px;
+  width: 50px;
+  padding-top: 10px;
   text-align: center;
+  font-size: 13px;
 `;
 
 const Plot = styled.div`

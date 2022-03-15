@@ -21,16 +21,18 @@ const Rule = styled.div`
             case DrawStyle.Intense:
                 return "2px solid red";
         }
-    }
-    };
+    }};
+    box-shadow: ${ ({look}:{look:DrawStyle}):string => { return look == DrawStyle.Intense ? "0px 0px 10px red" : "none" } };
 `;
 
 const Label = styled.div`
     position: absolute;
     right: 100%;
+    padding-right: 10px;
     text-align: right;
     line-height: 0;
     font-size: 10px;
+
 `;
 
 type Marked = {index:number, sample:Store.Sample}
@@ -61,9 +63,9 @@ const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answ
         if(from.sample[2] && to.sample[2])
         {
             output.push({
-                x1: from.index/test.Plot.length * 100 + "%",
+                x1: from.index/(test.Plot.length-1) * 100 + "%",
                 y1: (from.sample[0]-test.Clip[0])/(test.Clip[1]-test.Clip[0]) * 100 + "%",
-                x2: to.index/test.Plot.length * 100 + "%",
+                x2: to.index/(test.Plot.length-1) * 100 + "%",
                 y2: (to.sample[0]-test.Clip[0])/(test.Clip[1]-test.Clip[0]) * 100 + "%",
             });
         }
@@ -103,13 +105,15 @@ export default ( ) =>
     },
     [State.Draw, State.Show]);
 
-    return <div style={{ display:"flex", position:"relative", width:"500px", height:"300px", margin:"20px"}}>
+    return <div style={{position:"relative", width:"500px", height:"300px", margin:"35px", border: "1px solid #ddd"}}>
         { lines }
         { <Rule look={DrawStyle.Intense} style={{top: `${(State.dBHL - currentTest.Clip[0])/(currentTest.Clip[1] - currentTest.Clip[0])*100 }%`}}/> }
-        { currentTest.Plot.map( (f:Store.Frequency, i:number)=><Frequency freq={f} clip={currentTest.Clip} active={f == currentFreq} mode={State.Show} /> )}
-        <svg style={{position: "absolute", top:0, left:"16%", width:"100%", height:"100%"}} preserveAspectRatio="none" key={State.Draw}>
-            {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
-            { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
-        </svg>
+        <div style={{display:"flex", justifyContent: "space-between", position:"absolute", top:0, left:"10%", width:"80%", height:"100%"}}>
+            { currentTest.Plot.map( (f:Store.Frequency, i:number)=><Frequency freq={f} clip={currentTest.Clip} active={f == currentFreq} mode={State.Show} /> )}
+            <svg style={{position: "absolute", top:0, left:0, width:"100%", height:"100%"}} preserveAspectRatio="none" key={State.Draw}>
+                {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
+                { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
+            </svg>
+        </div>
     </div>;
 }
