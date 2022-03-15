@@ -116,15 +116,18 @@ export default () =>
     },
     [State.Draw, State.Show]);
 
+    const lines:Array<React.ReactElement> = useMemo(()=>{
+        let stride:number = 10;
+        let start:number = Math.floor(currentTest.Clip[0]/stride)*stride;
+        let stop:number = Math.floor(currentTest.Clip[1]/stride)*stride;
+        let lines = [];
+        for(let i=start; i<=stop; i+=stride)
+        {
+            lines.push(<Rule style={{top: `${(i-start)/(stop-start)*100}%`}} look={ i==0 ? DrawStyle.Normal : DrawStyle.Light}><Label>{i}</Label></Rule>)
+        }
+        return lines;
+    }, [State.Test]);
 
-    let stride:number = 10;
-    let start:number = Math.floor(currentTest.Clip[0]/stride)*stride;
-    let stop:number = Math.floor(currentTest.Clip[1]/stride)*stride;
-    let lines = [];
-    for(let i=start; i<=stop; i+=stride)
-    {
-        lines.push(<Rule style={{top: `${(i-start)/(stop-start)*100}%`}} look={ i==0 ? DrawStyle.Normal : DrawStyle.Light}><Label>{i}</Label></Rule>)
-    }
 
     return <div>
 
