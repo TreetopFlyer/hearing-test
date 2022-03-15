@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer } from "react";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
-export enum Actions { Test, Freq, dBHL, Chan, Mark };
+export enum Actions { Test, Freq, dBHL, Chan, Show, Mark };
 export type Action = { Type:Actions, Payload:number };
 export type Session =
 {
@@ -12,6 +12,7 @@ export type Session =
   Freq: number,
   Test: number,
   Draw: number,
+  Show: number,
   List: Array<Test>
 };
 export type Test =
@@ -31,6 +32,7 @@ export type SamplePair =
   Sample: Sample,
   Answer: Sample | null
 };
+
 export type Range = [ number, number];
 export type Sample = [ number | null, number | null, boolean ]; /* [ stim, mask, resp ] */
 
@@ -67,9 +69,11 @@ const reducer = (state:Session, action:Action):Session =>
       let clone = {...state, Draw:state.Draw+1 };
       let currFreq:Frequency = clone.List[state.Test].Plot[state.Freq];
       let currChan:SamplePair = state.Chan == 0 ? currFreq.AL: currFreq.AR; 
-      currChan.Answer =  [ state.dBHL, null, action.Payload == 1 ];
-
+      currChan.Sample =  [ state.dBHL, null, action.Payload == 1 ];
       return clone;
+
+    case Actions.Show :
+      return {...state, Show:action.Payload, Draw:state.Draw+1 };
 
     default:
       return state;
@@ -84,6 +88,7 @@ const model:Session =
   Freq: 0,
   Test: 0,
   Draw: 0,
+  Show: 0,
   List:
   [
     {
@@ -93,18 +98,18 @@ const model:Session =
       [
         {
           Hz: 250,
-          AL: {Sample:[20, null, true], Answer:null},
-          AR: {Sample:[50, null, true], Answer:null},
+          AL: {Answer:[20, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
         },
         {
           Hz: 500,
-          AL: {Sample:[50, null, true], Answer:null},
-          AR: {Sample:[50, null, true], Answer:null},
+          AL: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
         },
         {
           Hz: 1000,
-          AL: {Sample:[50, null, true], Answer:null},
-          AR: {Sample:[50, null, true], Answer:null},
+          AL: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
         },
       ]
     },
@@ -115,13 +120,13 @@ const model:Session =
       [
         {
           Hz: 250,
-          AL: {Sample:[50, null, true], Answer:null},
-          AR: {Sample:[50, null, true], Answer:null},
+          AL: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
         },
         {
           Hz: 500,
-          AL: {Sample:[50, null, true], Answer:null},
-          AR: {Sample:[50, null, true], Answer:null},
+          AL: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
         },
       ]
     }

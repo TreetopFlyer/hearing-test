@@ -36,7 +36,7 @@ const Plot = styled.div`
   font-size: 20px;
 `;
 
-export default ( { freq, clip, sample, answer, active }:{freq:Frequency, clip:Range, sample:Boolean, answer:Boolean, active:Boolean} ) =>
+export default ( { freq, clip, mode, active }:{freq:Frequency, clip:Range, mode:number, active:Boolean} ) =>
 {
 
   const iconAL = "✕";
@@ -47,9 +47,9 @@ export default ( { freq, clip, sample, answer, active }:{freq:Frequency, clip:Ra
 
   return <Column active={active}>
     <Label>{ freq.Hz }</Label>
-    { (sample && freq.AL.Sample) && <Plot style={{top:perc(clip[0], freq.AL.Sample[0], clip[1])}}>{iconAL}{ freq.AL.Sample[2] == false && iconNL }</Plot> }
-    { (sample && freq.AR.Sample) && <Plot style={{top:perc(clip[0], freq.AR.Sample[0], clip[1])}}>{iconAR}{ freq.AR.Sample[2] == false && iconNR }</Plot> }
-    { (answer && freq.AL.Answer) && <Plot style={{top:perc(clip[0], freq.AL.Answer[0], clip[1])}}>{iconAL}{ freq.AL.Answer[2] == false && iconNL }</Plot> }
-    { (answer && freq.AR.Answer) && <Plot style={{top:perc(clip[0], freq.AR.Answer[0], clip[1])}}>{iconAR}{ freq.AR.Answer[2] == false && iconNR }</Plot> }
+    { (mode == 0 && freq.AL.Sample) && <Plot style={{top:perc(clip[0], freq.AL.Sample[0], clip[1])}}>{iconAL}{ freq.AL.Sample[2] == false && iconNL }</Plot> }
+    { (mode == 0 && freq.AR.Sample) && <Plot style={{top:perc(clip[0], freq.AR.Sample[0], clip[1])}}>{iconAR}{ freq.AR.Sample[2] == false && iconNR }</Plot> }
+    { (mode == 1 && freq.AL.Answer) && <Plot style={{top:perc(clip[0], freq.AL.Answer[0], clip[1])}}>{iconAL}{ freq.AL.Answer[2] == false && iconNL }</Plot> }
+    { (mode == 1 && freq.AR.Answer) && <Plot style={{top:perc(clip[0], freq.AR.Answer[0], clip[1])}}>{iconAR}{ freq.AR.Answer[2] == false && iconNR }</Plot> }
   </Column>;
 }

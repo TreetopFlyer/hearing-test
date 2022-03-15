@@ -87,28 +87,35 @@ const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answ
 
 export default () =>
 {
-    const [askGet, askSet] = useState(0);
-    const [responseGet, responseSet] = useState(0);
-    useEffect(()=>{
-        let timer:number | undefined = undefined;
-        if(askGet == 1)
-        {
-            responseSet(State.dBHL - currentPair.Sample[0]);
-            timer = setTimeout(()=>{askSet(2);}, 1000);
-        }
-        return () => clearTimeout(timer);
-    }, [askGet])
-
     const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
     const currentPair:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
 
-    const path = useMemo(() =>
+    const [askGet, askSet] = useState(0);
+    const [responseGet, responseSet] = useState(0);
+
+    useEffect(()=>{
+        let timer:number | undefined = undefined;
+        if(askGet == 1)
+        {
+            responseSet(State.dBHL - currentPair.Answer[0]);
+            timer = setTimeout(()=>{askSet(2);}, 1000);
+        }
+        return () => clearTimeout(timer);
+    }, [askGet])
+
+    const path:{Left:Array<PercentCoords>, Right:Array<PercentCoords>} = useMemo(() =>
     {
-        return Contiguous(currentTest, "AL", "Answer");
+        let mode:"Sample" | "Answer" = State.Show ? "Answer" : "Sample";
+
+        return {
+             Left: Contiguous(currentTest, "AL", mode),
+            Right: Contiguous(currentTest, "AR", mode)
+        };
     },
-    [State.Draw]);
+    [State.Draw, State.Show]);
+
 
     let stride:number = 10;
     let start:number = Math.floor(currentTest.Clip[0]/stride)*stride;
@@ -133,9 +140,10 @@ export default () =>
             { <Rule look={DrawStyle.Intense} style={{top: `${
                 (State.dBHL - currentTest.Clip[0])/(currentTest.Clip[1] - currentTest.Clip[0])*100
             }%`}}/> }
-            { currentTest.Plot.map( (f:Store.Frequency, i:number)=><Frequency freq={f} clip={currentTest.Clip} active={f == currentFreq} sample={false} answer={true} /> )}
+            { currentTest.Plot.map( (f:Store.Frequency, i:number)=><Frequency freq={f} clip={currentTest.Clip} active={f == currentFreq} mode={State.Show} /> )}
             <svg style={{position: "absolute", top:0, left:"16%", width:"100%", height:"100%"}} preserveAspectRatio="none" key={State.Draw}>
-                { path.map( (m:Marked) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
+                {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
+                { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
             </svg>
         </div>
 
@@ -149,21 +157,21 @@ export default () =>
             </dd>
         </dl>
         <dl>
-            <dt>Frequency</dt>
-            <dd>{ currentFreq.Hz } Hz</dd>
-            <dd>
-                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>-</button>
-                <input type="range" min="0" max={currentTest.Plot.length-1} value={State.Freq} onChange={Handler(Store.Actions.Freq)}/>
-                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>+</button>
-            </dd>
-        </dl>
-        <dl>
             <dt>Stimulus</dt>
             <dd>{ State.dBHL } dBHL</dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>-</button>
                 <input type="range" min={currentTest.Clip[0]} max={currentTest.Clip[1]} value={State.dBHL} onChange={Handler(Store.Actions.dBHL)}/>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>+</button>
+            </dd>
+        </dl>
+        <dl>
+            <dt>Frequency</dt>
+            <dd>{ currentFreq.Hz } Hz</dd>
+            <dd>
+                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>-</button>
+                <input type="range" min="0" max={currentTest.Plot.length-1} value={State.Freq} onChange={Handler(Store.Actions.Freq)}/>
+                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>+</button>
             </dd>
         </dl>
         <dl>
@@ -181,7 +189,14 @@ export default () =>
                 <button onClick={()=>{Dispatch(Store.Actions.Mark, 0)}}>No Response</button>
             </dd>
         </dl>
-        
+        <dl>
+            <dt>Display</dt>
+            <dd>{ State.Show }</dd>
+            <dd>
+                <button onClick={()=>{Dispatch(Store.Actions.Show, 0)}}>Your Samples</button>
+                <button onClick={()=>{Dispatch(Store.Actions.Show, 1)}}>Test Answers</button>
+            </dd>
+        </dl>
 
     </div>;
 }
