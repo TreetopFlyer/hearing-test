@@ -13,39 +13,12 @@ const Blink = styled.div`
     animation-fill-mode: both;
 `;
 
-const ControlTitle = styled.div`
-text-align: center;
-font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-`;
-const ControlValue = styled.div`
-text-align: center;
-font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-font-weight: 900;
-`;
-const ControlInputs = styled.div`
-display: flex;
-`;
-const ControlButton = styled.div`
-padding: 5px 10px;
-border-radius: 20px;
-background: green;
-cursor: pointer;
-color: white;
-text-align: center;
-font-size: 10px;
-font-weight: 900;
-font-family: sans-serif;
-`;
-const ControlSlider = styled.input`
-width:100%;
-`;
-
-
 const DL = styled.dl`
 position: relative;
 text-align: center;
 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-margin: 20px 0 20px 0;
+margin: 20px 0 30px 0;
+user-select: none;
 dt
 {
     text-align: center;
@@ -62,7 +35,7 @@ button
 {
     flex: 1;
 }
-input
+input[type='range']
 {
     width:100%;
 }
@@ -145,14 +118,26 @@ export default () =>
             </dd>
         </DL>
         <DL>
-            <dt>Show Chart</dt>
+            <dt>Show on Chart</dt>
             <dd>
-                <button onClick={()=>{Dispatch(Store.Actions.Show, 0)}}>Your Samples</button>
-                <button onClick={()=>{Dispatch(Store.Actions.Show, 1)}}>Test Answers</button>
+                <button onClick={()=>{Dispatch(Store.Actions.Show, 0)}}>
+                    <input type="radio" name="display" id="show-samples" value={0} checked={State.Show == 0} onChange={Handler(Store.Actions.Show)}/>
+                    Your Samples
+                </button>
+                <button onClick={()=>{Dispatch(Store.Actions.Show, 1)}}>
+                    <input type="radio" name="display" id="show-answers" value={1} checked={State.Show == 1} onChange={Handler(Store.Actions.Show)}/>
+                    Test Answers
+                </button>
             </dd>
             <dd>
-                <input type="radio" name="display" id="show-samples" value={0} checked={State.Show == 0} onChange={Handler(Store.Actions.Show)}/>
-                <input type="radio" name="display" id="show-answers" value={1} checked={State.Show == 1} onChange={Handler(Store.Actions.Show)}/>
+                <p>
+                    <input type="checkbox" value={1-State.VisX} checked={State.VisX == 1} onChange={Handler(Store.Actions.VisX)} id="show-x"/><label for="show-x">Stimulus Line</label>
+                </p>
+            </dd>
+            <dd>
+                <p>
+                    <input type="checkbox" value={1-State.VisY} checked={State.VisY == 1} onChange={Handler(Store.Actions.VisY)} id="show-y"/><label for="show-y">Frequency Line</label>
+                </p>
             </dd>
         </DL>
     </div>;

@@ -2,10 +2,12 @@ import React, { createContext, useContext, useReducer } from "react";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
-export enum Actions { Test, Freq, dBHL, Chan, Show, Mark };
+export enum Actions { Test, Freq, dBHL, Chan, Show, Mark, VisX, VisY };
 export type Action = { Type:Actions, Payload:number };
 export type Session =
 {
+  VisX: number,
+  VisY: number; 
   Tone: number,
   Chan: number,
   dBHL: number,
@@ -47,8 +49,12 @@ const reducer = (state:Session, action:Action):Session =>
 {
   switch(action.Type)
   {
-    case Actions.Test :
+    case Actions.VisX :
+      return { ...state, VisX: action.Payload};
+    case Actions.VisY :
+      return { ...state, VisY: action.Payload};
 
+    case Actions.Test :
       let clipTest:number = limit(action.Payload, 0, state.List.length-1);
       let nextTest:Test = state.List[clipTest];
       let clipFreq:number = limit(state.Freq, 0, nextTest.Plot.length-1);
@@ -89,6 +95,8 @@ const reducer = (state:Session, action:Action):Session =>
 
 const model:Session =
 {
+  VisX: 1,
+  VisY: 1,
   Tone: 0,
   Chan: 0,
   dBHL: 50,
