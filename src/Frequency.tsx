@@ -33,7 +33,6 @@ const Label = styled.div`
 const Plot = styled.div`
   position: absolute;
   left: 50%;
-  border: 1px solid red;
   line-height: 0;
   letter-spacing: 0;
   font-weight: 900;

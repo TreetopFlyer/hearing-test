@@ -30,11 +30,11 @@ export type Frequency =
 export type SamplePair =
 {
   Sample: Sample,
-  Answer: Sample | null
+  Answer: Sample
 };
 
 export type Range = [ number, number];
-export type Sample = [ number | null, number | null, boolean ]; /* [ stim, mask, resp ] */
+export type Sample = [ number | null, number | null, boolean ] | null; /* [ stim, mask, resp ] */
 
 const limit = (val:number, min:number, max:number):number =>
 {
@@ -69,7 +69,14 @@ const reducer = (state:Session, action:Action):Session =>
       let clone = {...state, Draw:state.Draw+1 };
       let currFreq:Frequency = clone.List[state.Test].Plot[state.Freq];
       let currChan:SamplePair = state.Chan == 0 ? currFreq.AL: currFreq.AR; 
-      currChan.Sample =  [ state.dBHL, null, action.Payload == 1 ];
+      if(action.Payload == -1)
+      {
+        currChan.Sample = null;
+      }
+      else
+      {
+        currChan.Sample =  [ state.dBHL, null, action.Payload == 1 ];
+      }
       return clone;
 
     case Actions.Show :
@@ -125,6 +132,16 @@ const model:Session =
         },
         {
           Hz: 500,
+          AL: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
+          Hz: 1000,
+          AL: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
+          Hz: 2000,
           AL: {Answer:[50, null, true], Sample:null},
           AR: {Answer:[50, null, true], Sample:null},
         },

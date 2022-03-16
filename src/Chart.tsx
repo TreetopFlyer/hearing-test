@@ -3,36 +3,60 @@ import Frequency from "./Frequency";
 import * as Store from "./Store";
 import styled from "styled-components";
 
+const ChartOuter = styled.div`
+position: relative;
+width: 100%;
+padding-bottom: 56%;
+border: 1px solid #ddd;
+`;
+
+const ChartInner = styled.div`
+display: flex;
+justify-content: space-between;
+position: absolute;
+top: 0;
+left: 10%;
+width: 80%;
+height: 100%;
+`;
+
+const ChartSVG = styled.svg`
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+`;
+
 enum DrawStyle { Light, Normal, Intense };
 const Rule = styled.div`
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 0;
-    border-top: 1px dashed black;
-    border-top: ${ (props:{look:DrawStyle}):string =>
+position: absolute;
+left: 0;
+width: 100%;
+height: 0;
+border-top: 1px dashed black;
+border-top: ${ (props:{look:DrawStyle}):string =>
+{
+    switch(props.look)
     {
-        switch(props.look)
-        {
-            case DrawStyle.Light:
-                return "1px solid #ddd";
-            case DrawStyle.Normal:
-                return "1px solid black";
-            case DrawStyle.Intense:
-                return "2px solid red";
-        }
-    }};
-    box-shadow: ${ ({look}:{look:DrawStyle}):string => { return look == DrawStyle.Intense ? "0px 0px 10px red" : "none" } };
+        case DrawStyle.Light:
+            return "1px solid #ddd";
+        case DrawStyle.Normal:
+            return "1px solid black";
+        case DrawStyle.Intense:
+            return "2px solid red";
+    }
+}};
+box-shadow: ${ ({look}:{look:DrawStyle}):string => { return look == DrawStyle.Intense ? "0px 0px 10px red" : "none" } };
 `;
 
 const Label = styled.div`
-    position: absolute;
-    right: 100%;
-    padding-right: 10px;
-    text-align: right;
-    line-height: 0;
-    font-size: 10px;
-
+position: absolute;
+right: 100%;
+padding-right: 10px;
+text-align: right;
+line-height: 0;
+font-size: 10px;
 `;
 
 type Marked = {index:number, sample:Store.Sample}
@@ -70,8 +94,6 @@ const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answ
             });
         }
     }
-
-    console.log(output);
     return output;
 };
 
@@ -105,15 +127,15 @@ export default ( ) =>
     },
     [State.Draw, State.Show]);
 
-    return <div style={{position:"relative", width:"500px", height:"300px", margin:"35px", border: "1px solid #ddd"}}>
+    return <ChartOuter>
         { lines }
         { <Rule look={DrawStyle.Intense} style={{top: `${(State.dBHL - currentTest.Clip[0])/(currentTest.Clip[1] - currentTest.Clip[0])*100 }%`}}/> }
-        <div style={{display:"flex", justifyContent: "space-between", position:"absolute", top:0, left:"10%", width:"80%", height:"100%"}}>
+        <ChartInner>
             { currentTest.Plot.map( (f:Store.Frequency, i:number)=><Frequency freq={f} clip={currentTest.Clip} active={f == currentFreq} mode={State.Show} /> )}
-            <svg style={{position: "absolute", top:0, left:0, width:"100%", height:"100%"}} preserveAspectRatio="none" key={State.Draw}>
+            <ChartSVG preserveAspectRatio="none" key={State.Draw}>
                 {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
                 { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
-            </svg>
-        </div>
-    </div>;
+            </ChartSVG>
+        </ChartInner>
+    </ChartOuter>;
 }

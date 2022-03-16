@@ -1,6 +1,34 @@
 import React from "react";
 import { render } from "react-dom";
-import Component from "./Controls";
+import styled from "styled-components";
+import Controls from "./Controls";
+import Chart from "./Chart";
 import * as Store from "./Store";
 
-render(<Store.Provide><Component/></Store.Provide>, document.querySelector("#app"));
+const Layout = styled.div`
+display: flex;
+`;
+
+const ColumnLeft = styled.div`
+width: 300px;
+box-sizing: border-box;
+padding: 20px;
+`;
+
+const ColumnRight = styled.div`
+flex: 1 1;
+box-sizing: border-box;
+padding: 20px;
+`;
+
+render(
+<Store.Provide>
+    <Layout>
+        <ColumnLeft>
+            <Controls/>
+        </ColumnLeft>
+        <ColumnRight>
+            <Chart/>
+        </ColumnRight>
+    </Layout>
+</Store.Provide>, document.querySelector("#app"));

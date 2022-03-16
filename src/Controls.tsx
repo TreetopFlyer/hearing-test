@@ -1,17 +1,71 @@
 import React, { useState, useEffect, useMemo } from "react";
 import * as Store from "./Store";
 import styled, { keyframes } from "styled-components";
-import Chart from "./Chart";
-
 
 const BlinkAnim = keyframes`
-from { opacity: 1; }
-  to { opacity: 0; }
+    0% { opacity: 0;}
+   10% { opacity: 1;}
+  100% { opacity: 0;}
 `;
 
 const Blink = styled.div`
     animation: ${BlinkAnim} 4s linear;
     animation-fill-mode: both;
+`;
+
+const ControlTitle = styled.div`
+text-align: center;
+font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+`;
+const ControlValue = styled.div`
+text-align: center;
+font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+font-weight: 900;
+`;
+const ControlInputs = styled.div`
+display: flex;
+`;
+const ControlButton = styled.div`
+padding: 5px 10px;
+border-radius: 20px;
+background: green;
+cursor: pointer;
+color: white;
+text-align: center;
+font-size: 10px;
+font-weight: 900;
+font-family: sans-serif;
+`;
+const ControlSlider = styled.input`
+width:100%;
+`;
+
+
+const DL = styled.dl`
+position: relative;
+text-align: center;
+font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+margin: 20px 0 20px 0;
+dt
+{
+    text-align: center;
+    font-weight: 900;
+}
+dd
+{
+    display: flex;
+    margin: 0;
+    text-align: center;
+    justify-content: center;
+}
+button
+{
+    flex: 1;
+}
+input
+{
+    width:100%;
+}
 `;
 
 export default () =>
@@ -35,66 +89,71 @@ export default () =>
     }, [askGet])
 
     return <div>
-
-        <Chart/>
-
-        <dl>
-            <dt>test select</dt>
-            <select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
-                { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
-            </select>
-        </dl>
-
-        <dl>
-            <dt>Channel</dt>
-            <dd>{ State.Chan == 1 ? "Right" : "Left" }</dd>
+        <DL>
+            <dt>Hearing Condition</dt>
+            <dd>
+                <select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
+                    { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
+                </select>
+            </dd>
+        </DL>
+        <DL>
+            <dt><span>⮂</span> Channel</dt>
+            <dd><span>{ State.Chan == 1 ? "Right" : "Left" }</span></dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan-1)}>L</button>
                 <input type="range" min={0} max={1} value={State.Chan} onChange={Handler(Store.Actions.Chan)}/>
                 <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan+1)}>R</button>
             </dd>
-        </dl>
-        <dl>
-            <dt>Stimulus</dt>
-            <dd>{ State.dBHL } dBHL</dd>
+        </DL>
+        <DL>
+            <dt><span>🔊</span> Stimulus</dt>
+            <dd><span>{ State.dBHL } dBHL</span></dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>-</button>
                 <input type="range" min={currentTest.Clip[0]} max={currentTest.Clip[1]} value={State.dBHL} onChange={Handler(Store.Actions.dBHL)}/>
                 <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>+</button>
             </dd>
-        </dl>
-        <dl>
-            <dt>Frequency</dt>
-            <dd>{ currentFreq.Hz } Hz</dd>
+        </DL>
+        <DL>
+            <dt><span>♪</span> Frequency</dt>
+            <dd><span>{ currentFreq.Hz } Hz</span></dd>
             <dd>
                 <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>-</button>
                 <input type="range" min="0" max={currentTest.Plot.length-1} value={State.Freq} onChange={Handler(Store.Actions.Freq)}/>
                 <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>+</button>
             </dd>
-        </dl>
-        <dl>
-            <dt>Play Tone</dt>
+        </DL>
+        <DL>
+            <dt>🎧 Play Tone</dt>
             <dd>
-                { (askGet != 1) && <button onClick={()=>askSet(1)}>ask</button>}
-                { (askGet == 1) && <p>waiting...</p>}
-                { (askGet == 2) && <Blink>{responseGet > 0 ? "Heard it" : "Can't hear it"}</Blink>}
+                { (askGet == 1) && <span>Playing...</span>}
+                { (askGet == 2) && <Blink>{responseGet > 0 ? "👍 Response!" : "👎 No Response."}</Blink>}
             </dd>
-        </dl>
-        <dl>
-            <dt>Mark Chart</dt>
+            <dd>
+                <button onClick={()=>askSet(1)} disabled={askGet == 1}> Pulse</button>
+                <button onClick={()=>askSet(1)} disabled={askGet == 1}> Continuous</button>
+            </dd>
+        </DL>
+        <DL>
+            <dt>✍ Mark Chart</dt>
+            <dd><span>{ State.Chan == 1 ? "Right" : "Left" } ear</span> / <span>{ currentFreq.Hz } Hz</span> / <span>{ State.dBHL } dBHL</span></dd>
             <dd>
                 <button onClick={()=>{Dispatch(Store.Actions.Mark, 1)}}>Accept</button>
                 <button onClick={()=>{Dispatch(Store.Actions.Mark, 0)}}>No Response</button>
+                <button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentPair.Sample}>Erase</button>
             </dd>
-        </dl>
-        <dl>
-            <dt>Display</dt>
-            <dd>{ State.Show }</dd>
+        </DL>
+        <DL>
+            <dt>Show Chart</dt>
             <dd>
                 <button onClick={()=>{Dispatch(Store.Actions.Show, 0)}}>Your Samples</button>
                 <button onClick={()=>{Dispatch(Store.Actions.Show, 1)}}>Test Answers</button>
             </dd>
-        </dl>
-
+            <dd>
+                <input type="radio" name="display" id="show-samples" value={0} checked={State.Show == 0} onChange={Handler(Store.Actions.Show)}/>
+                <input type="radio" name="display" id="show-answers" value={1} checked={State.Show == 1} onChange={Handler(Store.Actions.Show)}/>
+            </dd>
+        </DL>
     </div>;
 }
