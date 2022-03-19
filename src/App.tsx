@@ -21,10 +21,16 @@ box-sizing: border-box;
 padding: 20px;
 `;
 
+import Mark from "./Mark";
+
 render(
 <Store.Provide>
     <Layout>
         <ColumnLeft>
+            <Mark style={{marginLeft:100, stroke:"blue"}} channel={0} response={false} />
+            <Mark style={{marginLeft:100, stroke:"blue"}} channel={1} response={false} />
+            <Mark style={{marginLeft:100, stroke:"red"}} channel={1} response={true} />
+            <Mark style={{marginLeft:100, stroke:"red"}} channel={0} response={true} />
             <Controls/>
         </ColumnLeft>
         <ColumnRight>
