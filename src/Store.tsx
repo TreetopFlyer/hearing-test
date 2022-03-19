@@ -108,17 +108,22 @@ const model:Session =
   [
     {
       Name:"CHL / Flat / Mid / Symmetric",
-      Clip:[-10, 130],
+      Clip:[-10, 120],
       Plot:
       [
         {
-          Hz: 250,
+          Hz: 125,
           AL: {Answer:[20, null, true], Sample:null},
           AR: {Answer:[50, null, true], Sample:null},
         },
         {
-          Hz: 500,
+          Hz: 250,
           AL: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
+          Hz: 500,
+          AL: {Answer:[20, null, true], Sample:null},
           AR: {Answer:[50, null, true], Sample:null},
         },
         {
@@ -126,6 +131,21 @@ const model:Session =
           AL: {Answer:[50, null, true], Sample:null},
           AR: {Answer:[50, null, true], Sample:null},
         },
+        {
+          Hz: 2000,
+          AL: {Answer:[20, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
+          Hz: 4000,
+          AL: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
+          Hz: 8000,
+          AL: {Answer:[20, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        }
       ]
     },
     {
