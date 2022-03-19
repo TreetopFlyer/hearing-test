@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer } from "react";
+import { Clip } from "./Util";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
@@ -38,12 +39,6 @@ export type SamplePair =
 export type Range = [ number, number];
 export type Sample = [ number | null, number | null, boolean ] | null; /* [ stim, mask, resp ] */
 
-const limit = (val:number, min:number, max:number):number =>
-{
-    if(val < min) { return min; }
-    if(val > max) { return max; }
-    return val;
-};
 
 const reducer = (state:Session, action:Action):Session =>
 {
@@ -55,21 +50,21 @@ const reducer = (state:Session, action:Action):Session =>
       return { ...state, VisY: action.Payload};
 
     case Actions.Test :
-      let clipTest:number = limit(action.Payload, 0, state.List.length-1);
+      let clipTest:number = Clip(action.Payload, 0, state.List.length-1);
       let nextTest:Test = state.List[clipTest];
-      let clipFreq:number = limit(state.Freq, 0, nextTest.Plot.length-1);
-      let clipdBHL = limit(state.dBHL, ...nextTest.Clip);
+      let clipFreq:number = Clip(state.Freq, 0, nextTest.Plot.length-1);
+      let clipdBHL = Clip(state.dBHL, ...nextTest.Clip);
       return { ...state, Test: clipTest, Freq: clipFreq, dBHL: clipdBHL, Draw:state.Draw+1 };
 
     case Actions.Freq :
       let maxFreq = state.List[state.Test].Plot.length-1;
-      return {...state, Freq: limit(action.Payload, 0, maxFreq) };
+      return {...state, Freq: Clip(action.Payload, 0, maxFreq) };
 
     case Actions.dBHL :
-      return {...state, dBHL: limit(action.Payload, ...state.List[state.Test].Clip) };
+      return {...state, dBHL: Clip(action.Payload, ...state.List[state.Test].Clip) };
 
     case Actions.Chan :
-      return {...state, Chan: limit(action.Payload, 0, 1) };
+      return {...state, Chan: Clip(action.Payload, 0, 1) };
 
     case Actions.Mark :
       let clone = {...state, Draw:state.Draw+1 };

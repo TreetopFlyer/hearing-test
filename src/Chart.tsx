@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import Frequency from "./Frequency";
 import * as Store from "./Store";
 import styled from "styled-components";
+import { Perc } from "./Util";
 
 const ChartGap = styled.div`
 margin: 0 0 60px 60px;
@@ -64,11 +65,17 @@ border-top: 1px dashed black;
 border-top: ${ ({dark}:{dark:boolean}):string => dark ? "1px solid black" : "1px solid #ddd" };
 `;
 
+const Shaded = styled.div`
+position: absolute;
+left: 0;
+width: 100%;
+background: #dedede;
+`;
+
 const Label = styled.div`
 position: absolute;
 right: 100%;
 padding-right: 10px;
-
 color: black;
 font-size: 10px;
 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -104,10 +111,10 @@ const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answ
         if(from.sample[2] && to.sample[2])
         {
             output.push({
-                x1: from.index/(test.Plot.length-1) * 100 + "%",
-                y1: (from.sample[0]-test.Clip[0])/(test.Clip[1]-test.Clip[0]) * 100 + "%",
-                x2: to.index/(test.Plot.length-1) * 100 + "%",
-                y2: (to.sample[0]-test.Clip[0])/(test.Clip[1]-test.Clip[0]) * 100 + "%",
+                x1: Perc(from.index, 0, test.Plot.length-1),
+                y1: Perc(from.sample[0], ...test.Clip),
+                x2: Perc(to.index, 0, test.Plot.length-1),
+                y2: Perc(to.sample[0], ...test.Clip),
             });
         }
     }
@@ -127,7 +134,7 @@ export default ( ) =>
         let lines = [];
         for(let i=start; i<=stop; i+=stride)
         {
-            lines.push(<Rule style={{top: `${(i-start)/(stop-start)*100}%`}} dark={ i==0 }><Label>{i}</Label></Rule>)
+            lines.push(<Rule style={{top: Perc(i, start, stop)}} dark={ i==0 }><Label>{i}</Label></Rule>)
         }
         return lines;
     }, [State.Test]);
