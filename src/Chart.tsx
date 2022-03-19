@@ -2,21 +2,27 @@ import React, { useMemo } from "react";
 import Frequency from "./Frequency";
 import * as Store from "./Store";
 import styled from "styled-components";
+import { Perc, Clip } from "./Util";
+
+const ChartGap = styled.div`
+margin: 0 0 60px 60px;
+box-sizing: border-box;
+`;
 
 const ChartOuter = styled.div`
 position: relative;
 width: 100%;
+box-sizing: border-box;
 padding-bottom: 56%;
 border: 1px solid #ddd;
 `;
 
 const ChartInner = styled.div`
 display: flex;
-justify-content: space-between;
 position: absolute;
 top: 0;
-left: 10%;
-width: 80%;
+left: 0;
+width: 100%;
 height: 100%;
 `;
 
@@ -28,35 +34,54 @@ width: 100%;
 height: 100%;
 `;
 
-enum DrawStyle { Light, Normal, Intense };
+const ChartLabel = styled.div`
+position: absolute;
+width: 100%;
+text-align: center;
+
+color: black;
+font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+font-size: 16px;
+font-weight: 900;
+line-height: 0;
+`;
+const ChartLabelX = styled(ChartLabel)`
+top: 100%;
+left: 0%;
+transform: translateY(40px);
+`;
+const ChartLabelY = styled(ChartLabel)`
+top: 50%;
+left: -50%;
+transform: rotate(-90deg) translateY(-40px);
+`;
+
 const Rule = styled.div`
 position: absolute;
 left: 0;
 width: 100%;
 height: 0;
 border-top: 1px dashed black;
-border-top: ${ (props:{look:DrawStyle}):string =>
-{
-    switch(props.look)
-    {
-        case DrawStyle.Light:
-            return "1px solid #ddd";
-        case DrawStyle.Normal:
-            return "1px solid black";
-        case DrawStyle.Intense:
-            return "2px solid red";
-    }
-}};
-box-shadow: ${ ({look}:{look:DrawStyle}):string => { return look == DrawStyle.Intense ? "0px 0px 10px red" : "none" } };
+border-top: ${ ({dark}:{dark:boolean}):string => dark ? "1px solid black" : "1px solid #ddd" };
+`;
+
+const Shaded = styled.div`
+position: absolute;
+left: 0;
+width: 100%;
+background: black;
+opacity: 0.1;
 `;
 
 const Label = styled.div`
 position: absolute;
 right: 100%;
 padding-right: 10px;
+color: black;
+font-size: 10px;
+font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 text-align: right;
 line-height: 0;
-font-size: 10px;
 `;
 
 type Marked = {index:number, sample:Store.Sample}
@@ -87,10 +112,10 @@ const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answ
         if(from.sample[2] && to.sample[2])
         {
             output.push({
-                x1: from.index/(test.Plot.length-1) * 100 + "%",
-                y1: (from.sample[0]-test.Clip[0])/(test.Clip[1]-test.Clip[0]) * 100 + "%",
-                x2: to.index/(test.Plot.length-1) * 100 + "%",
-                y2: (to.sample[0]-test.Clip[0])/(test.Clip[1]-test.Clip[0]) * 100 + "%",
+                x1: Perc(from.index, 0, test.Plot.length-1),
+                y1: Perc(from.sample[0], ...test.Clip),
+                x2: Perc(to.index, 0, test.Plot.length-1),
+                y2: Perc(to.sample[0], ...test.Clip),
             });
         }
     }
@@ -102,16 +127,15 @@ export default ( ) =>
     const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
-    const currentPair:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
 
     const lines:Array<React.ReactElement> = useMemo(()=>{
         let stride:number = 10;
-        let start:number = Math.floor(currentTest.Clip[0]/stride)*stride;
+        let start:number = Math.ceil(currentTest.Clip[0]/stride)*stride;
         let stop:number = Math.floor(currentTest.Clip[1]/stride)*stride;
         let lines = [];
         for(let i=start; i<=stop; i+=stride)
         {
-            lines.push(<Rule style={{top: `${(i-start)/(stop-start)*100}%`}} look={ i==0 ? DrawStyle.Normal : DrawStyle.Light}><Label>{i}</Label></Rule>)
+            lines.push(<Rule style={{top: Perc(i, ...currentTest.Clip)}} dark={ i==0 }><Label>{i}</Label></Rule>)
         }
         return lines;
     }, [State.Test]);
@@ -127,15 +151,42 @@ export default ( ) =>
     },
     [State.Draw, State.Show]);
 
-    return <ChartOuter>
-        { lines }
-        { (State.VisX == 1) && <Rule look={DrawStyle.Intense} style={{top: `${(State.dBHL - currentTest.Clip[0])/(currentTest.Clip[1] - currentTest.Clip[0])*100 }%`}}/> }
-        <ChartInner>
-            { currentTest.Plot.map( (f:Store.Frequency, i:number)=><Frequency freq={f} clip={currentTest.Clip} active={(f == currentFreq) && (State.VisY == 1)} mode={State.Show} /> )}
-            <ChartSVG preserveAspectRatio="none" key={State.Draw}>
-                {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
-                { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
-            </ChartSVG>
-        </ChartInner>
-    </ChartOuter>;
+    const SVGCSS:{left:string, width:string} = useMemo(() =>
+    {
+        const scalar = 100 / currentTest.Plot.length;
+        return {
+            left: scalar/2 + "%",
+            width: (100 - scalar) + "%" 
+        };
+    },
+    [State.Draw, State.Show]);
+
+    const frequencies:Array<typeof Frequency> = currentTest.Plot.map( (f:Store.Frequency, i:number)=>
+    {
+        return <Frequency freq={f} clip={currentTest.Clip} active={(f == currentFreq) && (State.VisY == 1)} mode={State.Show} />;
+    });
+    
+    const shaded = useMemo(()=>{
+        let min:number = Math.max(-10, currentTest.Clip[0]);
+        let max:number = Math.min( 25, currentTest.Clip[1]);
+
+        return <Shaded style={{top:Perc(min, ...currentTest.Clip), height:Perc(max-min, 0, currentTest.Clip[1] - currentTest.Clip[0])}}/>
+        
+    }, [currentTest.Clip])
+
+    return <ChartGap>
+        <ChartOuter>
+            { shaded }
+            { lines }
+            <ChartInner>
+                { frequencies }
+                <ChartSVG style={SVGCSS} preserveAspectRatio="none" key={State.Draw}>
+                    {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.5, strokeWidth:1.5}}/> ) }
+                    { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.5, strokeWidth:1.5}}/> ) }
+                </ChartSVG>
+            </ChartInner>
+            <ChartLabelX>Frequency in (H)z</ChartLabelX>
+            <ChartLabelY>Hearing Level (dB HL)</ChartLabelY>
+        </ChartOuter>
+    </ChartGap>;
 }

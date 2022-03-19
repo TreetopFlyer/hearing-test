@@ -21,6 +21,8 @@ box-sizing: border-box;
 padding: 20px;
 `;
 
+import Mark from "./Mark";
+
 render(
 <Store.Provide>
     <Layout>
