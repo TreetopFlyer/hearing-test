@@ -166,8 +166,8 @@ export default ( ) =>
             <ChartInner>
                 { frequencies }
                 <ChartSVG style={SVGCSS} preserveAspectRatio="none" key={State.Draw}>
-                    {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
-                    { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'#777', strokeWidth:1}}/> ) }
+                    {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.5, strokeWidth:1.5}}/> ) }
+                    { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.5, strokeWidth:1.5}}/> ) }
                 </ChartSVG>
             </ChartInner>
             <ChartLabelX>Frequency in (H)z</ChartLabelX>

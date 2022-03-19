@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Frequency, Range } from "./Store";
+import Mark from "./Mark";
 
 const perc = (min: number, val: number, max: number): string => `${(val - min) / (max - min) * 100}%`;
 
@@ -45,17 +46,11 @@ const Plot = styled.div`
 export default ( { freq, clip, mode, active }:{freq:Frequency, clip:Range, mode:number, active:Boolean} ) =>
 {
 
-  const iconAL = "✕";
-  const iconAR = "◯";
-
-  const iconNL = "🡦";
-  const iconNR = "🡧";
-
   return <Column active={active} half={freq.Hz >= 1000 && freq.Hz <= 6000}>
     <Label>{ freq.Hz }</Label>
-    { (mode == 0 && freq.AL.Sample) && <Plot style={{top:perc(clip[0], freq.AL.Sample[0], clip[1])}}>{iconAL}{ freq.AL.Sample[2] == false && iconNL }</Plot> }
-    { (mode == 0 && freq.AR.Sample) && <Plot style={{top:perc(clip[0], freq.AR.Sample[0], clip[1])}}>{iconAR}{ freq.AR.Sample[2] == false && iconNR }</Plot> }
-    { (mode == 1 && freq.AL.Answer) && <Plot style={{top:perc(clip[0], freq.AL.Answer[0], clip[1])}}>{iconAL}{ freq.AL.Answer[2] == false && iconNL }</Plot> }
-    { (mode == 1 && freq.AR.Answer) && <Plot style={{top:perc(clip[0], freq.AR.Answer[0], clip[1])}}>{iconAR}{ freq.AR.Answer[2] == false && iconNR }</Plot> }
+    { (mode == 0 && freq.AL.Sample) && <Mark channel={0} response={freq.AL.Sample[2]} style={{left:"50%", stroke:"blue", top:perc(clip[0], freq.AL.Sample[0], clip[1])}}></Mark> }
+    { (mode == 0 && freq.AR.Sample) && <Mark channel={1} response={freq.AR.Sample[2]} style={{left:"50%", stroke:"red", top:perc(clip[0], freq.AR.Sample[0], clip[1])}}></Mark> }
+    { (mode == 1 && freq.AL.Answer) && <Mark channel={1} response={freq.AL.Answer[2]} style={{left:"50%", stroke:"blue", top:perc(clip[0], freq.AL.Answer[0], clip[1])}}></Mark> }
+    { (mode == 1 && freq.AR.Answer) && <Mark channel={0} response={freq.AR.Answer[2]} style={{left:"50%", stroke:"red", top:perc(clip[0], freq.AR.Answer[0], clip[1])}}></Mark> }
   </Column>;
 }
