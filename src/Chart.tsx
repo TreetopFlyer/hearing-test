@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import Frequency from "./Frequency";
 import * as Store from "./Store";
 import styled from "styled-components";
-import { Perc } from "./Util";
+import { Perc, Clip } from "./Util";
 
 const ChartGap = styled.div`
 margin: 0 0 60px 60px;
@@ -69,7 +69,8 @@ const Shaded = styled.div`
 position: absolute;
 left: 0;
 width: 100%;
-background: #dedede;
+background: black;
+opacity: 0.1;
 `;
 
 const Label = styled.div`
@@ -129,12 +130,12 @@ export default ( ) =>
 
     const lines:Array<React.ReactElement> = useMemo(()=>{
         let stride:number = 10;
-        let start:number = Math.floor(currentTest.Clip[0]/stride)*stride;
+        let start:number = Math.ceil(currentTest.Clip[0]/stride)*stride;
         let stop:number = Math.floor(currentTest.Clip[1]/stride)*stride;
         let lines = [];
         for(let i=start; i<=stop; i+=stride)
         {
-            lines.push(<Rule style={{top: Perc(i, start, stop)}} dark={ i==0 }><Label>{i}</Label></Rule>)
+            lines.push(<Rule style={{top: Perc(i, ...currentTest.Clip)}} dark={ i==0 }><Label>{i}</Label></Rule>)
         }
         return lines;
     }, [State.Test]);
@@ -165,10 +166,17 @@ export default ( ) =>
         return <Frequency freq={f} clip={currentTest.Clip} active={(f == currentFreq) && (State.VisY == 1)} mode={State.Show} />;
     });
     
+    const shaded = useMemo(()=>{
+        let min:number = Math.max(-10, currentTest.Clip[0]);
+        let max:number = Math.min( 25, currentTest.Clip[1]);
 
+        return <Shaded style={{top:Perc(min, ...currentTest.Clip), height:Perc(max-min, 0, currentTest.Clip[1] - currentTest.Clip[0])}}/>
+        
+    }, [currentTest.Clip])
 
     return <ChartGap>
         <ChartOuter>
+            { shaded }
             { lines }
             <ChartInner>
                 { frequencies }
