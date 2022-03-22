@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import * as Store from "./Store";
 import styled, { keyframes } from "styled-components";
+import Stepper from "./Stepper";
 
 const BlinkAnim = keyframes`
     0% { opacity: 0;}
@@ -41,12 +42,60 @@ input[type='range']
 }
 `;
 
+
+const dl = {
+Step: styled.dl`
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    color: #333333;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+    dt
+    {
+        
+    }
+
+    dd
+    {
+        margin: 0;
+    }
+    dd.Label
+    {
+        width: 100%;
+        text-align: right;
+        padding-right: 5px;
+    }
+
+    button
+    {
+        appearance: none;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        background: #333333;
+    }
+    svg
+    {
+            width: 10px;
+        height: 10px;
+    }
+    line
+    {
+        stroke: #dddddd;
+        stroke-width: 2px;
+    }
+`
+};
+    
 export default () =>
 {
     const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
-    const currentPair:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
+    const currentChan:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
 
     const [askGet, askSet] = useState(0);
     const [responseGet, responseSet] = useState(0);
@@ -55,7 +104,7 @@ export default () =>
         let timer:number | undefined = undefined;
         if(askGet == 1)
         {
-            responseSet(State.dBHL - currentPair.Answer[0]);
+            responseSet(State.dBHL - currentChan.Answer[0]);
             timer = setTimeout(()=>{askSet(2);}, 1000);
         }
         return () => clearTimeout(timer);
@@ -79,24 +128,44 @@ export default () =>
                 <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan+1)}>R</button>
             </dd>
         </DL>
-        <DL>
-            <dt><span>🔊</span> Stimulus</dt>
-            <dd><span>{ State.dBHL } dBHL</span></dd>
+        <dl.Step>
+            <dt>Stimulus</dt>
+            <dd className="Label"><strong>{ State.dBHL }</strong> <span>dBHL</span></dd>
             <dd>
-                <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>-</button>
-                <input type="range" min={currentTest.Clip[0]} max={currentTest.Clip[1]} value={State.dBHL} onChange={Handler(Store.Actions.dBHL)}/>
-                <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>+</button>
+                <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>
+                    <svg>
+                        <line x1="0%" y1="50%" x2="100%" y2="50%"/>
+                    </svg>
+                </button>
             </dd>
-        </DL>
-        <DL>
-            <dt><span>♪</span> Frequency</dt>
-            <dd><span>{ currentFreq.Hz } Hz</span></dd>
             <dd>
-                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>-</button>
-                <input type="range" min="0" max={currentTest.Plot.length-1} value={State.Freq} onChange={Handler(Store.Actions.Freq)}/>
-                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>+</button>
+                <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>
+                    <svg>
+                        <line x1="0%" y1="50%" x2="100%" y2="50%"/>
+                        <line y1="0%" x1="50%" y2="100%" x2="50%"/>
+                    </svg>
+                </button>
             </dd>
-        </DL>
+        </dl.Step>
+        <dl.Step>
+            <dt>Frequency</dt>
+            <dd className="Label"><strong>{ currentFreq.Hz }</strong> <span>Hz</span></dd>
+            <dd>
+                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>
+                    <svg>
+                        <line x1="0%" y1="50%" x2="100%" y2="50%"/>
+                    </svg>
+                </button>
+            </dd>
+            <dd>
+                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>
+                    <svg>
+                        <line x1="0%" y1="50%" x2="100%" y2="50%"/>
+                        <line y1="0%" x1="50%" y2="100%" x2="50%"/>
+                    </svg>
+                </button>
+            </dd>
+        </dl.Step>
         <DL>
             <dt>🎧 Play Tone</dt>
             <dd>
@@ -114,7 +183,7 @@ export default () =>
             <dd>
                 <button onClick={()=>{Dispatch(Store.Actions.Mark, 1)}}>Accept</button>
                 <button onClick={()=>{Dispatch(Store.Actions.Mark, 0)}}>No Response</button>
-                <button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentPair.Sample}>Erase</button>
+                <button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample}>Erase</button>
             </dd>
         </DL>
         <DL>
