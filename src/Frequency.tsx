@@ -33,19 +33,11 @@ const Label = styled.div`
   
 `;
 
-const Plot = styled.div`
-  position: absolute;
-  left: 50%;
-  line-height: 0;
-  letter-spacing: 0;
-  font-weight: 900;
-  font-size: 20px;
-`;
 
 export default ( { freq, clip, mode, active }:{freq:Frequency, clip:Range, mode:number, active:Boolean} ) =>
 {
 
-  return <Column active={active} half={freq.Hz >= 1000 && freq.Hz <= 6000}>
+  return <Column half={freq.Hz >= 1000 && freq.Hz <= 6000}>
     <Label>{ freq.Hz }</Label>
     { (mode == 0 && freq.AL.Sample) && <Mark channel={0} response={freq.AL.Sample[2]} style={{left:"50%", stroke:"blue", top:Perc(freq.AL.Sample[0], ...clip)}}></Mark> }
     { (mode == 0 && freq.AR.Sample) && <Mark channel={1} response={freq.AR.Sample[2]} style={{left:"50%", stroke:"red",  top:Perc(freq.AR.Sample[0], ...clip)}}></Mark> }
