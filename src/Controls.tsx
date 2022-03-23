@@ -47,8 +47,9 @@ const dl = {
 Step: styled.dl`
     display: flex;
     align-items: center;
-    gap: 5px;
-
+    gap: 5px 5px;
+    padding: 5px;
+    border-radius: 10px;
     color: #333333;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
@@ -60,26 +61,91 @@ Step: styled.dl`
     dd
     {
         margin: 0;
+        text-align: right;
     }
-    dd.Label
+    .Wide
     {
         width: 100%;
-        text-align: right;
-        padding-right: 5px;
     }
 
     button
     {
+        position: relative;
+        display: inline-block;
         appearance: none;
+        min-width: 30px;
+        min-height: 30px;
+        padding: 5px 10px 5px 10px;
         border: none;
-        width: 30px;
-        height: 30px;
-        border-radius: 30px;
-        background: #333333;
+        border-radius: 10px;
+        background: #2a88f3;
+        cursor: pointer;
+        color: white;
+        font-weight: 600;
+        transition: all 0.4s;
     }
+    button[disabled], button[disabled]:hover
+    {
+        cursor: default;
+        transform: scale(0.8);
+        background: #aaa;
+    }
+    button:hover
+    {
+        background: black;
+    }
+
+    button[data-active]
+    {
+        width:100%;
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+    button[data-active]::before
+    {
+        content: " ";
+        display: block;
+        position: absolute;
+        z-index: 20;
+        top: 0;
+        left: 50%;
+        width: 10px;
+        height: 10px;
+        border-radius: 10px;
+        transform: translate(-5px, -10px);
+        outline: 2px solid white;
+        background: #555;
+        opacity: 0;
+        transition: all 0.4s;
+    }
+    button[data-active='true']::before
+    {
+        transform: translate(-5px, -6px);
+        background: #ffa600ff;
+        opacity: 1;
+    }
+
+    button span.blink
+    {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 10px;
+        animation: ${ keyframes`
+            0% { background: #ffa600ff; }
+          100% { background: #ffa60000; }
+        `} 0.4s linear;
+        animation-fill-mode: both;
+    }
+
     svg
     {
-            width: 10px;
+        z-index: 10;
+        position: relative;
+        width: 10px;
         height: 10px;
     }
     line
@@ -87,9 +153,31 @@ Step: styled.dl`
         stroke: #dddddd;
         stroke-width: 2px;
     }
-`
+`,
+Button: ( props:any ) =>
+{
+    const [showGet, showSet] = useState(-1);
+    useEffect(()=>
+    {
+        let timer:number = showGet ? -1 : setTimeout(()=>{showSet(1)});
+        return ()=>clearInterval(timer);
+    }
+    , [showGet]);
+
+    return <button
+        data-active={ props.active }
+        disabled={ props.disabled || false }
+        onClick={ (inEvent:any)=>{showSet(0);props.onClick(inEvent);}}>
+        { props.children }
+        { showGet > 0 && <span className="blink"/> }
+    </button>;
+}
 };
-    
+
+
+
+
+
 export default () =>
 {
     const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
@@ -119,95 +207,86 @@ export default () =>
                 </select>
             </dd>
         </DL>
-        <DL>
-            <dt><span>⮂</span> Channel</dt>
-            <dd><span>{ State.Chan == 1 ? "Right" : "Left" }</span></dd>
-            <dd>
-                <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan-1)}>L</button>
-                <input type="range" min={0} max={1} value={State.Chan} onChange={Handler(Store.Actions.Chan)}/>
-                <button onClick={()=>Dispatch(Store.Actions.Chan, State.Chan+1)}>R</button>
-            </dd>
-        </DL>
         <dl.Step>
-            <dt>Stimulus</dt>
-            <dd className="Label"><strong>{ State.dBHL }</strong> <span>dBHL</span></dd>
+            <dt className="Wide">Channel</dt>
             <dd>
-                <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>
-                    <svg>
-                        <line x1="0%" y1="50%" x2="100%" y2="50%"/>
-                    </svg>
-                </button>
+                <dl.Button active={State.Chan == 0} onClick={()=>Dispatch(Store.Actions.Chan, 0)}>Left</dl.Button>
             </dd>
             <dd>
-                <button onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>
-                    <svg>
-                        <line x1="0%" y1="50%" x2="100%" y2="50%"/>
-                        <line y1="0%" x1="50%" y2="100%" x2="50%"/>
-                    </svg>
-                </button>
+                <dl.Button active={State.Chan == 1} onClick={()=>Dispatch(Store.Actions.Chan, 1)}>Right</dl.Button>
             </dd>
         </dl.Step>
         <dl.Step>
             <dt>Frequency</dt>
-            <dd className="Label"><strong>{ currentFreq.Hz }</strong> <span>Hz</span></dd>
+            <dd className="Wide"><strong>{ currentFreq.Hz }</strong> <span>Hz</span></dd>
             <dd>
-                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>
+                <dl.Button disabled={State.Freq == 0} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>
                     <svg>
                         <line x1="0%" y1="50%" x2="100%" y2="50%"/>
                     </svg>
-                </button>
+                </dl.Button>
             </dd>
             <dd>
-                <button onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>
+                <dl.Button disabled={State.Freq == currentTest.Plot.length-1} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>
                     <svg>
                         <line x1="0%" y1="50%" x2="100%" y2="50%"/>
                         <line y1="0%" x1="50%" y2="100%" x2="50%"/>
                     </svg>
-                </button>
+                </dl.Button>
             </dd>
         </dl.Step>
-        <DL>
-            <dt>🎧 Play Tone</dt>
+        <dl.Step>
+            <dt>Stimulus</dt>
+            <dd className="Wide"><strong>{ State.dBHL }</strong> <span>dBHL</span></dd>
             <dd>
+                <dl.Button disabled={State.dBHL == currentTest.Clip[0]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>
+                    <svg>
+                        <line x1="0%" y1="50%" x2="100%" y2="50%"/>
+                    </svg>
+                </dl.Button >
+            </dd>
+            <dd>
+                <dl.Button disabled={State.dBHL == currentTest.Clip[1]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>
+                    <svg>
+                        <line x1="0%" y1="50%" x2="100%" y2="50%"/>
+                        <line y1="0%" x1="50%" y2="100%" x2="50%"/>
+                    </svg>
+                </dl.Button>
+            </dd>
+        </dl.Step>
+        <dl.Step>
+            <dt>Tone</dt>
+            <dd class="Wide">
                 { (askGet == 1) && <span>Playing...</span>}
                 { (askGet == 2) && <Blink>{responseGet > 0 ? "👍 Response!" : "👎 No Response."}</Blink>}
             </dd>
             <dd>
-                <button onClick={()=>askSet(1)} disabled={askGet == 1}> Pulse</button>
-                <button onClick={()=>askSet(1)} disabled={askGet == 1}> Continuous</button>
+                <dl.Button onClick={()=>askSet(1)} disabled={askGet == 1}> Play</dl.Button>
             </dd>
-        </DL>
-        <DL>
-            <dt>✍ Mark Chart</dt>
+        </dl.Step>
+        <dl.Step>
+            <dt>Mark</dt>
             <dd><span>{ State.Chan == 1 ? "Right" : "Left" } ear</span> / <span>{ currentFreq.Hz } Hz</span> / <span>{ State.dBHL } dBHL</span></dd>
+        </dl.Step>
+        <dl.Step>
             <dd>
-                <button onClick={()=>{Dispatch(Store.Actions.Mark, 1)}}>Accept</button>
-                <button onClick={()=>{Dispatch(Store.Actions.Mark, 0)}}>No Response</button>
-                <button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample}>Erase</button>
-            </dd>
-        </DL>
-        <DL>
-            <dt>Show on Chart</dt>
-            <dd>
-                <button onClick={()=>{Dispatch(Store.Actions.Show, 0)}}>
-                    <input type="radio" name="display" id="show-samples" value={0} checked={State.Show == 0} onChange={Handler(Store.Actions.Show)}/>
-                    Your Samples
-                </button>
-                <button onClick={()=>{Dispatch(Store.Actions.Show, 1)}}>
-                    <input type="radio" name="display" id="show-answers" value={1} checked={State.Show == 1} onChange={Handler(Store.Actions.Show)}/>
-                    Test Answers
-                </button>
+                <dl.Button onClick={()=>{Dispatch(Store.Actions.Mark, 1)}}>Accept</dl.Button>
             </dd>
             <dd>
-                <p>
-                    <input type="checkbox" value={1-State.VisX} checked={State.VisX == 1} onChange={Handler(Store.Actions.VisX)} id="show-x"/><label for="show-x">Stimulus Line</label>
-                </p>
+                <dl.Button onClick={()=>{Dispatch(Store.Actions.Mark, 0)}}>No Response</dl.Button>
             </dd>
             <dd>
-                <p>
-                    <input type="checkbox" value={1-State.VisY} checked={State.VisY == 1} onChange={Handler(Store.Actions.VisY)} id="show-y"/><label for="show-y">Frequency Line</label>
-                </p>
+                <dl.Button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample}>Erase</dl.Button>
             </dd>
-        </DL>
+        </dl.Step>
+        <dl.Step>
+            <dt>Display</dt>
+            <dd>
+                <dl.Button active={State.Show == 0} onClick={()=>{Dispatch(Store.Actions.Show, 0)}}>Your Samples</dl.Button>
+            </dd>
+            <dd>
+                <dl.Button active={State.Show == 1} onClick={()=>{Dispatch(Store.Actions.Show, 1)}}>Test Answers</dl.Button>
+            </dd>
+        </dl.Step>
     </div>;
 }
