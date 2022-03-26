@@ -14,6 +14,12 @@ const Frame = styled.dl`
     background: #ededed;
     color: #333333;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+    dl
+    {
+        margin: 0;
+        padding: 0;
+    }
 `;
 const FrameStack = styled(Frame)`
     flex-direction: column;
@@ -68,7 +74,7 @@ const _Button = ( props:any ) =>
 };
 const Button = styled(_Button)`
 
-    box-shadow: inset 0px -3px 0px #00000055;
+    box-shadow: rgb(0 0 0 / 33%) 0px -3px 0px inset, rgb(255 255 255 / 38%) 0px 3px 7px inset;
     position: relative;
     display: inline-block;
     appearance: none;
@@ -77,7 +83,7 @@ const Button = styled(_Button)`
     padding: 5px 10px 5px 10px;
     border: none;
     border-radius: 10px;
-    background: #2a88f3;
+    background: #49b378;
     cursor: pointer;
     color: white;
     font-weight: 600;
@@ -262,13 +268,22 @@ export default () =>
                 </Button>
             </Item>
         </Frame>
+
         <Frame>
-            <Label>Tone:</Label>
-            <Item><Light on={ (askGet == 2) && (responseGet > 0) }/></Item>
+            <Label>Response:</Label>
+            <Item><Light on={ (askGet == 2) && (responseGet >= 0) }/></Item>
             <Item>
                 <Button onClick={()=>askSet(1)} disabled={askGet == 1}><IconTriangle/><br/>Present</Button>
             </Item>
         </Frame>
+        <Frame>
+            <Label>Method:</Label>
+            <Item>
+                <Button onClick={()=>{}}>Pulsed</Button>
+                <Button onClick={()=>{}}>Continuous</Button>
+            </Item>
+        </Frame>
+
         <FrameStack>
             <Label>Mark:</Label>
             <Item><span><strong>{ State.Chan == 1 ? "Right" : "Left" }</strong> ear</span> / <span><strong>{ currentFreq.Hz }</strong> Hz</span> / <span><strong>{ State.dBHL }</strong> dBHL</span></Item>

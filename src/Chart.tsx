@@ -195,8 +195,8 @@ export default ( ) =>
                     { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.5, strokeWidth:1.5}}/> ) }
                 </ChartSVG>
                 <Preview style={{top: Perc(State.dBHL, ...currentTest.Clip), left: Perc(State.Freq+0.5, 0, currentTest.Plot.length) }} >
-                    <ellipse cx="0" cy="0" rx="10" ry="30" fill="url(#glow)"/>
-                    <ellipse cx="0" cy="0" rx="30" ry="10" fill="url(#glow)"/>
+                    <ellipse cx="0" cy="0" rx="5" ry="30" fill="url(#glow)"/>
+                    <ellipse cx="0" cy="0" rx="30" ry="5" fill="url(#glow)"/>
                     <defs>
                         <radialGradient id="glow">
                             <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.6" offset="0.0"/>
