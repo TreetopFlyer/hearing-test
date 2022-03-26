@@ -30,18 +30,23 @@ const Label = styled.div`
   font-size: 13px;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   text-align: center;
-  
 `;
 
+const Preview = styled.div`
+position: absolute;
+   width: 20px;
+  height: 20px;
+    left: 50%;
+  border: 1px solid black;
+`;
 
 export default ( { freq, clip, mode, active }:{freq:Frequency, clip:Range, mode:number, active:Boolean} ) =>
 {
-
   return <Column half={freq.Hz >= 1000 && freq.Hz <= 6000}>
     <Label>{ freq.Hz }</Label>
     { (mode == 0 && freq.AL.Sample) && <Mark channel={0} response={freq.AL.Sample[2]} style={{left:"50%", stroke:"blue", top:Perc(freq.AL.Sample[0], ...clip)}}></Mark> }
     { (mode == 0 && freq.AR.Sample) && <Mark channel={1} response={freq.AR.Sample[2]} style={{left:"50%", stroke:"red",  top:Perc(freq.AR.Sample[0], ...clip)}}></Mark> }
-    { (mode == 1 && freq.AL.Answer) && <Mark channel={1} response={freq.AL.Answer[2]} style={{left:"50%", stroke:"blue", top:Perc(freq.AL.Answer[0], ...clip)}}></Mark> }
-    { (mode == 1 && freq.AR.Answer) && <Mark channel={0} response={freq.AR.Answer[2]} style={{left:"50%", stroke:"red",  top:Perc(freq.AR.Answer[0], ...clip)}}></Mark> }
+    { (mode == 1 && freq.AL.Answer) && <Mark channel={0} response={freq.AL.Answer[2]} style={{left:"50%", stroke:"blue", top:Perc(freq.AL.Answer[0], ...clip)}}></Mark> }
+    { (mode == 1 && freq.AR.Answer) && <Mark channel={1} response={freq.AR.Answer[2]} style={{left:"50%", stroke:"red",  top:Perc(freq.AR.Answer[0], ...clip)}}></Mark> }
   </Column>;
 }

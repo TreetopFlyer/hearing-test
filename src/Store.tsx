@@ -103,7 +103,7 @@ const model:Session =
   [
     {
       Name:"CHL / Flat / Mid / Symmetric",
-      Clip:[-15, 125],
+      Clip:[-10, 120],
       Plot:
       [
         {

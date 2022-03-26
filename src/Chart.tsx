@@ -122,6 +122,14 @@ const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answ
     return output;
 };
 
+const Preview = styled.svg`
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    overflow: visible;
+    transition: all 0.4s;
+`;
+
 export default ( ) =>
 {
     const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
@@ -172,7 +180,9 @@ export default ( ) =>
 
         return <Shaded style={{top:Perc(min, ...currentTest.Clip), height:Perc(max-min, 0, currentTest.Clip[1] - currentTest.Clip[0])}}/>
         
-    }, [currentTest.Clip])
+    }, [currentTest.Clip]);
+
+
 
     return <ChartGap>
         <ChartOuter>
@@ -184,6 +194,17 @@ export default ( ) =>
                     {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.5, strokeWidth:1.5}}/> ) }
                     { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.5, strokeWidth:1.5}}/> ) }
                 </ChartSVG>
+                <Preview style={{top: Perc(State.dBHL, ...currentTest.Clip), left: Perc(State.Freq+0.5, 0, currentTest.Plot.length) }} >
+                    <ellipse cx="0" cy="0" rx="10" ry="30" fill="url(#glow)"/>
+                    <ellipse cx="0" cy="0" rx="30" ry="10" fill="url(#glow)"/>
+                    <defs>
+                        <radialGradient id="glow">
+                            <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.6" offset="0.0"/>
+                            <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.3" offset="0.2"/>
+                            <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.0" offset="1.0"/>
+                        </radialGradient>
+                    </defs>
+                </Preview>
             </ChartInner>
             <ChartLabelX>Frequency in (H)z</ChartLabelX>
             <ChartLabelY>Hearing Level (dB HL)</ChartLabelY>
