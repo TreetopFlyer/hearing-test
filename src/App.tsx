@@ -10,7 +10,7 @@ display: flex;
 `;
 
 const ColumnLeft = styled.div`
-width: 300px;
+width: 400px;
 box-sizing: border-box;
 padding: 20px;
 `;

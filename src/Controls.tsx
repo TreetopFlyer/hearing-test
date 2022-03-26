@@ -34,6 +34,22 @@ const FrameStack = styled(Frame)`
     }
 `;
 
+const FrameGroup = styled.dl`
+
+    padding: 5px;
+    margin: 0 0 10px 0;
+
+    border-radius: 8px;
+    background: #ccc;
+
+    color:white;
+
+    & > *
+    {
+        margin: 0 ;
+    }
+`;
+
 const Label = styled.dt`
 `;
 
@@ -78,7 +94,6 @@ const Button = styled(_Button)`
     position: relative;
     display: inline-block;
     appearance: none;
-    min-width: 30px;
     min-height: 30px;
     padding: 5px 10px 5px 10px;
     border: none;
@@ -92,7 +107,7 @@ const Button = styled(_Button)`
 &[disabled], &[disabled]:hover
 {
     cursor: default;
-    transform: scale(0.8);
+    transform: scale(0.95);
     background: #aaa;
 }
 &:hover
@@ -114,21 +129,30 @@ const Button = styled(_Button)`
     z-index: 20;
     top: 0;
     left: 50%;
-    width: 10px;
-    height: 10px;
+    width: 20px;
+    height: 0px;
     border-radius: 10px;
-    transform: translate(-5px, -10px);
-    outline: 2px solid white;
-    background: #555;
-    opacity: 0;
+    background: #ffa600;
+    outline: 2px solid transparent;
+    box-shadow: 0px 0px 0px #ffa600;
+    transform: translate(-50%, -50%);
     transition: all 0.4s;
 }
 &[data-active='true']::before
 {
-    transform: translate(-5px, -6px);
-    background: #ffa600ff;
+    height: 5px;
+    outline: 2px solid white;
+    box-shadow: 0px 0px 5px white;
     opacity: 1;
 }
+/*
+&[disabled][data-active='true'], &[disabled][data-active='true']:hover
+{
+    cursor: default;
+    transform: scale(1);
+    background: black;
+}
+*/
 
 & span.blink
 {
@@ -229,77 +253,91 @@ export default () =>
     }, [askGet])
 
     return <div>
-        <Frame>
-            <Label>Test:</Label>
-            <Item>
-                <Select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
-                    { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
-                </Select>
-            </Item>
-        </Frame>
-        <Frame>
-            <Label>Channel:</Label>
-            <Item>
-                <Button active={State.Chan == 0} onClick={()=>Dispatch(Store.Actions.Chan, 0)}>Left</Button>
-                <Button active={State.Chan == 1} onClick={()=>Dispatch(Store.Actions.Chan, 1)}>Right</Button>
-            </Item>
-        </Frame>
-        <Frame>
-            <Label>Frequency:</Label>
-            <Item><strong>{ currentFreq.Hz }</strong> Hz</Item>
-            <Item>
-                <Button disabled={State.Freq == 0} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>
-                    <IconMinus/>
-                </Button>
-                <Button disabled={State.Freq == currentTest.Plot.length-1} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>
-                    <IconPlus/>
-                </Button>
-            </Item>
-        </Frame>
-        <Frame>
-            <Label>Stimulus:</Label>
-            <Item><strong>{ State.dBHL }</strong> dBHL</Item>
-            <Item>
-                <Button disabled={State.dBHL == currentTest.Clip[0]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>
-                    <IconMinus/>
-                </Button >
-                <Button disabled={State.dBHL == currentTest.Clip[1]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>
-                    <IconPlus/>
-                </Button>
-            </Item>
-        </Frame>
+        <dl>
+            <dt>Session</dt>
+            <dd>
+                <dl>
+                    <dt>Test:</dt>
+                    <dd>
+                        <Select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
+                            { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
+                        </Select>
+                    </dd>
+                </dl>
+            </dd>
+        </dl>
 
-        <Frame>
-            <Label>Response:</Label>
-            <Item><Light on={ (askGet == 2) && (responseGet >= 0) }/></Item>
-            <Item>
-                <Button onClick={()=>askSet(1)} disabled={askGet == 1}><IconTriangle/><br/>Present</Button>
-            </Item>
-        </Frame>
-        <Frame>
-            <Label>Method:</Label>
-            <Item>
-                <Button onClick={()=>{}}>Pulsed</Button>
-                <Button onClick={()=>{}}>Continuous</Button>
-            </Item>
-        </Frame>
+        <FrameGroup>
+            <Label>Sound</Label>
+            <Frame>
+                <Label>Channel:</Label>
+                <Item>
+                    <Button disabled={ State.Chan == 0 } active={State.Chan == 0} onClick={()=>Dispatch(Store.Actions.Chan, 0)}>Left</Button>
+                    <Button disabled={ State.Chan == 1 } active={State.Chan == 1} onClick={()=>Dispatch(Store.Actions.Chan, 1)}>Right</Button>
+                </Item>
+            </Frame>
+            <Frame>
+                <Label>Frequency:</Label>
+                <Item><strong>{ currentFreq.Hz }</strong> Hz</Item>
+                <Item>
+                    <Button disabled={State.Freq == 0} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>
+                        <IconMinus/>
+                    </Button>
+                    <Button disabled={State.Freq == currentTest.Plot.length-1} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>
+                        <IconPlus/>
+                    </Button>
+                </Item>
+            </Frame>
+            <Frame>
+                <Label>Stimulus:</Label>
+                <Item><strong>{ State.dBHL }</strong> dBHL</Item>
+                <Item>
+                    <Button disabled={State.dBHL == currentTest.Clip[0]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>
+                        <IconMinus/>
+                    </Button >
+                    <Button disabled={State.dBHL == currentTest.Clip[1]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>
+                        <IconPlus/>
+                    </Button>
+                </Item>
+            </Frame>
+        </FrameGroup>
+
+        <FrameGroup>
+            <Label>Tone</Label>
+            <Frame>
+                <Label>Response:</Label>
+                <Item><Light on={ (askGet == 2) && (responseGet >= 0) }/></Item>
+                <Item>
+                    <Button onClick={()=>askSet(1)} disabled={askGet == 1}><IconTriangle/><br/>Present</Button>
+                </Item>
+            </Frame>
+            <Frame>
+                <Label>Method:</Label>
+                <Item>
+                    <Button disabled={State.Tone == 0} active={State.Tone == 0} onClick={()=>Dispatch(Store.Actions.Tone, 0)}>Pulsed</Button>
+                    <Button disabled={State.Tone == 1} active={State.Tone == 1} onClick={()=>Dispatch(Store.Actions.Tone, 1)}>Continuous</Button>
+                </Item>
+            </Frame>
+        </FrameGroup>
+
 
         <FrameStack>
             <Label>Mark:</Label>
             <Item><span><strong>{ State.Chan == 1 ? "Right" : "Left" }</strong> ear</span> / <span><strong>{ currentFreq.Hz }</strong> Hz</span> / <span><strong>{ State.dBHL }</strong> dBHL</span></Item>
             <Item>
-                <Button disabled={State.Show == 1} onClick={()=>{Dispatch(Store.Actions.Mark, 1)}}>Accept</Button>
-                <Button disabled={State.Show == 1} onClick={()=>{Dispatch(Store.Actions.Mark, 0)}}>No Response</Button>
+                <Button disabled={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Mark, 1)}>Accept</Button>
+                <Button disabled={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Mark, 0)}>No Response</Button>
             </Item>
             <Item>
                 <Button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample || State.Show == 1 }>Clear Threshold</Button>
             </Item>
         </FrameStack>
+
         <FrameStack>
             <Label>Display:</Label>
             <Item>
-                <Button active={State.Show == 0} onClick={()=>{Dispatch(Store.Actions.Show, 0)}}>Your&nbsp;Samples</Button>
-                <Button active={State.Show == 1} onClick={()=>{Dispatch(Store.Actions.Show, 1)}}>Test&nbsp;Answers</Button>
+                <Button disabled={State.Show == 0} active={State.Show == 0} onClick={()=>Dispatch(Store.Actions.Show, 0)}>Your&nbsp;Samples</Button>
+                <Button disabled={State.Show == 1} active={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Show, 1)}>Test&nbsp;Answers</Button>
             </Item>
         </FrameStack>
     </div>;

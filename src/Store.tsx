@@ -3,19 +3,17 @@ import { Clip } from "./Util";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
-export enum Actions { Test, Freq, dBHL, Chan, Show, Mark, VisX, VisY };
+export enum Actions { Test, Freq, dBHL, Chan, Tone, Show, Mark };
 export type Action = { Type:Actions, Payload:number };
 export type Session =
 {
-  VisX: number,
-  VisY: number; 
-  Tone: number,
-  Chan: number,
-  dBHL: number,
-  Freq: number,
-  Test: number,
-  Draw: number,
-  Show: number,
+  Test: number, // test index 
+  Chan: number, // left | right index
+  Freq: number, // frequency index
+  dBHL: number, // dbhl value
+  Tone: number, // pulsed | continuous index
+  Draw: number, // svg update rand
+  Show: number, // sample | test 
   List: Array<Test>
 };
 export type Test =
@@ -44,10 +42,8 @@ const reducer = (state:Session, action:Action):Session =>
 {
   switch(action.Type)
   {
-    case Actions.VisX :
-      return { ...state, VisX: action.Payload};
-    case Actions.VisY :
-      return { ...state, VisY: action.Payload};
+    case Actions.Tone :
+      return { ...state, Tone:action.Payload};
 
     case Actions.Test :
       let clipTest:number = Clip(action.Payload, 0, state.List.length-1);
@@ -90,8 +86,6 @@ const reducer = (state:Session, action:Action):Session =>
 
 const model:Session =
 {
-  VisX: 1,
-  VisY: 1,
   Tone: 0,
   Chan: 0,
   dBHL: 50,

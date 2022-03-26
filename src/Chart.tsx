@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import Frequency from "./Frequency";
 import * as Store from "./Store";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { Perc, Clip } from "./Util";
 
 const ChartGap = styled.div`
@@ -128,6 +128,13 @@ const Preview = styled.svg`
     height: 50px;
     overflow: visible;
     transition: all 0.4s;
+    transform-origin: 0 0;
+    animation: ${keyframes`
+        0%  { transform: scale(1.0); }
+        50% { transform: scale(1.5); }
+      100%  { transform: scale(1.0); }`} 2s linear;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
 `;
 
 export default ( ) =>
