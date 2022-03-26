@@ -3,63 +3,93 @@ import * as Store from "./Store";
 import styled, { keyframes, css } from "styled-components";
 import Stepper from "./Stepper";
 
+const UI = styled.div`
 
-const Frame = styled.dl`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 5px 5px;
-    padding: 5px 10px 5px 10px;
-    border-radius: 10px;
-    background: #ededed;
-    color: #333333;
+display: flex;
+flex-direction: column;
+gap: 15px 5px;
+
+dl, dt, dd
+{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+dl
+{
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    border-radius: 5px;
+
+    overflow: hidden;
+    background: #eee;
+    background: rgb(172,172,172);
+    background: linear-gradient(159deg, #ececec 0%, #e9e9e9 36%, #dfdfdf 37%, #ececec 100%);
+    
+    box-shadow: 0px 2px 5px #969696;
+
+    text-align: center;
+
+    dt
+    {
+        padding: 5px;
+        border-top: 1px solid white;
+        border-bottom: 1px solid #ccc;
+
+        background: rgb(0 0 0 / 7%);
+
+        color: #444444;
+        font-weight: 900;
+        text-transform: uppercase;
+    }
 
     dl
     {
-        margin: 0;
-        padding: 0;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+
+        border-left: none;
+        border-right: none;
+        border-top: 1px solid white;
+        border-bottom: 1px solid #ccc;
+
+        border-radius: 3px;
+        background: none;
+        box-shadow: none;
+
+        color: #333333;
+        font-weight: 500;
+        text-align: left;
+
+        dt
+        {
+            width: 100%;
+
+            padding: 10px;
+            border: none;
+
+            background: none;
+
+            color: #666666;
+            font-weight: 500;
+            text-transform: none;
+        }
+
+        dd
+        {
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            padding: 5px;
+        }
     }
-`;
-const FrameStack = styled(Frame)`
-    flex-direction: column;
-    & > dt
-    {
-        text-align: center;
-        font-weight: 900;
-    }
-    & > dd
-    {
-        margin-bottom: 8px;
-    }
+}
 `;
 
-const FrameGroup = styled.dl`
-
-    padding: 5px;
-    margin: 0 0 10px 0;
-
-    border-radius: 8px;
-    background: #ccc;
-
-    color:white;
-
-    & > *
-    {
-        margin: 0 ;
-    }
-`;
-
-const Label = styled.dt`
-`;
-
-const Item = styled.dd`
-    display: flex;
-    justify-content: space-between;
-    gap: 5px 5px;
-    margin: 0;
-    padding: 0;
-`;
 
 const Select = styled.select`
     padding: 7px;
@@ -68,7 +98,6 @@ const Select = styled.select`
     border: none;
     cursor: pointer;
 `;
-
 const _Button = ( props:any ) =>
 {
     const [showGet, showSet] = useState(-1);
@@ -252,12 +281,12 @@ export default () =>
         return () => clearTimeout(timer);
     }, [askGet])
 
-    return <div>
+    return <UI>
         <dl>
             <dt>Session</dt>
             <dd>
                 <dl>
-                    <dt>Test:</dt>
+                    <dt>Condition:</dt>
                     <dd>
                         <Select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
                             { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
@@ -267,78 +296,78 @@ export default () =>
             </dd>
         </dl>
 
-        <FrameGroup>
-            <Label>Sound</Label>
-            <Frame>
-                <Label>Channel:</Label>
-                <Item>
+        <dl>
+            <dt>Sound</dt>
+            <dl>
+                <dt>Channel:</dt>
+                <dd>
                     <Button disabled={ State.Chan == 0 } active={State.Chan == 0} onClick={()=>Dispatch(Store.Actions.Chan, 0)}>Left</Button>
                     <Button disabled={ State.Chan == 1 } active={State.Chan == 1} onClick={()=>Dispatch(Store.Actions.Chan, 1)}>Right</Button>
-                </Item>
-            </Frame>
-            <Frame>
-                <Label>Frequency:</Label>
-                <Item><strong>{ currentFreq.Hz }</strong> Hz</Item>
-                <Item>
+                </dd>
+            </dl>
+            <dl>
+                <dt>Frequency:</dt>
+                <dd><strong>{ currentFreq.Hz }</strong> Hz</dd>
+                <dd>
                     <Button disabled={State.Freq == 0} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>
                         <IconMinus/>
                     </Button>
                     <Button disabled={State.Freq == currentTest.Plot.length-1} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>
                         <IconPlus/>
                     </Button>
-                </Item>
-            </Frame>
-            <Frame>
-                <Label>Stimulus:</Label>
-                <Item><strong>{ State.dBHL }</strong> dBHL</Item>
-                <Item>
+                </dd>
+            </dl>
+            <dl>
+                <dt>Stimulus:</dt>
+                <dd><strong>{ State.dBHL }</strong> dBHL</dd>
+                <dd>
                     <Button disabled={State.dBHL == currentTest.Clip[0]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>
                         <IconMinus/>
                     </Button >
                     <Button disabled={State.dBHL == currentTest.Clip[1]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>
                         <IconPlus/>
                     </Button>
-                </Item>
-            </Frame>
-        </FrameGroup>
+                </dd>
+            </dl>
+        </dl>
 
-        <FrameGroup>
-            <Label>Tone</Label>
-            <Frame>
-                <Label>Response:</Label>
-                <Item><Light on={ (askGet == 2) && (responseGet >= 0) }/></Item>
-                <Item>
+        <dl>
+            <dt>Tone</dt>
+            <dl>
+                <dt>Response:</dt>
+                <dd><Light on={ (askGet == 2) && (responseGet >= 0) }/></dd>
+                <dd>
                     <Button onClick={()=>askSet(1)} disabled={askGet == 1}><IconTriangle/><br/>Present</Button>
-                </Item>
-            </Frame>
-            <Frame>
-                <Label>Method:</Label>
-                <Item>
+                </dd>
+            </dl>
+            <dl>
+                <dt>Method:</dt>
+                <dd>
                     <Button disabled={State.Tone == 0} active={State.Tone == 0} onClick={()=>Dispatch(Store.Actions.Tone, 0)}>Pulsed</Button>
                     <Button disabled={State.Tone == 1} active={State.Tone == 1} onClick={()=>Dispatch(Store.Actions.Tone, 1)}>Continuous</Button>
-                </Item>
-            </Frame>
-        </FrameGroup>
+                </dd>
+            </dl>
+        </dl>
 
 
-        <FrameStack>
-            <Label>Mark:</Label>
-            <Item><span><strong>{ State.Chan == 1 ? "Right" : "Left" }</strong> ear</span> / <span><strong>{ currentFreq.Hz }</strong> Hz</span> / <span><strong>{ State.dBHL }</strong> dBHL</span></Item>
-            <Item>
+        <dl>
+            <dt>Mark:</dt>
+            <dd><span><strong>{ State.Chan == 1 ? "Right" : "Left" }</strong> ear</span> / <span><strong>{ currentFreq.Hz }</strong> Hz</span> / <span><strong>{ State.dBHL }</strong> dBHL</span></dd>
+            <dd>
                 <Button disabled={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Mark, 1)}>Accept</Button>
                 <Button disabled={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Mark, 0)}>No Response</Button>
-            </Item>
-            <Item>
+            </dd>
+            <dd>
                 <Button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample || State.Show == 1 }>Clear Threshold</Button>
-            </Item>
-        </FrameStack>
+            </dd>
+        </dl>
 
-        <FrameStack>
-            <Label>Display:</Label>
-            <Item>
+        <dl>
+            <dt>Display:</dt>
+            <dd>
                 <Button disabled={State.Show == 0} active={State.Show == 0} onClick={()=>Dispatch(Store.Actions.Show, 0)}>Your&nbsp;Samples</Button>
                 <Button disabled={State.Show == 1} active={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Show, 1)}>Test&nbsp;Answers</Button>
-            </Item>
-        </FrameStack>
-    </div>;
+            </dd>
+        </dl>
+    </UI>;
 }
