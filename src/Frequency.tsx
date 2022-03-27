@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Frequency, Range } from "./Store";
+import * as Store from "./Store";
 import Mark from "./Mark";
 import { Perc } from "./Util";
 
@@ -40,13 +40,14 @@ position: absolute;
   border: 1px solid black;
 `;
 
-export default ( { freq, clip, mode, active }:{freq:Frequency, clip:Range, mode:number, active:Boolean} ) =>
+export default ( { freq, clip, mode, active, chan }:{freq:Store.Frequency, clip:Store.Range, mode:number, active:boolean, chan:number} ) =>
 {
+
   return <Column half={freq.Hz >= 1000 && freq.Hz <= 6000}>
     <Label>{ freq.Hz }</Label>
-    { (mode == 0 && freq.AL.Sample) && <Mark channel={0} response={freq.AL.Sample[2]} style={{left:"50%", stroke:"blue", top:Perc(freq.AL.Sample[0], ...clip)}}></Mark> }
-    { (mode == 0 && freq.AR.Sample) && <Mark channel={1} response={freq.AR.Sample[2]} style={{left:"50%", stroke:"red",  top:Perc(freq.AR.Sample[0], ...clip)}}></Mark> }
-    { (mode == 1 && freq.AL.Answer) && <Mark channel={0} response={freq.AL.Answer[2]} style={{left:"50%", stroke:"blue", top:Perc(freq.AL.Answer[0], ...clip)}}></Mark> }
-    { (mode == 1 && freq.AR.Answer) && <Mark channel={1} response={freq.AR.Answer[2]} style={{left:"50%", stroke:"red",  top:Perc(freq.AR.Answer[0], ...clip)}}></Mark> }
+    { (mode == 0 && freq.AL.Sample) && <Mark active={active && (chan == 0)} channel={0} response={freq.AL.Sample[2]} style={{left:"50%", stroke:"blue", top:Perc(freq.AL.Sample[0], ...clip)}}></Mark> }
+    { (mode == 0 && freq.AR.Sample) && <Mark active={active && (chan == 1)} channel={1} response={freq.AR.Sample[2]} style={{left:"50%", stroke:"red",  top:Perc(freq.AR.Sample[0], ...clip)}}></Mark> }
+    { (mode == 1 && freq.AL.Answer) && <Mark active={false}                 channel={0} response={freq.AL.Answer[2]} style={{left:"50%", stroke:"blue", top:Perc(freq.AL.Answer[0], ...clip)}}></Mark> }
+    { (mode == 1 && freq.AR.Answer) && <Mark active={false}                 channel={1} response={freq.AR.Answer[2]} style={{left:"50%", stroke:"red",  top:Perc(freq.AR.Answer[0], ...clip)}}></Mark> }
   </Column>;
 }

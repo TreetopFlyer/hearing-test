@@ -310,6 +310,15 @@ export default () =>
         <dl>
             <dt>Session</dt>
             <dd>
+            <dl>
+                <dt>File:</dt>
+                    <dd>
+                        <a     ref={refSave} style={{display:"none"}}  />
+                        <input ref={refLoad} style={{display:"none"}} onInput={()=>handleLoad()}type="file"></input>
+                        <Button onClick={()=>handleSave()}>Save Session</Button>
+                        <Button onClick={()=>refLoad.current.click()}>Load Session</Button>
+                    </dd>
+                </dl>
                 <dl>
                     <dt>Condition:</dt>
                     <dd>
@@ -317,15 +326,6 @@ export default () =>
                         <Select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
                             { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
                         </Select>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>File:</dt>
-                    <dd>
-                        <a     ref={refSave} style={{display:"none"}}  />
-                        <input ref={refLoad} style={{display:"none"}} onInput={()=>handleLoad()}type="file"></input>
-                        <Button onClick={()=>handleSave()}>Save Session</Button>
-                        <Button onClick={()=>refLoad.current.click()}>Load Session</Button>
                     </dd>
                 </dl>
             </dd>

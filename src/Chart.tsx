@@ -129,12 +129,11 @@ const Preview = styled.svg`
     overflow: visible;
     transition: all 0.4s;
     transform-origin: 0 0;
-    animation: ${keyframes`
+    animation: ${ keyframes`
         0%  { transform: scale(1.0); }
         50% { transform: scale(1.5); }
-      100%  { transform: scale(1.0); }`} 2s linear;
-    animation-timing-function: ease-in-out;
-    animation-iteration-count: infinite;
+      100%  { transform: scale(1.0); }`
+    } 2s ease-in-out infinite;
 `;
 
 export default ( ) =>
@@ -178,7 +177,7 @@ export default ( ) =>
 
     const frequencies:Array<typeof Frequency> = currentTest.Plot.map( (f:Store.Frequency, i:number)=>
     {
-        return <Frequency freq={f} clip={currentTest.Clip} active={(f == currentFreq) && (State.VisY == 1)} mode={State.Show} />;
+        return <Frequency freq={f} active={currentFreq == f} clip={currentTest.Clip} chan={State.Chan} mode={State.Show} />;
     });
     
     const shaded = useMemo(()=>{

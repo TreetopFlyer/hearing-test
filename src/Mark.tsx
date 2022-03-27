@@ -1,3 +1,4 @@
+import styled, { css, keyframes } from "styled-components";
 import React, {useMemo} from "react";
 
 const MarkerArrow = ({x, y, r}:{x:string, y:string, r:string}) => <g style={{transform:`translate(${x}, ${y}) rotate(${r}) scale(0.5)`}}>
@@ -17,7 +18,18 @@ const MarkerX = ({response}:{response:boolean}) => <>
     { !response && <MarkerArrow x="50%" y="50%" r="-15deg" /> }
 </>
 
-export default ( { style, channel, response }:{ style:any, channel:number, response:boolean} ) =>
-<svg style={{ position:"absolute", width:20, height:20, overflow:"visible", stroke:"black", strokeWidth:"2px", fill:"none", ...style}}>
+const Marker = styled.svg`
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+    stroke: black;
+    stroke-width: ${ ({active}:{active:boolean}) => active ? 4 : 2 }px;
+    fill: none;
+    transform-origin: 0 0;
+    ${ (props:any):any => props.style }
+`;
+
+export default ( { style, channel, response, active }:{ style:any, channel:number, response:boolean, active:boolean} ) => <Marker active={active} style={style}>
     { channel == 0 ? <MarkerX response={response} /> : <MarkerCircle response={response}/> }
-</svg>;
+</Marker>;
