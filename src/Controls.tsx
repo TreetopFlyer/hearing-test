@@ -49,7 +49,9 @@ dl
     dl
     {
         flex-direction: row;
+        flex-wrap: wrap;
         align-items: center;
+        justify-content: center;
         gap: 5px;
 
         border-left: none;
@@ -67,7 +69,7 @@ dl
 
         dt
         {
-            width: 100%;
+            flex: 1 1;
 
             padding: 10px;
             border: none;
@@ -174,14 +176,13 @@ const Button = styled(_Button)`
     box-shadow: 0px 0px 5px white;
     opacity: 1;
 }
-/*
+
 &[disabled][data-active='true'], &[disabled][data-active='true']:hover
 {
     cursor: default;
     transform: scale(1);
-    background: black;
+    background: #49b378;
 }
-*/
 
 & span.blink
 {
@@ -207,6 +208,12 @@ svg
     height: 10px;
     stroke: #dddddd;
     stroke-width: 2px;
+    fill: #dddddd;
+}
+svg.large
+{
+    width: 16px;
+    height: 16px;
 }
 `;
 
@@ -231,7 +238,7 @@ const Blink = styled.circle`
       100% { opacity: 0;}`} 2s linear;
     animation-fill-mode: both;
 `;
-const Light = ( { on }:{ on:boolean } ) => <svg width="80" height="80" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
+const Light = ( { on }:{ on:boolean } ) => <svg width="50" height="50" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle  fill="url(#metal)" cx="39" cy="40" r="35"/>
     <circle  fill="url(#metal)" cx="39.5" cy="39.5" r="29.5" transform="rotate(180 39.5 39.5)"/>
     <circle  fill="url(#metal)" cx="39" cy="40" r="27"/>
@@ -332,12 +339,12 @@ export default () =>
         </dl>
 
         <dl>
-            <dt>Tone</dt>
+            <dt>Playback</dt>
             <dl>
                 <dt>Response:</dt>
                 <dd><Light on={ (askGet == 2) && (responseGet >= 0) }/></dd>
                 <dd>
-                    <Button onClick={()=>askSet(1)} disabled={askGet == 1}><IconTriangle/><br/>Present</Button>
+                    <Button onClick={()=>askSet(1)} disabled={askGet == 1}><IconTriangle/><br/>Present Tone</Button>
                 </dd>
             </dl>
             <dl>
@@ -351,23 +358,58 @@ export default () =>
 
 
         <dl>
-            <dt>Mark:</dt>
-            <dd><span><strong>{ State.Chan == 1 ? "Right" : "Left" }</strong> ear</span> / <span><strong>{ currentFreq.Hz }</strong> Hz</span> / <span><strong>{ State.dBHL }</strong> dBHL</span></dd>
-            <dd>
-                <Button disabled={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Mark, 1)}>Accept</Button>
-                <Button disabled={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Mark, 0)}>No Response</Button>
-            </dd>
-            <dd>
-                <Button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample || State.Show == 1 }>Clear Threshold</Button>
-            </dd>
-        </dl>
-
-        <dl>
-            <dt>Display:</dt>
-            <dd>
-                <Button disabled={State.Show == 0} active={State.Show == 0} onClick={()=>Dispatch(Store.Actions.Show, 0)}>Your&nbsp;Samples</Button>
-                <Button disabled={State.Show == 1} active={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Show, 1)}>Test&nbsp;Answers</Button>
-            </dd>
+            <dt>Chart</dt>
+            <dl>
+                <dt>Mark:</dt>
+                <dd>
+                    <span><strong>{ State.Chan == 1 ? "Right" : "Left" }</strong> ear</span> /
+                    <span><strong>{ currentFreq.Hz }</strong> Hz</span> /
+                    <span><strong>{ State.dBHL }</strong> dBHL</span>
+                </dd>
+            </dl>
+            <dl>
+                
+                <dd>
+                    <Button disabled={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Mark, 1)}>
+                        <svg className="large" viewBox="0 0 80 80">
+                            <path fill="white" d="M40 10.1818C23.5319 10.1818 10.1818 23.5319 10.1818 40C10.1818 56.4681 23.5319 69.8182 40 69.8182C56.4681 69.8182 69.8182 56.4681 69.8182 40C69.8182 38.2644 69.6699 36.5634 69.3853 34.9091L77.549 26.1818C79.1344 30.4885 80 35.1431 80 40C80 62.0914 62.0914 80 40 80C17.9086 80 0 62.0914 0 40C0 17.9086 17.9086 0 40 0C50.7198 0 60.4547 4.21685 67.6364 11.0822L60.3248 18.1818C54.9991 13.2185 47.8542 10.1818 40 10.1818Z"/>
+                            <path fill="white" d="M82.6114 15.458L40.6981 59.2295L17.3886 34.8866L24.6114 27.9705L40.6981 44.7705L75.3886 8.54195L82.6114 15.458Z"/>
+                        </svg>
+                        <br/>
+                        Accept
+                    </Button>
+                    <Button disabled={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Mark, 0)}>
+                        <svg className="large" viewBox="0 0 80 80">
+                            <path fill="white" d="M33.004 42.3686V40.656C33.0401 37.2233 33.4002 34.3817 34.1396 32.1946C34.8678 30.041 35.9247 28.2334 37.3413 26.8243C38.6691 25.5036 40.2453 24.3034 42.0579 23.2177C43.001 22.6449 43.8439 21.9721 44.5902 21.1991C45.3031 20.4435 45.8655 19.5749 46.279 18.5847L46.2861 18.5679C46.6975 17.6179 46.9142 16.543 46.9142 15.3225C46.9142 13.8273 46.5646 12.6018 45.9142 11.5892C45.2356 10.5327 44.3336 9.72006 43.1829 9.14039C42.0246 8.55683 40.7204 8.25403 39.2458 8.25403C37.9841 8.25403 36.771 8.51297 35.5954 9.03606C34.4878 9.5289 33.5532 10.3046 32.7845 11.399C32.0673 12.42 31.5976 13.8333 31.468 15.7349L31.3804 17.0203H22L22.0685 15.573C22.22 12.37 23.0591 9.55427 24.636 7.18205L24.6403 7.17544C26.2122 4.8399 28.2845 3.05215 30.8333 1.82297L30.8369 1.82125C33.3892 0.599635 36.1997 0 39.2458 0C42.5367 0 45.4691 0.651571 47.9994 2.0063C50.5235 3.34827 52.5025 5.20947 53.8956 7.58907C55.308 9.97117 56 12.6679 56 15.6394C56 17.7193 55.6769 19.6425 55.0069 21.3898C54.3622 23.1169 53.423 24.6641 52.194 26.0233C50.9998 27.3636 49.5684 28.5364 47.913 29.5474C46.4406 30.4632 45.3077 31.4005 44.4812 32.3466L44.4738 32.3551C43.6815 33.2472 43.0955 34.3197 42.7242 35.5967C42.3464 36.8962 42.1245 38.5806 42.0897 40.6822V42.3686H33.004ZM40.8434 57.1715L40.8352 57.1765C39.9028 57.7329 38.866 58 37.7592 58C36.0943 58 34.6301 57.3918 33.439 56.2071C32.247 55.0215 31.6236 53.5507 31.6236 51.8662C31.6236 50.1818 32.247 48.711 33.439 47.5254C34.6301 46.3407 36.0943 45.7325 37.7592 45.7325C39.4242 45.7325 40.8884 46.3407 42.0795 47.5254C43.2715 48.711 43.8949 50.1818 43.8949 51.8662C43.8949 52.9797 43.6063 54.0224 43.0313 54.9642C42.4893 55.8807 41.7535 56.6196 40.8434 57.1715Z"/>
+                            <path fill="white" d="M15.0985 24.4273C6.70541 37.721 10.6025 55.3496 23.803 63.8019C37.0034 72.2543 54.5084 68.3297 62.9015 55.036C69.8215 44.0756 68.3868 30.1683 60.2716 20.8868C61.1356 18.0246 61.6326 14.6531 61.1063 11.208C60.9385 10.1099 60.6414 9.04066 60.2466 8.0095C77.2611 19.5542 82.1375 42.7212 71.063 60.2619C59.8039 78.0948 36.3216 83.3596 18.6137 72.0211C0.905831 60.6825 -4.32201 37.0344 6.93702 19.2015C9.83435 14.6124 13.5411 10.8557 17.7506 8C16.896 12.6276 16.6158 17.6549 16.8241 21.9837C16.2137 22.7591 15.6373 23.5739 15.0985 24.4273Z"/>
+                        </svg>
+                        <br/>
+                        No Response
+                    </Button>
+                    <Button onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample || State.Show == 1 }>
+                        <svg className="large" viewBox="0 0 80 80">
+                            <path fill="white" d="M77 40.5C77 61.2107 60.2107 78 39.5 78C18.7893 78 2 61.2107 2 40.5C2 19.7893 18.7893 3 39.5 3C60.2107 3 77 19.7893 77 40.5ZM39.5 67.4737C54.3972 67.4737 66.4737 55.3972 66.4737 40.5C66.4737 25.6028 54.3972 13.5263 39.5 13.5263C24.6028 13.5263 12.5263 25.6028 12.5263 40.5C12.5263 55.3972 24.6028 67.4737 39.5 67.4737Z"/>
+                            <rect fill="white" x="14.3791" y="57.7923" width="61.8421" height="9.21053" transform="rotate(-45 14.3791 57.7923)"/>
+                        </svg>
+                        <br/>
+                        Clear Threshold
+                    </Button>
+                </dd>
+            </dl>
+            <dl>
+                <dt>Showing:</dt>
+                <dd>
+                    <Button disabled={State.Show == 0} active={State.Show == 0} onClick={()=>Dispatch(Store.Actions.Show, 0)}>Your&nbsp;Samples</Button>
+                    <Button disabled={State.Show == 1} active={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Show, 1)}>Test&nbsp;Answers</Button>
+                </dd>
+            </dl>
+            <dl>
+                <dt>Placement Preview:</dt>
+                <dd>
+                    <Button disabled={State.View == 0} active={State.View == 0} onClick={()=>Dispatch(Store.Actions.View, 0)}>Hide</Button>
+                    <Button disabled={State.View == 1} active={State.View == 1} onClick={()=>Dispatch(Store.Actions.View, 1)}>Show</Button>
+                </dd>
+            </dl>
         </dl>
     </UI>;
 }

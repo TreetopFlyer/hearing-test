@@ -3,7 +3,7 @@ import { Clip } from "./Util";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
-export enum Actions { Test, Freq, dBHL, Chan, Tone, Show, Mark };
+export enum Actions { Test, Freq, dBHL, Chan, Tone, Show, Mark, View };
 export type Action = { Type:Actions, Payload:number };
 export type Session =
 {
@@ -13,7 +13,8 @@ export type Session =
   dBHL: number, // dbhl value
   Tone: number, // pulsed | continuous index
   Draw: number, // svg update rand
-  Show: number, // sample | test 
+  Show: number, // sample | answer ,
+  View: number, // preview crosshairs
   List: Array<Test>
 };
 export type Test =
@@ -42,6 +43,9 @@ const reducer = (state:Session, action:Action):Session =>
 {
   switch(action.Type)
   {
+    case Actions.View :
+      return { ...state, View:action.Payload};
+
     case Actions.Tone :
       return { ...state, Tone:action.Payload};
 
@@ -93,6 +97,7 @@ const model:Session =
   Test: 0,
   Draw: 0,
   Show: 0,
+  View: 1,
   List:
   [
     {

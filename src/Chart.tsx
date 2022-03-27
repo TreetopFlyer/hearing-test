@@ -124,8 +124,8 @@ const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answ
 
 const Preview = styled.svg`
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 20px;
+    height: 20px;
     overflow: visible;
     transition: all 0.4s;
     transform-origin: 0 0;
@@ -201,7 +201,7 @@ export default ( ) =>
                     {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.5, strokeWidth:1.5}}/> ) }
                     { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.5, strokeWidth:1.5}}/> ) }
                 </ChartSVG>
-                <Preview style={{top: Perc(State.dBHL, ...currentTest.Clip), left: Perc(State.Freq+0.5, 0, currentTest.Plot.length) }} >
+                { State.View == 1 && <Preview style={{top: Perc(State.dBHL, ...currentTest.Clip), left: Perc(State.Freq+0.5, 0, currentTest.Plot.length) }} >
                     <ellipse cx="0" cy="0" rx="5" ry="30" fill="url(#glow)"/>
                     <ellipse cx="0" cy="0" rx="30" ry="5" fill="url(#glow)"/>
                     <defs>
@@ -211,7 +211,7 @@ export default ( ) =>
                             <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.0" offset="1.0"/>
                         </radialGradient>
                     </defs>
-                </Preview>
+                </Preview> }
             </ChartInner>
             <ChartLabelX>Frequency in (H)z</ChartLabelX>
             <ChartLabelY>Hearing Level (dB HL)</ChartLabelY>

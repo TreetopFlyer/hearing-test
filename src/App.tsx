@@ -21,10 +21,9 @@ box-sizing: border-box;
 padding: 20px;
 `;
 
-import Mark from "./Mark";
-
 render(
 <Store.Provide>
+    <h1>Hearing Test</h1>
     <Layout>
         <ColumnLeft>
             <Controls/>
