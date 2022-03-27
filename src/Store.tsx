@@ -121,66 +121,81 @@ const model:Session =
       [
         {
           Hz: 125,
-          AL: {Answer:[20, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[35, null, true], Sample:null},
+          AR: {Answer:[35, null, true], Sample:null},
         },
         {
           Hz: 250,
-          AL: {Answer:[50, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[35, null, true], Sample:null},
+          AR: {Answer:[35, null, true], Sample:null},
         },
         {
           Hz: 500,
-          AL: {Answer:[20, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[40, null, true], Sample:null},
+          AR: {Answer:[30, null, true], Sample:null},
         },
         {
           Hz: 1000,
-          AL: {Answer:[50, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[30, null, true], Sample:null},
+          AR: {Answer:[35, null, true], Sample:null},
         },
         {
           Hz: 2000,
-          AL: {Answer:[20, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[35, null, true], Sample:null},
+          AR: {Answer:[30, null, true], Sample:null},
         },
         {
           Hz: 4000,
-          AL: {Answer:[50, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[30, null, true], Sample:null},
+          AR: {Answer:[30, null, true], Sample:null},
         },
         {
           Hz: 8000,
-          AL: {Answer:[20, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[40, null, true], Sample:null},
+          AR: {Answer:[30, null, true], Sample:null},
         }
       ]
     },
     {
-      Name:"SNHL / Sloping",
-      Clip:[-50, 200],
+      Name:"MHL / Sloping / Mod-Sev / Symmetric",
+      Clip:[-10, 120],
       Plot:
       [
         {
+          Hz: 125,
+          AL: {Answer:[40, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
           Hz: 250,
-          AL: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[45, null, true], Sample:null},
           AR: {Answer:[50, null, true], Sample:null},
         },
         {
           Hz: 500,
-          AL: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[45, null, true], Sample:null},
           AR: {Answer:[50, null, true], Sample:null},
         },
         {
           Hz: 1000,
           AL: {Answer:[50, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AR: {Answer:[55, null, true], Sample:null},
         },
         {
           Hz: 2000,
-          AL: {Answer:[50, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
+          AL: {Answer:[55, null, true], Sample:null},
+          AR: {Answer:[55, null, true], Sample:null},
         },
+        {
+          Hz: 4000,
+          AL: {Answer:[80, null, true], Sample:null},
+          AR: {Answer:[75, null, true], Sample:null},
+        },
+        {
+          Hz: 8000,
+          AL: {Answer:[85, null, true], Sample:null},
+          AR: {Answer:[90, null, true], Sample:null},
+        }
       ]
     }
   ]
