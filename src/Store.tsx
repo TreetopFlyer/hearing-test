@@ -3,8 +3,8 @@ import { Clip } from "./Util";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
-export enum Actions { Test, Freq, dBHL, Chan, Tone, Show, Mark, View };
-export type Action = { Type:Actions, Payload:number };
+export enum Actions { Test, Freq, dBHL, Chan, Tone, Show, Mark, View, Load };
+export type Action = { Type:Actions, Payload:any };
 export type Session =
 {
   Test: number, // test index 
@@ -43,6 +43,9 @@ const reducer = (state:Session, action:Action):Session =>
 {
   switch(action.Type)
   {
+    case Actions.Load :
+      return action.Payload;
+
     case Actions.View :
       return { ...state, View:action.Payload};
 
@@ -175,7 +178,7 @@ const model:Session =
 export type Binding =
 {
   State:Session,
-  Dispatch:(inType:Actions, inPayload:number) => void
+  Dispatch:(inType:Actions, inPayload:any) => void
   Handler:(inType:Actions) => (e:{target:{value:"string" | "number"}}) => void
 };
 
@@ -189,7 +192,7 @@ export const Consume = ():Binding =>
     const [state, dispatch]:[Session, (a:Action)=>void] = useContext(CTX);
     return {
         State:state,
-        Dispatch(inType:Actions, inPayload:number)
+        Dispatch(inType:Actions, inPayload:any)
         {
           dispatch({Type:inType, Payload:inPayload});
         },

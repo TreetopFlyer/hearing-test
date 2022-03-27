@@ -21,9 +21,16 @@ box-sizing: border-box;
 padding: 20px;
 `;
 
+const Header = styled.div`
+padding: 20px;
+background: black;
+color: white;
+font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+`;
+
 render(
 <Store.Provide>
-    <h1>Hearing Test</h1>
+    <Header>Hearing Test</Header>
     <Layout>
         <ColumnLeft>
             <Controls/>

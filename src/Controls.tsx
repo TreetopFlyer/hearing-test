@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as Store from "./Store";
 import styled, { keyframes, css } from "styled-components";
 import Stepper from "./Stepper";
@@ -286,7 +286,25 @@ export default () =>
             timer = setTimeout(()=>{askSet(2);}, 1500 + Math.random()*1000);
         }
         return () => clearTimeout(timer);
-    }, [askGet])
+    }, [askGet]);
+
+    const refSave = useRef(null);
+    const handleSave = () =>
+    {
+        refSave.current.setAttribute('href','data:text/plain;charset=utf-8, ' + encodeURIComponent(JSON.stringify(State)));
+        refSave.current.setAttribute('download', "aud.json");
+        refSave.current.click();
+    };
+
+    const refLoad = useRef(null);
+    const handleLoad = () =>
+    {
+        const reader = new FileReader();
+        reader.addEventListener('load', (event) => {
+            Dispatch(Store.Actions.Load, JSON.parse(reader.result.toString()));
+        });
+        reader.readAsText(refLoad.current.files[0]);
+    };
 
     return <UI>
         <dl>
@@ -295,9 +313,19 @@ export default () =>
                 <dl>
                     <dt>Condition:</dt>
                     <dd>
+                        <a ref={refSave}/>
                         <Select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
                             { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
                         </Select>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt>File:</dt>
+                    <dd>
+                        <a     ref={refSave} style={{display:"none"}}  />
+                        <input ref={refLoad} style={{display:"none"}} onInput={()=>handleLoad()}type="file"></input>
+                        <Button onClick={()=>handleSave()}>Save Session</Button>
+                        <Button onClick={()=>refLoad.current.click()}>Load Session</Button>
                     </dd>
                 </dl>
             </dd>
