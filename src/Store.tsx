@@ -4,7 +4,18 @@ import { Clip } from "./Util";
 const CTX:React.Context<any> = createContext("default value"); 
 
 export enum Actions { Test, Freq, dBHL, Chan, Tone, Show, Mark, View, Load };
-export type Action = { Type:Actions, Payload:any };
+export type Action = 
+{ Type:Actions.Test, Payload:number } |
+{ Type:Actions.Freq, Payload:number } |
+{ Type:Actions.dBHL, Payload:number } |
+{ Type:Actions.Chan, Payload:number } |
+{ Type:Actions.Tone, Payload:number } |
+{ Type:Actions.Show, Payload:number } |
+{ Type:Actions.Mark, Payload:number } |
+{ Type:Actions.View, Payload:number } |
+{ Type:Actions.Load, Payload:Session }
+
+
 export type Session =
 {
   Test: number, // test index 

@@ -30,7 +30,6 @@ font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida San
 
 render(
 <Store.Provide>
-    <Header>Hearing Test</Header>
     <Layout>
         <ColumnLeft>
             <Controls/>
