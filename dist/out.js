@@ -324,6 +324,7 @@ line-height: 0;
       100%  { transform: scale(1.0); }`} 2s ease-in-out infinite;
 `,_d=()=>{let{State:e,Dispatch:t,Handler:n}=Wn(),r=e.List[e.Test],o=r.Plot[e.Freq],l=(0,X.useMemo)(()=>{let y=10,k=Math.ceil(r.Clip[0]/y)*y,g=Math.floor(r.Clip[1]/y)*y,x=[];for(let w=k;w<=g;w+=y)x.push(X.default.createElement(Km,{style:{top:_e(w,...r.Clip)},dark:w==0},X.default.createElement(Jm,null,w)));return x},[e.Test]),i=(0,X.useMemo)(()=>{let y=e.Show?"Answer":"Sample";return{Left:Ed(r,"AL",y),Right:Ed(r,"AR",y)}},[e.Draw,e.Show]),u=(0,X.useMemo)(()=>{let y=100/r.Plot.length;return{left:y/2+"%",width:100-y+"%"}},[e.Draw,e.Show]),s=r.Plot.map((y,k)=>X.default.createElement(xd,{freq:y,active:o==y,clip:r.Clip,chan:e.Chan,mode:e.Show})),d=(0,X.useMemo)(()=>{let y=Math.max(-10,r.Clip[0]),k=Math.min(25,r.Clip[1]);return X.default.createElement(Zm,{style:{top:_e(y,...r.Clip),height:_e(k-y,0,r.Clip[1]-r.Clip[0])}})},[r.Clip]);return X.default.createElement(Gm,null,X.default.createElement(Ym,null,d,l,X.default.createElement(Qm,null,s,X.default.createElement(Xm,{style:u,preserveAspectRatio:"none",key:e.Draw},i.Left.map(y=>X.default.createElement("line",{...y,style:{stroke:"blue",opacity:.5,strokeWidth:1.5}})),i.Right.map(y=>X.default.createElement("line",{...y,style:{stroke:"red",opacity:.5,strokeWidth:1.5}}))),e.View==1&&X.default.createElement(eh,{style:{top:_e(e.dBHL,...r.Clip),left:_e(e.Freq+.5,0,r.Plot.length)}},X.default.createElement("ellipse",{cx:"0",cy:"0",rx:"5",ry:"30",fill:"url(#glow)"}),X.default.createElement("ellipse",{cx:"0",cy:"0",rx:"30",ry:"5",fill:"url(#glow)"}),X.default.createElement("defs",null,X.default.createElement("radialGradient",{id:"glow"},X.default.createElement("stop",{"stop-color":e.Chan==0?"blue":"red","stop-opacity":"0.6",offset:"0.0"}),X.default.createElement("stop",{"stop-color":e.Chan==0?"blue":"red","stop-opacity":"0.3",offset:"0.2"}),X.default.createElement("stop",{"stop-color":e.Chan==0?"blue":"red","stop-opacity":"0.0",offset:"1.0"}))))),X.default.createElement(bm,null,"Frequency in (H)z"),X.default.createElement(qm,null,"Hearing Level (dB HL)")))};var th=Y.div`
 display: flex;
+justify-content: center;
 background: rgb(255,255,255);
 background: linear-gradient(0deg, rgba(255,255,255,1) 87%, #e2e2e2 100%);
 `,nh=Y.div`
@@ -334,6 +335,7 @@ padding: 20px;
 flex: 1 1;
 box-sizing: border-box;
 padding: 20px;
+max-width: 900px;
 `,oh=Y.div`
 display: flex;
 justify-content: space-between;

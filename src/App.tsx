@@ -8,6 +8,7 @@ import { Button, Select } from "./Controls";
 
 const Columns = styled.div`
 display: flex;
+justify-content: center;
 background: rgb(255,255,255);
 background: linear-gradient(0deg, rgba(255,255,255,1) 87%, #e2e2e2 100%);
 `;
@@ -22,6 +23,7 @@ const ColumnRight = styled.div`
 flex: 1 1;
 box-sizing: border-box;
 padding: 20px;
+max-width: 900px;
 `;
 
 const Header = styled.div`
