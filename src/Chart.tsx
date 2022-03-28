@@ -7,13 +7,14 @@ import { Perc, Clip } from "./Util";
 const ChartGap = styled.div`
 margin: 0 0 60px 60px;
 box-sizing: border-box;
+height: 100%;
 `;
 
 const ChartOuter = styled.div`
 position: relative;
 width: 100%;
+height: 100%;
 box-sizing: border-box;
-padding-bottom: 56%;
 border: 1px solid #ddd;
 `;
 

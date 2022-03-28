@@ -92,8 +92,10 @@ dl
 }
 `;
 
-
-const Select = styled.select`
+export const Select = styled.select`
+    max-width: 500px;
+    width:100%;
+    box-shadow: inset 0px 3px 5px lightgrey;
     padding: 7px;
     color: #556b7e;
     border-radius: 6px;
@@ -119,7 +121,7 @@ const _Button = ( props:any ) =>
         { showGet > 0 && <span className="blink"/> }
     </button>;
 };
-const Button = styled(_Button)`
+export const Button = styled(_Button)`
 
     box-shadow: rgb(0 0 0 / 33%) 0px -3px 0px inset, rgb(255 255 255 / 38%) 0px 3px 7px inset;
     position: relative;
@@ -230,7 +232,7 @@ const IconTriangle = () => <svg>
     <polygon points="0,0 10,5 0,10" fill="#ffffff" stroke="none" />
 </svg>;
 
-const Blink = styled.circle`
+const LightBlink = styled.circle`
     animation: ${keyframes`
         0% { opacity: 0;}
         5% { opacity: 1;}
@@ -244,7 +246,7 @@ const Light = ( { on }:{ on:boolean } ) => <svg width="50" height="50" viewBox="
     <circle  fill="url(#metal)" cx="39" cy="40" r="27"/>
     <circle  fill="url(#backwall)"cx="39" cy="40" r="25"/>
     <ellipse fill="url(#clearcoat)" cx="39" cy="33" rx="20" ry="16"/>
-    { on && <Blink fill="url(#light)" cx="39.5" cy="39.5" r="39.5"/> }
+    { on && <LightBlink fill="url(#light)" cx="39.5" cy="39.5" r="39.5"/> }
     <defs>
         <linearGradient id="metal" x1="39.5" y1="1" x2="39.5" y2="78" gradientUnits="userSpaceOnUse">
             <stop stop-color="#C4C4C4"/>
@@ -307,32 +309,9 @@ export default () =>
     };
 
     return <UI>
-        <dl>
-            <dt>Session</dt>
-            <dd>
-            <dl>
-                <dt>File:</dt>
-                    <dd>
-                        <a     ref={refSave} style={{display:"none"}}  />
-                        <input ref={refLoad} style={{display:"none"}} onInput={()=>handleLoad()}type="file"></input>
-                        <Button onClick={()=>handleSave()}>Save Session</Button>
-                        <Button onClick={()=>refLoad.current.click()}>Load Session</Button>
-                    </dd>
-                </dl>
-                <dl>
-                    <dt>Condition:</dt>
-                    <dd>
-                        <a ref={refSave}/>
-                        <Select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
-                            { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
-                        </Select>
-                    </dd>
-                </dl>
-            </dd>
-        </dl>
 
         <dl>
-            <dt>Sound</dt>
+            <dt>Variables</dt>
             <dl>
                 <dt>Channel:</dt>
                 <dd>
