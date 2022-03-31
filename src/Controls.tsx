@@ -311,7 +311,7 @@ export default () =>
     return <UI>
 
         <dl>
-            <dt>Variables</dt>
+            <dt>Controls</dt>
             <dl>
                 <dt>Channel:</dt>
                 <dd>
@@ -343,10 +343,6 @@ export default () =>
                     </Button>
                 </dd>
             </dl>
-        </dl>
-
-        <dl>
-            <dt>Playback</dt>
             <dl>
                 <dt>Response:</dt>
                 <dd><Light on={ (askGet == 2) && (responseGet >= 0) }/></dd>
@@ -365,7 +361,7 @@ export default () =>
 
 
         <dl>
-            <dt>Chart</dt>
+            <dt>Thresholds</dt>
             <dl>
                 <dt>Mark:</dt>
                 <dd>
