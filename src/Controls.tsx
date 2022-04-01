@@ -155,7 +155,7 @@ export const Button = styled(_Button)`
     padding-top: 8px;
     padding-bottom: 8px;
 }
-&[data-active]::before
+&[data-active]::after
 {
     content: " ";
     display: block;
@@ -172,7 +172,7 @@ export const Button = styled(_Button)`
     transform: translate(-50%, -50%);
     transition: all 0.4s;
 }
-&[data-active='true']::before
+&[data-active='true']::after
 {
     height: 5px;
     outline: 2px solid white;
@@ -221,8 +221,30 @@ svg.large
 `;
 
 const ButtonMajor = styled(Button)`
+
+    display: flex;
+    align-items: stretch;
     width: 50%;
     min-height: 50px;
+    max-height: 70px;
+    padding: 0;
+    margin: 7px 0 7px 0;
+
+    .dark, .text
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 10px 0 10px;
+    }
+
+    .dark
+    {
+        background: rgba(0,0,0,0.3);
+        border-bottom-left-radius: 10px;
+           border-top-left-radius: 10px;
+    }
+
 `;
 
 const IconMinus = () => <svg>
@@ -369,7 +391,10 @@ export default () =>
                 <dt>Response:</dt>
                 <dd><Light on={ (askGet == 2) && (responseGet >= 0) }/></dd>
                 <dd>
-                    <ButtonMajor onClick={()=>askSet(1)} disabled={askGet == 1}><IconTriangle/><br/>Present Tone</ButtonMajor>
+                    <ButtonMajor onClick={()=>askSet(1)} disabled={askGet == 1}>
+                        <span className="dark"><IconTriangle/></span>
+                        <span className="text">Present Tone</span>
+                    </ButtonMajor>
                 </dd>
             </dl>
             <dl>
@@ -395,13 +420,13 @@ export default () =>
             <dl>
                 <dd>
                     <ButtonMajor onClick={()=>Dispatch(Store.Actions.Mark, 1)}>
-                        Accept
+                        <span className="dark">{ State.Chan == 0 ? "✕" : "◯" }</span><span className="text">Accept</span>
                     </ButtonMajor>
                     <ButtonMajor onClick={()=>Dispatch(Store.Actions.Mark, 0)}>
-                        No Response
+                        <span className="dark">NR</span><span className="text">No Response</span>
                     </ButtonMajor>
                     <ButtonMajor onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample}>
-                        Clear Threshold
+                        <span className="dark"><IconClear/></span><span className="text">Clear Threshold</span>
                     </ButtonMajor>
                 </dd>
             </dl>
