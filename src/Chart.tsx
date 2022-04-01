@@ -150,13 +150,20 @@ export default ( ) =>
         return lines;
     }, [State.Test]);
 
-    const path:{Left:Array<PercentCoords>, Right:Array<PercentCoords>} = useMemo(() =>
+    type Paths = {Left:Array<PercentCoords>, Right:Array<PercentCoords>}
+    const path:{Sample:Paths, Answer:Paths} = useMemo(() =>
     {
         let mode:"Sample" | "Answer" = State.Show ? "Answer" : "Sample";
 
         return {
-             Left: Contiguous(currentTest, "AL", mode),
-            Right: Contiguous(currentTest, "AR", mode)
+            Sample:{
+                 Left: Contiguous(currentTest, "AL", "Sample"),
+                Right: Contiguous(currentTest, "AR", "Sample")
+            },
+            Answer:{
+                 Left: State.Show ? Contiguous(currentTest, "AL", "Answer") : [],
+                Right: State.Show ? Contiguous(currentTest, "AR", "Answer") : []
+            }
         };
     },
     [State.Draw, State.Show]);
@@ -193,8 +200,10 @@ export default ( ) =>
             <ChartInner>
                 { frequencies }
                 <ChartSVG style={SVGCSS} preserveAspectRatio="none" key={State.Draw}>
-                    {  path.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.5, strokeWidth:1.5}}/> ) }
-                    { path.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.5, strokeWidth:1.5}}/> ) }
+                    {  path.Answer.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.2, strokeWidth:3.5}}/> ) }
+                    { path.Answer.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.2, strokeWidth:3.5}}/> ) }
+                    {  path.Sample.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.5, strokeWidth:1.5}}/> ) }
+                    { path.Sample.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.5, strokeWidth:1.5}}/> ) }
                 </ChartSVG>
                 { State.View == 1 && <Preview style={{top: Perc(State.dBHL, ...currentTest.Clip), left: Perc(State.Freq+0.5, 0, currentTest.Plot.length) }} >
                     <ellipse cx="0" cy="0" rx="5" ry="30" fill="url(#glow)"/>
