@@ -134,7 +134,7 @@ const Preview = styled.svg`
 
 export default ( ) =>
 {
-    const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
+    const {State}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
 

@@ -272,7 +272,7 @@ const Light = ( { on }:{ on:boolean } ) => <svg width="50" height="50" viewBox="
 
 export default () =>
 {
-    const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
+    const {State, Dispatch}:Store.Binding = Store.Consume();
     const currentTest:Store.Test = State.List[State.Test];
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
     const currentChan:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
