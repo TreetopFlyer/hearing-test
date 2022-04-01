@@ -22,9 +22,9 @@ const Column = styled.div`
 
 const Label = styled.div`
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   width: 100%;
-  padding-top: 10px;
+  padding-bottom: 10px;
 
   color: black;
   font-size: 13px;

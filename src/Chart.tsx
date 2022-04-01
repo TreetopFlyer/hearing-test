@@ -5,7 +5,7 @@ import styled, { keyframes } from "styled-components";
 import { Perc, Clip } from "./Util";
 
 const ChartGap = styled.div`
-margin: 0 0 60px 60px;
+margin: 60px 0 0px 60px;
 box-sizing: border-box;
 height: 100%;
 `;
@@ -47,9 +47,9 @@ font-weight: 900;
 line-height: 0;
 `;
 const ChartLabelX = styled(ChartLabel)`
-top: 100%;
+bottom: 100%;
 left: 0%;
-transform: translateY(40px);
+transform: translateY(-40px);
 `;
 const ChartLabelY = styled(ChartLabel)`
 top: 50%;
@@ -71,7 +71,7 @@ position: absolute;
 left: 0;
 width: 100%;
 background: black;
-opacity: 0.1;
+opacity: 0.05;
 `;
 
 const Label = styled.div`
@@ -130,11 +130,6 @@ const Preview = styled.svg`
     overflow: visible;
     transition: all 0.4s;
     transform-origin: 0 0;
-    animation: ${ keyframes`
-        0%  { transform: scale(1.0); }
-        50% { transform: scale(1.5); }
-      100%  { transform: scale(1.0); }`
-    } 2s ease-in-out infinite;
 `;
 
 export default ( ) =>
@@ -213,7 +208,7 @@ export default ( ) =>
                     </defs>
                 </Preview> }
             </ChartInner>
-            <ChartLabelX>Frequency in (H)z</ChartLabelX>
+            <ChartLabelX>Frequency in Hz</ChartLabelX>
             <ChartLabelY>Hearing Level (dB HL)</ChartLabelY>
         </ChartOuter>
     </ChartGap>;
