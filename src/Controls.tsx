@@ -401,10 +401,10 @@ export default () =>
                 </dd>
             </dl>
             <dl>
-                <dt>Showing:</dt>
+                <dt>Answer Key:</dt>
                 <dd>
-                    <Button disabled={State.Show == 0} active={State.Show == 0} onClick={()=>Dispatch(Store.Actions.Show, 0)}>Your&nbsp;Samples</Button>
-                    <Button disabled={State.Show == 1} active={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Show, 1)}>Test&nbsp;Answers</Button>
+                    <Button disabled={State.Show == 0} active={State.Show == 0} onClick={()=>Dispatch(Store.Actions.Show, 0)}>Hide</Button>
+                    <Button disabled={State.Show == 1} active={State.Show == 1} onClick={()=>Dispatch(Store.Actions.Show, 1)}>Show</Button>
                 </dd>
             </dl>
             <dl>
