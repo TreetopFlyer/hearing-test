@@ -37,7 +37,7 @@ font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida San
 
 const App = () =>
 {
-    const {State, Dispatch, Handler}:Store.Binding = Store.Consume();
+    const {State, Dispatch}:Store.Binding = Store.Consume();
 
     const refSave = useRef(null);
     const handleSave = () =>
@@ -60,7 +60,7 @@ const App = () =>
     return <div>
         <Header>
             <strong>EarmarkHC Audiogram</strong>
-            <Select onChange={ Handler(Store.Actions.Test) } value={State.Test}>
+            <Select onChange={ e=>Dispatch(Store.Actions.Test, parseInt(e.target.value)) } value={State.Test}>
                 { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
             </Select>
             <div>
