@@ -120,32 +120,32 @@ const model:Session =
       Plot:
       [
         {
-          Hz: 125,
-          AL: {Answer:[35, null, true], Sample:null},
-          AR: {Answer:[35, null, true], Sample:null},
-        },
-        {
-          Hz: 250,
-          AL: {Answer:[35, null, true], Sample:null},
-          AR: {Answer:[35, null, true], Sample:null},
-        },
-        {
           Hz: 500,
-          AL: {Answer:[40, null, true], Sample:null},
-          AR: {Answer:[30, null, true], Sample:null},
+          AL: {Answer:[35, null, true], Sample:null},
+          AR: {Answer:[35, null, true], Sample:null},
         },
         {
           Hz: 1000,
-          AL: {Answer:[30, null, true], Sample:null},
+          AL: {Answer:[35, null, true], Sample:null},
           AR: {Answer:[35, null, true], Sample:null},
         },
         {
           Hz: 2000,
+          AL: {Answer:[40, null, true], Sample:null},
+          AR: {Answer:[30, null, true], Sample:null},
+        },
+        {
+          Hz: 3000,
+          AL: {Answer:[30, null, true], Sample:null},
+          AR: {Answer:[35, null, true], Sample:null},
+        },
+        {
+          Hz: 4000,
           AL: {Answer:[35, null, true], Sample:null},
           AR: {Answer:[30, null, true], Sample:null},
         },
         {
-          Hz: 4000,
+          Hz: 6000,
           AL: {Answer:[30, null, true], Sample:null},
           AR: {Answer:[30, null, true], Sample:null},
         },
@@ -162,32 +162,32 @@ const model:Session =
       Plot:
       [
         {
-          Hz: 125,
+          Hz: 500,
           AL: {Answer:[40, null, true], Sample:null},
           AR: {Answer:[50, null, true], Sample:null},
         },
         {
-          Hz: 250,
-          AL: {Answer:[45, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
-        },
-        {
-          Hz: 500,
-          AL: {Answer:[45, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
-        },
-        {
           Hz: 1000,
+          AL: {Answer:[45, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
+          Hz: 2000,
+          AL: {Answer:[45, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
+          Hz: 3000,
           AL: {Answer:[50, null, true], Sample:null},
           AR: {Answer:[55, null, true], Sample:null},
         },
         {
-          Hz: 2000,
+          Hz: 4000,
           AL: {Answer:[55, null, true], Sample:null},
           AR: {Answer:[55, null, true], Sample:null},
         },
         {
-          Hz: 4000,
+          Hz: 6000,
           AL: {Answer:[80, null, true], Sample:null},
           AR: {Answer:[75, null, true], Sample:null},
         },
