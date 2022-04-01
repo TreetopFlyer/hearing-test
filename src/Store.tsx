@@ -205,7 +205,6 @@ export type Binding =
 {
   State:Session,
   Dispatch:(inType:Actions, inPayload:any) => void
-  Handler:(inType:Actions) => (e:{target:{value:"string" | "number"}}) => void
 };
 
 export const Provide = (props:any) =>
@@ -221,10 +220,6 @@ export const Consume = ():Binding =>
         Dispatch(inType:Actions, inPayload:any)
         {
           dispatch({Type:inType, Payload:inPayload});
-        },
-        Handler(inType:Actions)
-        {
-          return (e) => dispatch({Type:inType, Payload:parseInt(e.target.value) || 0});
-        },
+        }
     };
 }
