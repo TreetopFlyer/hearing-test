@@ -123,6 +123,7 @@ const _Button = ( props:any ) =>
 };
 export const Button = styled(_Button)`
 
+    flex: 1 1;
     box-shadow: rgb(0 0 0 / 33%) 0px -3px 0px inset, rgb(255 255 255 / 38%) 0px 3px 7px inset;
     position: relative;
     display: inline-block;
