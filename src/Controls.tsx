@@ -8,6 +8,17 @@ const UI = styled.div`
 display: flex;
 flex-direction: column;
 gap: 30px 5px;
+@media(max-width:1024px)
+{
+    justify-content: center;
+    flex-direction: row;
+    gap: 20px;
+}
+@media(max-width:720px)
+{
+    flex-direction: column;
+}
+
 
 dl, dt, dd
 {
