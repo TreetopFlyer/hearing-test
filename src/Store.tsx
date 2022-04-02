@@ -106,8 +106,8 @@ const model:Session =
 {
   Tone: 0,
   Chan: 0,
-  dBHL: 50,
-  Freq: 0,
+  dBHL: 30,
+  Freq: 1,
   Test: 0,
   Draw: 0,
   Show: 0,
