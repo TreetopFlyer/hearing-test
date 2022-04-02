@@ -29,6 +29,7 @@ max-width: 900px;
 const Header = styled.div`
 display: flex;
 justify-content: space-between;
+align-items: baseline;
 padding: 20px;
 border-bottom: 1px solid #dfdfdf;
 color: #555;
@@ -59,7 +60,7 @@ const App = () =>
 
     return <div>
         <Header>
-            <strong>EarmarkHC Audiogram</strong>
+            <span><img style={{maxWidth:"200px"}} src="logo.png"/></span>
             <Select onChange={ e=>Dispatch(Store.Actions.Test, parseInt(e.target.value)) } value={State.Test}>
                 { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
             </Select>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as Store from "./Store";
 import styled, { keyframes, css } from "styled-components";
-import Stepper from "./Stepper";
+import Marker from "./Mark";
 
 const UI = styled.div`
 
@@ -94,6 +94,7 @@ dl
 
 export const Select = styled.select`
     max-width: 500px;
+    max-height: 30px;
     width:100%;
     box-shadow: inset 0px 3px 5px lightgrey;
     padding: 7px;
@@ -422,7 +423,9 @@ export default () =>
             <dl>
                 <dd>
                     <ButtonMajor onClick={()=>Dispatch(Store.Actions.Mark, 1)}>
-                        <span className="dark">{ State.Chan == 0 ? "✕" : "◯" }</span><span className="text">Accept</span>
+                        <span className="dark">
+                            <Marker style={{left:"5px", top:"5px", fill:"none"}} channel={State.Chan} response={true} active={false}/>
+                        </span><span className="text">Accept</span>
                     </ButtonMajor>
                     <ButtonMajor onClick={()=>Dispatch(Store.Actions.Mark, 0)}>
                         <span className="dark">NR</span><span className="text">No Response</span>
