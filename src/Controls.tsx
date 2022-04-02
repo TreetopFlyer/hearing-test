@@ -7,7 +7,7 @@ const UI = styled.div`
 
 display: flex;
 flex-direction: column;
-gap: 15px 5px;
+gap: 30px 5px;
 
 dl, dt, dd
 {
@@ -279,18 +279,20 @@ const IconClear = () => <svg className="large" viewBox="0 0 80 80">
 const LightBlink = styled.circle`
     animation: ${keyframes`
         0% { opacity: 0;}
-        5% { opacity: 1;}
-       50% { opacity: 1;}
+        10% { opacity: 0;}
+       12% { opacity: 1;}
+       22% { opacity: 1;}
+       42% { opacity: 0.2;}
       100% { opacity: 0;}`} 2s linear;
     animation-fill-mode: both;
 `;
-const Light = ( { on }:{ on:boolean } ) => <svg width="50" height="50" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
+const Light = ( { on }:{ on:boolean } ) => <svg width="60" height="60" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
     <circle  fill="url(#metal)" cx="39" cy="40" r="35"/>
     <circle  fill="url(#metal)" cx="39.5" cy="39.5" r="29.5" transform="rotate(180 39.5 39.5)"/>
     <circle  fill="url(#metal)" cx="39" cy="40" r="27"/>
     <circle  fill="url(#backwall)"cx="39" cy="40" r="25"/>
     <ellipse fill="url(#clearcoat)" cx="39" cy="33" rx="20" ry="16"/>
-    { on && <LightBlink fill="url(#light)" cx="39.5" cy="39.5" r="39.5"/> }
+    { on && <LightBlink fill="url(#light)" cx="39.5" cy="39.5" r="105"/> }
     <defs>
         <linearGradient id="metal" x1="39.5" y1="1" x2="39.5" y2="78" gradientUnits="userSpaceOnUse">
             <stop stop-color="#C4C4C4"/>
@@ -306,7 +308,7 @@ const Light = ( { on }:{ on:boolean } ) => <svg width="50" height="50" viewBox="
         </radialGradient>
         <radialGradient id="light" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(39.5 39.5) rotate(90) scale(39.5)">
             <stop offset="0.234375" stop-color="white"/>
-            <stop offset="0.5" stop-color="#80FF00" stop-opacity="0.662983"/>
+            <stop offset="0.5" stop-color="#ff8800" stop-opacity="0.662983"/>
             <stop offset="0.927083" stop-color="white" stop-opacity="0"/>
         </radialGradient>
     </defs>
@@ -329,7 +331,7 @@ export default () =>
         if(askGet == 1)
         {
             responseSet(State.dBHL - currentChan.Answer[0]);
-            timer = setTimeout(()=>{askSet(2);}, 1500 + Math.random()*1000);
+            timer = setTimeout(()=>{askSet(2);}, 500 + Math.random()*1000);
         }
         return () => clearTimeout(timer);
     }, [askGet]);
