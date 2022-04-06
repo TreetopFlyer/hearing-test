@@ -11,6 +11,7 @@ display: flex;
 justify-content: center;
 background: rgb(255,255,255);
 background: linear-gradient(0deg, rgba(255,255,255,1) 87%, #e2e2e2 100%);
+font-size: 14px;
 @media( max-width:1024px )
 {
     flex-wrap: wrap;
@@ -30,7 +31,7 @@ padding: 20px;
 const ColumnRight = styled.div`
 flex: 1 1;
 box-sizing: border-box;
-padding: 20px;
+padding-bottom: 80px;
 max-width: 900px;
 @media( max-width:1024px )
 {
@@ -45,6 +46,7 @@ align-items: baseline;
 padding: 20px;
 border-bottom: 1px solid #dfdfdf;
 color: #555;
+font-size: 14px;
 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 @media(max-width:1024px)
 {
