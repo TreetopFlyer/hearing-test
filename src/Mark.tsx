@@ -29,6 +29,8 @@ export const Marker = styled.svg`
     fill: none;
     transform-origin: 0 0;
     ${ (props:any):any => props.style }
+
+    &:not(:root){ overflow:visible; }
 `;
 
 export default ( { style, channel, response, active }:{ style:any, channel:number, response:boolean, active:boolean} ) => <Marker active={active} style={style}>
