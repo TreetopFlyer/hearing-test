@@ -5,6 +5,7 @@ import Controls from "./Controls";
 import Chart from "./Chart";
 import * as Store from "./Store";
 import { Button, Select } from "./Controls";
+import Logo from "./logo.png";
 
 const Columns = styled.div`
 display: flex;
@@ -85,7 +86,7 @@ const App = () =>
 
     return <div>
         <Header>
-            <span><img style={{maxWidth:"200px"}} src="logo.png"/></span>
+            <span><img style={{maxWidth:"200px"}} src={Logo}/></span>
             <Select onChange={ e=>Dispatch(Store.Actions.Test, parseInt(e.target.value)) } value={State.Test}>
                 { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
             </Select>

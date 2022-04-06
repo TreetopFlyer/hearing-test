@@ -1,7 +1,7 @@
 {
   "name": "hearing-test",
   "scripts": {
-    "go": "esbuild ./src/App.tsx --minify --bundle --watch --sourcemap --outfile=./dist/out.js"
+    "go": "esbuild ./src/App.tsx --minify --bundle --watch --sourcemap --outfile=./dist/out.js --loader:.png=dataurl"
   },
   "dependencies": {
     "react": "^17.0.2",
