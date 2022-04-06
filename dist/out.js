@@ -20,6 +20,8 @@ Add a <Suspense fallback=...> component higher in the tree to provide a loading 
     fill: none;
     transform-origin: 0 0;
     ${e=>e.style}
+
+    &:not(:root){ overflow:visible; }
 `,sn=({style:e,channel:t,response:n,active:r})=>ye.default.createElement(Fm,{active:r,style:e},t==0?ye.default.createElement(jm,{response:n}):ye.default.createElement(Dm,{response:n}));var Bm=Y.div`
 
 display: flex;
@@ -312,6 +314,7 @@ top: 0;
 left: 0;
 width: 100%;
 height: 100%;
+&:not(:root){ overflow:visible; }
 `,_d=Y.div`
 position: absolute;
 width: 100%;
@@ -359,11 +362,14 @@ line-height: 0;
     overflow: visible;
     transition: all 0.4s;
     transform-origin: 0 0;
+
+    &:not(:root){ overflow:visible; }
 `,Ad=()=>{let{State:e}=Gn(),t=e.List[e.Test],n=t.Plot[e.Freq],r=(0,Q.useMemo)(()=>{let s=10,c=Math.ceil(t.Clip[0]/s)*s,v=Math.floor(t.Clip[1]/s)*s,k=[];for(let y=c;y<=v;y+=s)k.push(Q.default.createElement(Jm,{style:{top:_e(y,...t.Clip)},dark:y==0},Q.default.createElement(th,null,y)));return k},[e.Test]),o=(0,Q.useMemo)(()=>{let s=e.Show?"Answer":"Sample";return{Sample:{Left:Ml(t,"AL","Sample"),Right:Ml(t,"AR","Sample")},Answer:{Left:e.Show?Ml(t,"AL","Answer"):[],Right:e.Show?Ml(t,"AR","Answer"):[]}}},[e.Draw,e.Show]),l=(0,Q.useMemo)(()=>{let s=100/t.Plot.length;return{left:s/2+"%",width:100-s+"%"}},[e.Draw,e.Show]),i=t.Plot.map((s,c)=>Q.default.createElement(Pd,{freq:s,active:n==s,clip:t.Clip,chan:e.Chan,mode:e.Show})),u=(0,Q.useMemo)(()=>{let s=Math.max(-10,t.Clip[0]),c=Math.min(25,t.Clip[1]);return Q.default.createElement(eh,{style:{top:_e(s,...t.Clip),height:_e(c-s,0,t.Clip[1]-t.Clip[0])}})},[t.Clip]);return Q.default.createElement(Qm,null,Q.default.createElement(Xm,null,u,r,Q.default.createElement(bm,null,i,Q.default.createElement(qm,{style:l,preserveAspectRatio:"none",key:e.Draw},o.Answer.Left.map(s=>Q.default.createElement("line",{...s,style:{stroke:"blue",opacity:.2,strokeWidth:3.5}})),o.Answer.Right.map(s=>Q.default.createElement("line",{...s,style:{stroke:"red",opacity:.2,strokeWidth:3.5}})),o.Sample.Left.map(s=>Q.default.createElement("line",{...s,style:{stroke:"blue",opacity:.5,strokeWidth:1.5}})),o.Sample.Right.map(s=>Q.default.createElement("line",{...s,style:{stroke:"red",opacity:.5,strokeWidth:1.5}}))),e.View==1&&Q.default.createElement(nh,{style:{top:_e(e.dBHL,...t.Clip),left:_e(e.Freq+.5,0,t.Plot.length)}},Q.default.createElement("ellipse",{cx:"0",cy:"0",rx:"5",ry:"30",fill:"url(#glow)"}),Q.default.createElement("ellipse",{cx:"0",cy:"0",rx:"30",ry:"5",fill:"url(#glow)"}),Q.default.createElement("defs",null,Q.default.createElement("radialGradient",{id:"glow"},Q.default.createElement("stop",{"stop-color":e.Chan==0?"blue":"red","stop-opacity":"0.6",offset:"0.0"}),Q.default.createElement("stop",{"stop-color":e.Chan==0?"blue":"red","stop-opacity":"0.3",offset:"0.2"}),Q.default.createElement("stop",{"stop-color":e.Chan==0?"blue":"red","stop-opacity":"0.0",offset:"1.0"}))))),Q.default.createElement(Km,null,"Frequency in Hz"),Q.default.createElement(Zm,null,"Hearing Level (dB HL)")))};var rh=Y.div`
 display: flex;
 justify-content: center;
 background: rgb(255,255,255);
 background: linear-gradient(0deg, rgba(255,255,255,1) 87%, #e2e2e2 100%);
+font-size: 14px;
 @media( max-width:1024px )
 {
     flex-wrap: wrap;
@@ -379,7 +385,7 @@ padding: 20px;
 `,lh=Y.div`
 flex: 1 1;
 box-sizing: border-box;
-padding: 20px;
+padding-bottom: 80px;
 max-width: 900px;
 @media( max-width:1024px )
 {
@@ -392,6 +398,7 @@ align-items: baseline;
 padding: 20px;
 border-bottom: 1px solid #dfdfdf;
 color: #555;
+font-size: 14px;
 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 @media(max-width:1024px)
 {
