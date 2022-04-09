@@ -120,6 +120,16 @@ const model:Session =
       Plot:
       [
         {
+          Hz: 125,
+          AL: {Answer:[35, null, true], Sample:null},
+          AR: {Answer:[35, null, true], Sample:null},
+        },
+        {
+          Hz: 250,
+          AL: {Answer:[35, null, true], Sample:null},
+          AR: {Answer:[35, null, true], Sample:null},
+        },
+        {
           Hz: 500,
           AL: {Answer:[35, null, true], Sample:null},
           AR: {Answer:[35, null, true], Sample:null},
@@ -161,6 +171,16 @@ const model:Session =
       Clip:[-10, 120],
       Plot:
       [
+        {
+          Hz: 125,
+          AL: {Answer:[40, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
+        {
+          Hz: 250,
+          AL: {Answer:[40, null, true], Sample:null},
+          AR: {Answer:[50, null, true], Sample:null},
+        },
         {
           Hz: 500,
           AL: {Answer:[40, null, true], Sample:null},
