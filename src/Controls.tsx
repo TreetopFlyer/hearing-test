@@ -290,12 +290,12 @@ const IconClear = () => <svg className="large" viewBox="0 0 80 80">
 
 const LightBlink = styled.circle`
     animation: ${keyframes`
-        0% { opacity: 0;}
-        10% { opacity: 0;}
-       12% { opacity: 1;}
-       22% { opacity: 1;}
-       42% { opacity: 0.2;}
-      100% { opacity: 0;}`} 2s linear;
+        0% { opacity: 0.0;}
+        5% { opacity: 0.0;}
+       10% { opacity: 1.0;}
+       80% { opacity: 1.0;}
+       90% { opacity: 0.2;}
+      100% { opacity: 0.0;}`} 2.2s linear;
     animation-fill-mode: both;
 `;
 const Light = ( { on }:{ on:boolean } ) => <svg width="60" height="60" viewBox="0 0 79 79" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -304,24 +304,24 @@ const Light = ( { on }:{ on:boolean } ) => <svg width="60" height="60" viewBox="
     <circle  fill="url(#metal)" cx="39" cy="40" r="27"/>
     <circle  fill="url(#backwall)"cx="39" cy="40" r="25"/>
     <ellipse fill="url(#clearcoat)" cx="39" cy="33" rx="20" ry="16"/>
-    { on && <LightBlink fill="url(#light)" cx="39.5" cy="39.5" r="105"/> }
+    { on && <LightBlink fill="url(#light)" cx="39.5" cy="39.5" r="36"/> }
     <defs>
         <linearGradient id="metal" x1="39.5" y1="1" x2="39.5" y2="78" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#C4C4C4"/>
-            <stop offset="1" stop-color="#F2F2F2"/>
+            <stop offset="0.0" stop-color="#C4C4C4" stop-opacity="1.0"/>
+            <stop offset="1.0" stop-color="#F2F2F2" stop-opacity="1.0"/>
         </linearGradient>
         <radialGradient id="backwall" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(39 56) rotate(-90) scale(45.5 74.4907)">
-            <stop stop-color="#AAAAAA"/>
-            <stop offset="1"/>
+            <stop offset="0.0" stop-color="#AAAAAA" stop-opacity="1.0"/>
+            <stop offset="1.0" stop-color="#333333" stop-opacity="1.0"/>
         </radialGradient>
         <radialGradient id="clearcoat" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(39 38.5) rotate(90) scale(50.5 71.9394)">
-            <stop offset="0.0729167" stop-color="white" stop-opacity="0"/>
-            <stop offset="0.78125" stop-color="white"/>
+            <stop offset="0.0" stop-color="#ffffff" stop-opacity="0.0"/>
+            <stop offset="0.7" stop-color="#ffffff" stop-opacity="1.0"/>
         </radialGradient>
-        <radialGradient id="light" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(39.5 39.5) rotate(90) scale(39.5)">
-            <stop offset="0.234375" stop-color="white"/>
-            <stop offset="0.5" stop-color="#ff8800" stop-opacity="0.662983"/>
-            <stop offset="0.927083" stop-color="white" stop-opacity="0"/>
+        <radialGradient id="light" cx="0" cy="0" r="1.0" gradientUnits="userSpaceOnUse" gradientTransform="translate(39.5 39.5) rotate(90) scale(39.5)">
+            <stop offset="0.2" stop-color="#ffffff" stop-opacity="1.0"/>
+            <stop offset="0.5" stop-color="#ff8800" stop-opacity="1.6"/>
+            <stop offset="0.9" stop-color="#ffffff" stop-opacity="0.0"/>
         </radialGradient>
     </defs>
 </svg>
@@ -343,7 +343,7 @@ export default () =>
         if(askGet == 1)
         {
             responseSet(State.dBHL - currentChan.Answer[0]);
-            timer = setTimeout(()=>{askSet(2);}, 500 + Math.random()*1000);
+            timer = setTimeout(()=>{askSet(2);}, 300 + Math.random()*1000);
         }
         return () => clearTimeout(timer);
     }, [askGet]);
