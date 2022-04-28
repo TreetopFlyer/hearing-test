@@ -7,6 +7,8 @@ import * as Store from "./Store";
 import { Button, Select } from "./Controls";
 import Logo from "./logo.png";
 
+import ChartFixed from "./ChartFixed";
+
 const Columns = styled.div`
 display: flex;
 justify-content: center;
@@ -102,7 +104,7 @@ const App = () =>
                 <Controls/>
             </ColumnLeft>
             <ColumnRight>
-                <Chart/>
+                <ChartFixed/>
             </ColumnRight>
         </Columns>
     </div>
