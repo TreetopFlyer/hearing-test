@@ -1,7 +1,7 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import * as Store from "./Store";
 import styled, { keyframes } from "styled-components";
-import { Perc, Clip } from "./Util";
+import Mark from "./Mark";
 
 const MapFreqScalar = 1/6;
 const MapFreq =
@@ -43,7 +43,6 @@ const Chart = styled.div`
         background: rgba(0, 0, 0, 0.1);
     }
 `;
-
 const LabeldBHL = styled.div`
     position: absolute;
     width: 200px;
@@ -70,7 +69,6 @@ const LabelFreq = styled.div`
     font-family: sans-serif;
     font-weight: 600;
 `;
-
 const RuledBHL = styled.div`
     position: absolute;
     width: 100%;
@@ -92,7 +90,6 @@ const RuledBHL = styled.div`
         text-align: right;
     }
 `;
-
 const RuleFreq = styled.div`
     position: absolute;
     height: 100%;
@@ -115,8 +112,89 @@ const RuleFreq = styled.div`
     }
 `;
 
+const ChartLayer = styled.svg`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    stroke-width: 3px;
+    overflow: visible;
+    ${ (props:any):any => props.style }
+`;
+
+type ChartMark = {Freq:number, dBHL:number, Chan:number, Resp:boolean, Perc:[string, string]};
+type ChartLine = {From:ChartMark, To:ChartMark};
+const ChartGetMarks = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answer"):Array<ChartMark> =>
+{
+    /* reduce the list of frequencies to only those with marked responses for requested SamplePair */
+    const marks:Array<ChartMark> = [];
+    test.Plot.forEach( (p:Store.Frequency) =>
+    {
+        let sample = p[pairKey][sampleKey];
+        if(sample)
+        {
+            marks.push({
+                Freq:p.Hz,
+                dBHL:sample[0],
+                Resp:sample[2],
+                Chan:pairKey == "AR" ? 1 : 0,
+                Perc:MapPercentCoords(p.Hz, sample[0])
+            });
+        }
+    });
+    return marks;
+};
+const ChartGetLines = (marks:Array<ChartMark>):Array<ChartLine> =>
+{
+    /* output a list of *adjacent* of marks with *positive* responses */
+    const lines:Array<ChartLine> = [];
+    for(let i=0; i<marks.length-1; i++)
+    {
+        const line:ChartLine = {From:marks[i], To:marks[i+1]};
+        if(line.From.Resp && line.To.Resp)
+        {
+            lines.push(line);
+        }
+    }
+    return lines;
+};
+
 export default () =>
 {
+    const {State} = Store.Consume();
+    const currentTest = State.List[State.Test];
+    const currentFreq = currentTest.Plot[State.Freq];
+
+    const iterMarks = (m:ChartMark) => <Mark channel={m.Chan} response={m.Resp} active={false} coords={m.Perc} />;
+    const iterLines = (l:ChartLine) => <line x1={l.From.Perc[0]} y1={l.From.Perc[1]} x2={l.To.Perc[0]} y2={l.To.Perc[1]} />;
+
+    let  leftAnswerMarks = [];
+    let  leftAnswerLines = [];
+    let rightAnswerMarks = [];
+    let rightAnswerLines = [];
+
+    useEffect(()=>{
+         leftAnswerMarks = ChartGetMarks(currentTest, "AL", "Answer");
+         leftAnswerLines = ChartGetLines( leftAnswerMarks);
+        rightAnswerMarks = ChartGetMarks(currentTest, "AR", "Answer");
+        rightAnswerLines = ChartGetLines(rightAnswerMarks);
+    }, []);
+
+    const  leftSampleMarks = ChartGetMarks(currentTest, "AL", "Answer");
+    const  leftSampleLines = ChartGetLines( leftSampleMarks);
+    const rightSampleMarks = ChartGetMarks(currentTest, "AR", "Answer");
+    const rightSampleLines = ChartGetLines(rightSampleMarks);
+
+
+    // right sample marks
+    // right sample lines
+
+    // left answer marks
+    // left answer lines
+    // right answer marks
+    // right answer lines
+
     return <Chart>
 
         <LabeldBHL>Hearing Level (dBHL)</LabeldBHL>
@@ -145,6 +223,17 @@ export default () =>
         <RuleFreq value={4000} bold/>
         <RuleFreq value={6000} />
         <RuleFreq value={8000} bold/>
+
+
+        <ChartLayer style={{stroke:"blue", strokeWidth:"3px", opacity:0.3}}>{  leftAnswerLines.map( iterLines ) }</ChartLayer>
+        <ChartLayer style={{stroke:"blue", strokeWidth:"2px", opacity:1.0}}>{  leftAnswerMarks.map( iterMarks ) }</ChartLayer>
+        <ChartLayer style={{stroke:"red",  strokeWidth:"3px", opacity:0.3}}>{ rightAnswerLines.map( iterLines ) }</ChartLayer>
+        <ChartLayer style={{stroke:"red",  strokeWidth:"2px", opacity:1.0}}>{ rightAnswerMarks.map( iterMarks ) }</ChartLayer>
+
+        <ChartLayer style={{stroke:"blue", strokeWidth:"3px", opacity:0.3}}>{  leftSampleLines.map( iterLines ) }</ChartLayer>
+        <ChartLayer style={{stroke:"blue", strokeWidth:"2px", opacity:1.0}}>{  leftSampleMarks.map( iterMarks ) }</ChartLayer>
+        <ChartLayer style={{stroke:"red",  strokeWidth:"3px", opacity:0.3}}>{ rightSampleLines.map( iterLines ) }</ChartLayer>
+        <ChartLayer style={{stroke:"red",  strokeWidth:"2px", opacity:1.0}}>{ rightSampleMarks.map( iterMarks ) }</ChartLayer>
 
     </Chart>;
 }

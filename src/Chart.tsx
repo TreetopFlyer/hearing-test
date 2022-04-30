@@ -86,10 +86,12 @@ text-align: right;
 line-height: 0;
 `;
 
-type Marked = {index:number, sample:Store.Sample}
+
 type PercentCoords = {x1:string, y1:string, x2:string, y2:string}
 const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answer"):Array<PercentCoords> =>
 {
+    type Marked = {index:number, sample:Store.Sample}
+    
     /* reduce the list of frequencies to only those with marked responses for requested SamplePair */
     let points:Array<Marked> = [];
     test.Plot.forEach( (p:Store.Frequency, index:number) =>
@@ -97,7 +99,7 @@ const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answ
         let pair = p[pairKey];
         if(pair)
         {
-            let sample = pair[sampleKey]
+            let sample = pair[sampleKey];
             if(sample)
             {
                 points.push({index:index, sample:sample});
