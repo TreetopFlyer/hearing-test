@@ -31,12 +31,12 @@ export const Marker = styled.svg`
     &:not(:root){ overflow:visible; }
 `;
 
-export default ( { style, channel, response, active, coords }:{ style?:any, channel:number, response:boolean, active:boolean, coords?:[string, string]} ) =>
+export default ( { style, channel, response, coords }:{ style?:any, channel:number, response:boolean, coords?:[string, string]} ) =>
 {
     if(!coords)
         coords = ["0%", "0%"];
 
-    return <Marker active={active} style={style} x={ coords[0] } y={ coords[1]} width="20" height="20">
+    return <Marker style={style} x={ coords[0] } y={ coords[1]} width="20" height="20">
         { channel == 0 ? <MarkerX response={response} /> : <MarkerCircle response={response}/> }
     </Marker>;
 };
