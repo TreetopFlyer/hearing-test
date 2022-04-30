@@ -348,24 +348,6 @@ export default () =>
         return () => clearTimeout(timer);
     }, [askGet]);
 
-    const refSave = useRef(null);
-    const handleSave = () =>
-    {
-        refSave.current.setAttribute('href','data:text/plain;charset=utf-8, ' + encodeURIComponent(JSON.stringify(State)));
-        refSave.current.setAttribute('download', "aud.json");
-        refSave.current.click();
-    };
-
-    const refLoad = useRef(null);
-    const handleLoad = () =>
-    {
-        const reader = new FileReader();
-        reader.addEventListener('load', (event) => {
-            Dispatch(Store.Actions.Load, JSON.parse(reader.result.toString()));
-        });
-        reader.readAsText(refLoad.current.files[0]);
-    };
-
     return <UI>
 
         <dl>

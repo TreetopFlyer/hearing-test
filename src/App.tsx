@@ -2,12 +2,11 @@ import React, { useRef } from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
 import Controls from "./Controls";
-import Chart from "./Chart";
 import * as Store from "./Store";
 import { Button, Select } from "./Controls";
 import Logo from "./logo.png";
 
-import ChartFixed from "./ChartFixed";
+import ChartFixed from "./Chart";
 
 const Columns = styled.div`
 display: flex;

@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { Clip } from "./Util";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
@@ -49,6 +48,12 @@ export type SamplePair =
 export type Range = [ number, number];
 export type Sample = [ number | null, number | null, boolean ] | null; /* [ stim, mask, resp ] */
 
+export const Clip = (val:number, min:number, max:number):number =>
+{
+    if(val < min) { return min; }
+    if(val > max) { return max; }
+    return val;
+};
 
 const reducer = (state:Session, action:Action):Session =>
 {
