@@ -25,104 +25,6 @@ const MapPercentCoords = (inFreq:number, indBHL:number):[string, string] =>
         MapPercent( MapdBHL(indBHL) )
     ];
 };
-
-const Chart = styled.div`
-    position: relative;
-    width: 800px;
-    height: 500px;
-    box-sizing: border-box;
-    border: 1px solid #aaa;
-    &::before
-    {
-        content: " ";
-        position: absolute;
-        top: ${MapPercent(MapdBHL(-10))};
-        left: 0;
-        width: 100%;
-        height: ${ parseFloat(MapPercent(MapdBHL(25))) - parseFloat(MapPercent(MapdBHL(-10))) }%;
-        background: rgba(0, 0, 0, 0.1);
-    }
-`;
-const LabeldBHL = styled.div`
-    position: absolute;
-    width: 200px;
-    height: 0px;
-    top: 50%;
-    left: -140px;
-    transform: rotate(-90deg);
-    white-space: nowrap;
-    text-align: center;
-    color: black;
-    font-family: sans-serif;
-    font-weight: 600;
-`;
-const LabelFreq = styled.div`
-    position: absolute;
-    width: 200px;
-    height: 0px;
-    top: -50px;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    text-align: center;
-    color: black;
-    font-family: sans-serif;
-    font-weight: 600;
-`;
-const RuledBHL = styled.div`
-    position: absolute;
-    width: 100%;
-    height: 0px;
-    top: ${props => MapPercent( MapdBHL(props.value) )};
-    border-top: ${props => props.bold ? `2px solid black` : `1px solid #aaa`};
-    &::before
-    {
-        content: "${props => props.value}";
-        display: block;
-        width: 20px;
-        height: 0px;
-        position: absolute;
-        left: -25px;
-        top: -5px;
-        color: black;
-        font-size: 10px;
-        font-family: sans-serif;
-        text-align: right;
-    }
-`;
-const RuleFreq = styled.div`
-    position: absolute;
-    height: 100%;
-    width: 0px;
-    left: ${props => MapPercent( MapFreq[props.value] )};
-    border-right: ${props => props.bold ? `1px solid black` : `1px dashed #aaa`};
-    &::before
-    {
-        content: "${props => props.value}";
-        display: block;
-        width: 100px;
-        height: 10px;
-        position: absolute;
-        left: -50px;
-        top: ${props => props.bold ? -25 : -15}px;
-        color: black;
-        font-family: sans-serif;
-        font-size: 10px;
-        text-align: center;
-    }
-`;
-
-const ChartLayer = styled.svg`
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    stroke-width: 3px;
-    overflow: visible;
-    ${ (props:any):any => props.style }
-`;
-
 type ChartMark = {Freq:number, dBHL:number, Chan:number, Resp:boolean, Perc:[string, string]};
 type ChartLine = {From:ChartMark, To:ChartMark};
 const ChartGetMarks = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answer"):Array<ChartMark> =>
@@ -160,80 +62,164 @@ const ChartGetLines = (marks:Array<ChartMark>):Array<ChartLine> =>
     return lines;
 };
 
+const Grid = styled.div`
+    position: relative;
+    left: 40px;
+    width: calc(100% - 40px);
+    top: 60px;
+    height: calc(100% - 60px);
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    &::before
+    {
+        content: " ";
+        position: absolute;
+        top: ${MapPercent(MapdBHL(-10))};
+        left: 0;
+        width: 100%;
+        height: ${ parseFloat(MapPercent(MapdBHL(25))) - parseFloat(MapPercent(MapdBHL(-10))) }%;
+        background: rgba(0, 0, 0, 0.1);
+    }
+`;
+const GridYLabel = styled.div`
+    position: absolute;
+    width: 200px;
+    height: 0px;
+    top: 50%;
+    left: -140px;
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    text-align: center;
+    color: black;
+    font-family: sans-serif;
+    font-weight: 600;
+`;
+const GridXLabel = styled.div`
+    position: absolute;
+    width: 200px;
+    height: 0px;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    text-align: center;
+    color: black;
+    font-family: sans-serif;
+    font-weight: 600;
+`;
+const GridYRule = styled.div`
+    position: absolute;
+    width: 100%;
+    height: 0px;
+    top: ${props => MapPercent( MapdBHL(props.value) )};
+    border-top: ${props => props.bold ? `2px solid black` : `1px solid #aaa`};
+    &::before
+    {
+        content: "${props => props.value}";
+        display: block;
+        width: 20px;
+        height: 0px;
+        position: absolute;
+        left: -25px;
+        top: -5px;
+        color: black;
+        font-size: 10px;
+        font-family: sans-serif;
+        text-align: right;
+    }
+`;
+const GridXRule = styled.div`
+    position: absolute;
+    height: 100%;
+    width: 0px;
+    left: ${props => MapPercent( MapFreq[props.value] )};
+    border-right: ${props => props.bold ? `1px solid black` : `1px dashed #aaa`};
+    &::before
+    {
+        content: "${props => props.value}";
+        display: block;
+        width: 100px;
+        height: 10px;
+        position: absolute;
+        left: -50px;
+        top: ${props => props.bold ? -25 : -15}px;
+        color: black;
+        font-family: sans-serif;
+        font-size: 10px;
+        text-align: center;
+    }
+`;
+const GridLayer = styled.svg`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    stroke-width: 3px;
+    ${ (props:any):any => props.style }
+
+    &:not(:root){ overflow:visible; }
+`;
+
+
 export default () =>
 {
     const {State} = Store.Consume();
     const currentTest = State.List[State.Test];
     const currentFreq = currentTest.Plot[State.Freq];
 
+    const  leftAnswerMarks = ChartGetMarks(currentTest, "AL", "Answer");
+    const  leftAnswerLines = ChartGetLines( leftAnswerMarks);
+    const rightAnswerMarks = ChartGetMarks(currentTest, "AR", "Answer");
+    const rightAnswerLines = ChartGetLines(rightAnswerMarks);
+
+    const  leftSampleMarks = ChartGetMarks(currentTest, "AL", "Sample");
+    const  leftSampleLines = ChartGetLines( leftSampleMarks);
+    const rightSampleMarks = ChartGetMarks(currentTest, "AR", "Sample");
+    const rightSampleLines = ChartGetLines(rightSampleMarks);
+
     const iterMarks = (m:ChartMark) => <Mark channel={m.Chan} response={m.Resp} active={false} coords={m.Perc} />;
     const iterLines = (l:ChartLine) => <line x1={l.From.Perc[0]} y1={l.From.Perc[1]} x2={l.To.Perc[0]} y2={l.To.Perc[1]} />;
 
-    let  leftAnswerMarks = [];
-    let  leftAnswerLines = [];
-    let rightAnswerMarks = [];
-    let rightAnswerLines = [];
 
-    useEffect(()=>{
-         leftAnswerMarks = ChartGetMarks(currentTest, "AL", "Answer");
-         leftAnswerLines = ChartGetLines( leftAnswerMarks);
-        rightAnswerMarks = ChartGetMarks(currentTest, "AR", "Answer");
-        rightAnswerLines = ChartGetLines(rightAnswerMarks);
-    }, []);
+    return <Grid>
 
-    const  leftSampleMarks = ChartGetMarks(currentTest, "AL", "Answer");
-    const  leftSampleLines = ChartGetLines( leftSampleMarks);
-    const rightSampleMarks = ChartGetMarks(currentTest, "AR", "Answer");
-    const rightSampleLines = ChartGetLines(rightSampleMarks);
+        <GridYLabel>Hearing Level (dBHL)</GridYLabel>
+        <GridYRule value={-10}/>
+        <GridYRule value={  0} bold/>
+        <GridYRule value={ 10}/>
+        <GridYRule value={ 20}/>
+        <GridYRule value={ 30}/>
+        <GridYRule value={ 40}/>
+        <GridYRule value={ 50}/>
+        <GridYRule value={ 60}/>
+        <GridYRule value={ 70}/>
+        <GridYRule value={ 80}/>
+        <GridYRule value={ 90}/>
+        <GridYRule value={100}/>
+        <GridYRule value={110}/>
+        <GridYRule value={120}/>
 
+        <GridXLabel>Frequency in Hz</GridXLabel>
+        <GridXRule value={ 125} bold/>
+        <GridXRule value={ 250} bold/>
+        <GridXRule value={ 500} bold/>
+        <GridXRule value={1000} bold/>
+        <GridXRule value={2000} bold/>
+        <GridXRule value={3000} />
+        <GridXRule value={4000} bold/>
+        <GridXRule value={6000} />
+        <GridXRule value={8000} bold/>
 
-    // right sample marks
-    // right sample lines
+        { State.Show == 1 && <GridLayer key={"1"+State.Draw} style={{stroke:"blue", strokeWidth:"3px", opacity:0.2}}>{  leftAnswerLines.map( iterLines ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"2"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:0.5}}>{  leftAnswerMarks.map( iterMarks ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"3"+State.Draw} style={{stroke:"red",  strokeWidth:"3px", opacity:0.2}}>{ rightAnswerLines.map( iterLines ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"4"+State.Draw} style={{stroke:"red",  strokeWidth:"2px", opacity:0.5}}>{ rightAnswerMarks.map( iterMarks ) }</GridLayer> }
 
-    // left answer marks
-    // left answer lines
-    // right answer marks
-    // right answer lines
+        <GridLayer key={"5"+State.Draw} style={{stroke:"blue", strokeWidth:"3px", opacity:0.3}}>{  leftSampleLines.map( iterLines ) }</GridLayer>
+        <GridLayer key={"6"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:1.0}}>{  leftSampleMarks.map( iterMarks ) }</GridLayer>
+        <GridLayer key={"7"+State.Draw} style={{stroke:"red",  strokeWidth:"3px", opacity:0.3}}>{ rightSampleLines.map( iterLines ) }</GridLayer>
+        <GridLayer key={"8"+State.Draw} style={{stroke:"red",  strokeWidth:"2px", opacity:1.0}}>{ rightSampleMarks.map( iterMarks ) }</GridLayer>
 
-    return <Chart>
-
-        <LabeldBHL>Hearing Level (dBHL)</LabeldBHL>
-        <RuledBHL value={-10}/>
-        <RuledBHL value={  0} bold/>
-        <RuledBHL value={ 10}/>
-        <RuledBHL value={ 20}/>
-        <RuledBHL value={ 30}/>
-        <RuledBHL value={ 40}/>
-        <RuledBHL value={ 50}/>
-        <RuledBHL value={ 60}/>
-        <RuledBHL value={ 70}/>
-        <RuledBHL value={ 80}/>
-        <RuledBHL value={ 90}/>
-        <RuledBHL value={100}/>
-        <RuledBHL value={110}/>
-        <RuledBHL value={120}/>
-
-        <LabelFreq>Frequency in Hz</LabelFreq>
-        <RuleFreq value={ 125} bold/>
-        <RuleFreq value={ 250} bold/>
-        <RuleFreq value={ 500} bold/>
-        <RuleFreq value={1000} bold/>
-        <RuleFreq value={2000} bold/>
-        <RuleFreq value={3000} />
-        <RuleFreq value={4000} bold/>
-        <RuleFreq value={6000} />
-        <RuleFreq value={8000} bold/>
-
-
-        <ChartLayer style={{stroke:"blue", strokeWidth:"3px", opacity:0.3}}>{  leftAnswerLines.map( iterLines ) }</ChartLayer>
-        <ChartLayer style={{stroke:"blue", strokeWidth:"2px", opacity:1.0}}>{  leftAnswerMarks.map( iterMarks ) }</ChartLayer>
-        <ChartLayer style={{stroke:"red",  strokeWidth:"3px", opacity:0.3}}>{ rightAnswerLines.map( iterLines ) }</ChartLayer>
-        <ChartLayer style={{stroke:"red",  strokeWidth:"2px", opacity:1.0}}>{ rightAnswerMarks.map( iterMarks ) }</ChartLayer>
-
-        <ChartLayer style={{stroke:"blue", strokeWidth:"3px", opacity:0.3}}>{  leftSampleLines.map( iterLines ) }</ChartLayer>
-        <ChartLayer style={{stroke:"blue", strokeWidth:"2px", opacity:1.0}}>{  leftSampleMarks.map( iterMarks ) }</ChartLayer>
-        <ChartLayer style={{stroke:"red",  strokeWidth:"3px", opacity:0.3}}>{ rightSampleLines.map( iterLines ) }</ChartLayer>
-        <ChartLayer style={{stroke:"red",  strokeWidth:"2px", opacity:1.0}}>{ rightSampleMarks.map( iterMarks ) }</ChartLayer>
-
-    </Chart>;
+    </Grid>;
 }
