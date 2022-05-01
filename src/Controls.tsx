@@ -338,6 +338,7 @@ export default () =>
 
     const handler = (inEvent)=>
     {
+        inEvent.preventDefault();
         switch (inEvent.code)
         {
             case "ArrowRight" : Dispatch(Store.Actions.Freq, State.Freq+1); break;
@@ -355,8 +356,8 @@ export default () =>
     };
     useEffect(()=>
     {
-        document.addEventListener("keyup", handler);
-        return ()=> document.removeEventListener("keyup", handler);
+        document.addEventListener("keydown", handler);
+        return ()=> document.removeEventListener("keydown", handler);
     });
 
     return <UI>
