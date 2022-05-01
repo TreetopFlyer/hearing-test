@@ -43,7 +43,7 @@ export type Frequency =
 };
 export type SamplePair =
 {
-  Sample: Sample,
+  Sample?: Sample,
   Answer: Sample
 };
 
@@ -122,8 +122,135 @@ const model:Session =
   Draw: 0,
   Show: 0,
   View: 1,
+  Play: 0,
   List:
   [
+    {
+      Name: "Patient A  Asymmetric Notch",
+      Clip: [-10, 120],
+      Plot:
+      [
+        {
+          "Hz": 500,
+          "AL": { Answer: [15, null, true] },
+          "AR": { Answer: [10, null, true] }
+        },
+        {
+          "Hz": 1000,
+          "AL": { Answer: [10, null, true] },
+          "AR": { Answer: [10, null, true] }
+        },
+        {
+          "Hz": 2000,
+          "AL": { Answer: [15, null, true] },
+          "AR": { Answer: [20, null, true] }
+        },
+        {
+          "Hz": 3000,
+          "AL": { Answer: [30, null, true] },
+          "AR": { Answer: [40, null, true] }
+        },
+        {
+          "Hz": 4000,
+          "AL": { Answer: [40, null, true] },
+          "AR": { Answer: [55, null, true] }
+        },
+        {
+          "Hz": 6000,
+          "AL": { Answer: [35, null, true] },
+          "AR": { Answer: [40, null, true] }
+        },
+        {
+          "Hz": 8000,
+          "AL": { Answer: [20, null, true] },
+          "AR": { Answer: [15, null, true] }
+        }
+      ]
+    },
+    {
+      Name: "Patient B High Freq Hearing Loss",
+      Clip:[-10, 120],
+      Plot:
+      [
+        {
+          "Hz": 500,
+          "AL": {Answer: [10, null, true] },
+          "AR": {Answer: [10, null, true] }
+        },
+        {
+          "Hz": 1000,
+          "AL": { Answer: [15, null, true] },
+          "AR": { Answer: [10, null, true] }
+        },
+        {
+          "Hz": 2000,
+          "AL": { Answer: [10, null, true] },
+          "AR": { Answer: [15, null, true] }
+        },
+        {
+          "Hz": 3000,
+          "AL": { Answer: [25, null, true] },
+          "AR": { Answer: [20, null, true] }
+        },
+        {
+          "Hz": 4000,
+          "AL": { Answer: [35, null, true] },
+          "AR": { Answer: [35, null, true] }
+        },
+        {
+          "Hz": 6000,
+          "AL": { Answer: [50, null, true] },
+          "AR": { Answer: [55, null, true] }
+        },
+        {
+          "Hz": 8000,
+          "AL": { Answer: [80, null, true] },
+          "AR": { Answer: [75, null, true] }
+        }
+      ]
+    },
+    {
+      Name: "Patient C Unilateral Hearing Loss",
+      Clip:[-10, 120],
+      Plot:
+      [
+        {
+          "Hz": 500,
+          "AL": { Answer: [15, null, true] },
+          "AR": { Answer: [40, null, true] }
+        },
+        {
+          "Hz": 1000,
+          "AL": { Answer: [15, null, true] },
+          "AR": { Answer: [50, null, true] }
+        },
+        {
+          "Hz": 2000,
+          "AL": { Answer: [20, null, true] },
+          "AR": { Answer: [65, null, true] }
+        },
+        {
+          "Hz": 3000,
+          "AL": { Answer: [15, null, true] },
+          "AR": { Answer: [70, null, true] }
+        },
+        {
+          "Hz": 4000,
+          "AL": { Answer: [20, null, true] },
+          "AR": { Answer: [65, null, true] }
+        },
+        {
+          "Hz": 6000,
+          "AL": { Answer: [25, null, true] },
+          "AR": { Answer: [60, null, true] }
+        },
+        {
+          "Hz": 8000,
+          "AL": { Answer: [20, null, true] },
+          "AR": { Answer: [45, null, true] }
+        }
+      ]
+    },
     {
       Name:"Patient D Normal Hearing",
       Clip:[-10, 120],
@@ -131,90 +258,38 @@ const model:Session =
       [
         {
           "Hz": 500,
-          "AL": { "Sample": null, "Answer": [5, null, true] },
-          "AR": { "Sample": null, "Answer": [10, null, true] }
+          "AL": { Answer: [5, null, true] },
+          "AR": { Answer: [10, null, true] }
         },
         {
           "Hz": 1000,
-          "AL": { "Sample": null, "Answer": [0, null, true] },
-          "AR": { "Sample": null, "Answer": [5, null, true] }
+          "AL": { Answer: [0, null, true] },
+          "AR": { Answer: [5, null, true] }
         },
         {
           "Hz": 2000,
-          "AL": { "Sample": null, "Answer": [5, null, true] },
-          "AR": { "Sample": null, "Answer": [5, null, true] }
+          "AL": { Answer: [5, null, true] },
+          "AR": { Answer: [5, null, true] }
         },
         {
           "Hz": 3000,
-          "AL": { "Sample": null, "Answer": [15, null, true] },
-          "AR": { "Sample": null, "Answer": [10, null, true] }
+          "AL": { Answer: [15, null, true] },
+          "AR": { Answer: [10, null, true] }
         },
         {
           "Hz": 4000,
-          "AL": { "Sample": null, "Answer": [15, null, true] },
-          "AR": { "Sample": null, "Answer": [15, null, true] }
+          "AL": { Answer: [15, null, true] },
+          "AR": { Answer: [15, null, true] }
         },
         {
           "Hz": 6000,
-          "AL": { "Sample": null, "Answer": [5, null, true] },
-          "AR": { "Sample": null, "Answer": [10, null, true] }
+          "AL": { Answer: [5, null, true] },
+          "AR": { Answer: [10, null, true] }
         },
         {
           "Hz": 8000,
-          "AL": { "Sample": null, "Answer": [0, null, true] },
-          "AR": { "Sample": null, "Answer": [5, null, true] }
-        }
-      ]
-    },
-    {
-      Name:"MHL / Sloping / Mod-Sev / Symmetric",
-      Clip:[-10, 120],
-      Plot:
-      [
-        {
-          Hz: 125,
-          AL: {Answer:[40, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
-        },
-        {
-          Hz: 250,
-          AL: {Answer:[40, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
-        },
-        {
-          Hz: 500,
-          AL: {Answer:[40, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
-        },
-        {
-          Hz: 1000,
-          AL: {Answer:[45, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
-        },
-        {
-          Hz: 2000,
-          AL: {Answer:[45, null, true], Sample:null},
-          AR: {Answer:[50, null, true], Sample:null},
-        },
-        {
-          Hz: 3000,
-          AL: {Answer:[50, null, true], Sample:null},
-          AR: {Answer:[55, null, true], Sample:null},
-        },
-        {
-          Hz: 4000,
-          AL: {Answer:[55, null, true], Sample:null},
-          AR: {Answer:[55, null, true], Sample:null},
-        },
-        {
-          Hz: 6000,
-          AL: {Answer:[80, null, true], Sample:null},
-          AR: {Answer:[75, null, true], Sample:null},
-        },
-        {
-          Hz: 8000,
-          AL: {Answer:[85, null, true], Sample:null},
-          AR: {Answer:[90, null, true], Sample:null},
+          "AL": { Answer: [0, null, true] },
+          "AR": { Answer: [5, null, true] }
         }
       ]
     }
