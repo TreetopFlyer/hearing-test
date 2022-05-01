@@ -345,9 +345,9 @@ export default () =>
             case    "ArrowUp" : Dispatch(Store.Actions.dBHL, State.dBHL-5); inEvent.preventDefault(); break;
             case  "ArrowDown" : Dispatch(Store.Actions.dBHL, State.dBHL+5); inEvent.preventDefault(); break;
 
-            case     "Space" : Dispatch(Store.Actions.Play, 1); break;
+            case     "Space" : Dispatch(Store.Actions.Play, 1); inEvent.preventDefault(); break;
             case     "Enter" : Dispatch(Store.Actions.Mark, inEvent.shiftKey ? 0 : 1); break;
-            case "Backspace" : Dispatch(Store.Actions.Mark, -1); break;
+            case "Backspace" : Dispatch(Store.Actions.Mark, -1);  break;
 
             case      "KeyL" : Dispatch(Store.Actions.Chan, 0); break;
             case      "KeyR" : Dispatch(Store.Actions.Chan, 1); break;

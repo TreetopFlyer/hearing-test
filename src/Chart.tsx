@@ -98,6 +98,8 @@ const GridYLabel = styled.div`
     color: black;
     font-family: sans-serif;
     font-weight: 600;
+    font-size: 14px;
+    line-height: 14px;
 `;
 const GridXLabel = styled.div`
     position: absolute;
@@ -111,6 +113,8 @@ const GridXLabel = styled.div`
     color: black;
     font-family: sans-serif;
     font-weight: 600;
+    font-size: 14px;
+    line-height: 14px;
 `;
 const GridYRule = styled.div`
     position: absolute;
@@ -128,8 +132,9 @@ const GridYRule = styled.div`
         left: -25px;
         top: -5px;
         color: black;
-        font-size: 10px;
         font-family: sans-serif;
+        font-size: 10px;
+        line-height: 10px;
         text-align: right;
     }
 `;
@@ -151,6 +156,7 @@ const GridXRule = styled.div`
         color: black;
         font-family: sans-serif;
         font-size: 10px;
+        line-height: 10px;
         text-align: center;
     }
 `;
