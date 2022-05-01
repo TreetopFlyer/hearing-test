@@ -33,11 +33,10 @@ padding: 20px;
 const ColumnRight = styled.div`
 flex: 1 1;
 box-sizing: border-box;
-padding-bottom: 80px;
 max-width: 900px;
 @media( max-width:1024px )
 {
-    min-height: 400px;
+    min-height: 500px;
 }
 `;
 

@@ -70,8 +70,8 @@ const Grid = styled.div`
     position: relative;
     left: 40px;
     width: calc(100% - 40px);
-    top: 60px;
-    height: calc(100% - 60px);
+    top: 72px;
+    height: calc(100% - 72px);
     box-sizing: border-box;
     border: 1px solid #aaa;
     &::before
@@ -82,7 +82,7 @@ const Grid = styled.div`
         left: 0;
         width: 100%;
         height: ${ parseFloat(MapPercent(MapdBHL(25))) - parseFloat(MapPercent(MapdBHL(-10))) }%;
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(0, 0, 0, 0.05);
     }
 `;
 const GridYLabel = styled.div`
@@ -116,7 +116,7 @@ const GridYRule = styled.div`
     width: 100%;
     height: 0px;
     top: ${props => MapPercent( MapdBHL(props.value) )};
-    border-top: ${props => props.bold ? `2px solid black` : `1px solid #aaa`};
+    border-top: ${props => props.bold ? `2px solid black` : `1px solid #b9b9b9`};
     &::before
     {
         content: "${props => props.value}";
@@ -137,7 +137,7 @@ const GridXRule = styled.div`
     height: 100%;
     width: 0px;
     left: ${props => MapPercent( MapFreq[props.value] )};
-    border-right: ${props => props.bold ? `1px solid black` : `1px dashed #aaa`};
+    border-right: ${props => props.bold ? `1px solid #aaa` : `1px dashed #aaa`};
     &::before
     {
         content: "${props => props.value}";
@@ -198,6 +198,17 @@ export default () =>
 
     return <Grid>
 
+        <GridXLabel>Frequency in Hz</GridXLabel>
+        <GridXRule value={ 125} bold/>
+        <GridXRule value={ 250} bold/>
+        <GridXRule value={ 500} bold/>
+        <GridXRule value={1000} bold/>
+        <GridXRule value={2000} bold/>
+        <GridXRule value={3000} />
+        <GridXRule value={4000} bold/>
+        <GridXRule value={6000} />
+        <GridXRule value={8000} bold/>
+
         <GridYLabel>Hearing Level (dBHL)</GridYLabel>
         <GridYRule value={-10}/>
         <GridYRule value={  0} bold/>
@@ -214,21 +225,10 @@ export default () =>
         <GridYRule value={110}/>
         <GridYRule value={120}/>
 
-        <GridXLabel>Frequency in Hz</GridXLabel>
-        <GridXRule value={ 125} bold/>
-        <GridXRule value={ 250} bold/>
-        <GridXRule value={ 500} bold/>
-        <GridXRule value={1000} bold/>
-        <GridXRule value={2000} bold/>
-        <GridXRule value={3000} />
-        <GridXRule value={4000} bold/>
-        <GridXRule value={6000} />
-        <GridXRule value={8000} bold/>
-
-        { State.Show == 1 && <GridLayer key={"1"+State.Draw} style={{stroke:"blue", strokeWidth:"3px", opacity:0.2}}>{  leftAnswerLines.map( iterLines ) }</GridLayer> }
-        { State.Show == 1 && <GridLayer key={"2"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:0.5}}>{  leftAnswerMarks.map( iterMarks ) }</GridLayer> }
-        { State.Show == 1 && <GridLayer key={"3"+State.Draw} style={{stroke:"red",  strokeWidth:"3px", opacity:0.2}}>{ rightAnswerLines.map( iterLines ) }</GridLayer> }
-        { State.Show == 1 && <GridLayer key={"4"+State.Draw} style={{stroke:"red",  strokeWidth:"2px", opacity:0.5}}>{ rightAnswerMarks.map( iterMarks ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"1"+State.Draw} style={{stroke:"blue", strokeWidth:"5px", opacity:0.3}}>{  leftAnswerLines.map( iterLines ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"2"+State.Draw} style={{stroke:"blue", strokeWidth:"4px", opacity:0.3}}>{  leftAnswerMarks.map( iterMarks ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"3"+State.Draw} style={{stroke:"red",  strokeWidth:"5px", opacity:0.3}}>{ rightAnswerLines.map( iterLines ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"4"+State.Draw} style={{stroke:"red",  strokeWidth:"4px", opacity:0.3}}>{ rightAnswerMarks.map( iterMarks ) }</GridLayer> }
 
         <GridLayer key={"5"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:0.6}}>{  leftSampleLines.map( iterLines ) }</GridLayer>
         <GridLayer key={"6"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:1.0}}>{  leftSampleMarks.map( iterMarks ) }</GridLayer>
@@ -236,17 +236,16 @@ export default () =>
         <GridLayer key={"8"+State.Draw} style={{stroke:"red",  strokeWidth:"2px", opacity:1.0}}>{ rightSampleMarks.map( iterMarks ) }</GridLayer>
 
         { State.View == 1 && <GridCursor coords={MapPercentCoords(currentFreq.Hz, State.dBHL)}>
-                <ellipse cx="0" cy="0" rx="5" ry="30" fill="url(#glow)"/>
-                <ellipse cx="0" cy="0" rx="30" ry="5" fill="url(#glow)"/>
-                <defs>
-                    <radialGradient id="glow">
-                        <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.6" offset="0.0"/>
-                        <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.3" offset="0.2"/>
-                        <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.0" offset="1.0"/>
-                    </radialGradient>
-                </defs>
-            </GridCursor>
-        }
+            <ellipse cx="0" cy="0" rx="5" ry="30" fill="url(#glow)"/>
+            <ellipse cx="0" cy="0" rx="30" ry="5" fill="url(#glow)"/>
+            <defs>
+                <radialGradient id="glow">
+                    <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.6" offset="0.0"/>
+                    <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.3" offset="0.2"/>
+                    <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.0" offset="1.0"/>
+                </radialGradient>
+            </defs>
+        </GridCursor> }
 
 
     </Grid>;
