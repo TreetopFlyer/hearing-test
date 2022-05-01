@@ -28,7 +28,7 @@ const MapPercentCoords = (inFreq:number, indBHL:number):[string, string] =>
 };
 
 // plots
-type ChartMark = {Freq:number, dBHL:number, Chan:number, Resp:boolean, Perc:[string, string]};
+type ChartMark = {Freq:number, dBHL:number, Chan:number, Resp:boolean, Type:string, Perc:[string, string]};
 type ChartLine = {From:ChartMark, To:ChartMark};
 const ChartGetMarks = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answer"):Array<ChartMark> =>
 {
@@ -41,10 +41,11 @@ const ChartGetMarks = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"A
         {
             marks.push({
                 Freq:p.Hz,
-                dBHL:sample[0],
-                Resp:sample[2],
-                Chan:pairKey == "AR" ? 1 : 0,
-                Perc:MapPercentCoords(p.Hz, sample[0])
+                dBHL: sample[0],
+                Resp: sample[2],
+                Chan: pairKey == "AR" ? 1 : 0,
+                Type: sampleKey,
+                Perc: MapPercentCoords(p.Hz, sample[0])
             });
         }
     });
@@ -193,7 +194,15 @@ export default () =>
     const rightSampleMarks = ChartGetMarks(currentTest, "AR", "Sample");
     const rightSampleLines = ChartGetLines(rightSampleMarks);
 
-    const iterMarks = (m:ChartMark) => <Mark channel={m.Chan} response={m.Resp} style={{strokeWidth:currentFreq.Hz == m.Freq ? "4px" : "2px"}} coords={m.Perc} />;
+    const iterMarks = (m:ChartMark) =>
+    {
+        let style:any = {};
+        if ( State.Chan == m.Chan && m.Type == "Sample" && currentFreq.Hz == m.Freq )
+        {
+            style.strokeWidth = "4px";
+        }
+        return <Mark channel={m.Chan} response={m.Resp} style={style} coords={m.Perc}  />;
+    };
     const iterLines = (l:ChartLine) => <line x1={l.From.Perc[0]} y1={l.From.Perc[1]} x2={l.To.Perc[0]} y2={l.To.Perc[1]} />;
 
     return <Grid>
