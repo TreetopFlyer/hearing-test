@@ -103,17 +103,6 @@ dl
 }
 `;
 
-export const Select = styled.select`
-    max-width: 500px;
-    max-height: 30px;
-    width:100%;
-    box-shadow: inset 0px 3px 5px lightgrey;
-    padding: 7px;
-    color: #556b7e;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-`;
 const _Button = ( props:any ) =>
 {
     const [showGet, showSet] = useState(-1);
@@ -335,36 +324,40 @@ export default () =>
     const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
     const currentChan:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
 
-    const [askGet, askSet] = useState(0);
     const [responseGet, responseSet] = useState(0);
-
-    useEffect(()=>{
+    useEffect(()=>
+    {
         let timer:number | undefined = undefined;
-        if(askGet == 1)
+        if(State.Play == 1)
         {
             responseSet(State.dBHL - currentChan.Answer[0]);
-            timer = setTimeout(()=>{askSet(2);}, 300 + Math.random()*1000);
+            timer = setTimeout(()=>{Dispatch(Store.Actions.Play, 2);}, 300 + Math.random()*1000);
         }
         return () => clearTimeout(timer);
-    }, [askGet]);
+    }, [State.Play]);
 
-    const refSave = useRef(null);
-    const handleSave = () =>
+    const handler = (inEvent)=>
     {
-        refSave.current.setAttribute('href','data:text/plain;charset=utf-8, ' + encodeURIComponent(JSON.stringify(State)));
-        refSave.current.setAttribute('download', "aud.json");
-        refSave.current.click();
-    };
+        switch (inEvent.code)
+        {
+            case "ArrowRight" : Dispatch(Store.Actions.Freq, State.Freq+1); break;
+            case "ArrowLeft" : Dispatch(Store.Actions.Freq, State.Freq-1); break;
+            case "ArrowUp" : Dispatch(Store.Actions.dBHL, State.dBHL-5); break;
+            case "ArrowDown" : Dispatch(Store.Actions.dBHL, State.dBHL+5); break;
 
-    const refLoad = useRef(null);
-    const handleLoad = () =>
-    {
-        const reader = new FileReader();
-        reader.addEventListener('load', (event) => {
-            Dispatch(Store.Actions.Load, JSON.parse(reader.result.toString()));
-        });
-        reader.readAsText(refLoad.current.files[0]);
+            case "Space" : Dispatch(Store.Actions.Play, 1); break;
+            case "Enter" : Dispatch(Store.Actions.Mark, inEvent.shiftKey ? 0 : 1); break;
+            case "Backspace" : Dispatch(Store.Actions.Mark, -1); break;
+
+            case "KeyL" : Dispatch(Store.Actions.Chan, 0); break;
+            case "KeyR" : Dispatch(Store.Actions.Chan, 1); break;
+        }
     };
+    useEffect(()=>
+    {
+        document.addEventListener("keyup", handler);
+        return ()=> document.removeEventListener("keyup", handler);
+    });
 
     return <UI>
 
@@ -403,9 +396,9 @@ export default () =>
             </dl>
             <dl>
                 <dt>Response:</dt>
-                <dd><Light on={ (askGet == 2) && (responseGet >= 0) }/></dd>
+                <dd><Light on={ (State.Play == 2) && (responseGet >= 0) }/></dd>
                 <dd>
-                    <ButtonMajor onClick={()=>askSet(1)} disabled={askGet == 1}>
+                    <ButtonMajor onClick={()=>Dispatch(Store.Actions.Play, 1)} disabled={State.Play == 1}>
                         <span className="dark"><IconTriangle/></span>
                         <span className="text">Present Tone</span>
                     </ButtonMajor>

@@ -1,133 +1,174 @@
-import React, { useMemo } from "react";
-import Frequency from "./Frequency";
+import React, { useMemo, useEffect } from "react";
 import * as Store from "./Store";
 import styled, { keyframes } from "styled-components";
-import { Perc, Clip } from "./Util";
+import Mark from "./Mark";
 
-const ChartGap = styled.div`
-margin: 60px 0 0px 60px;
-box-sizing: border-box;
-height: 100%;
-`;
-
-const ChartOuter = styled.div`
-position: relative;
-width: 100%;
-height: 100%;
-box-sizing: border-box;
-border: 1px solid #ddd;
-`;
-
-const ChartInner = styled.div`
-display: flex;
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-`;
-
-const ChartSVG = styled.svg`
-position: absolute;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-&:not(:root){ overflow:visible; }
-`;
-
-const ChartLabel = styled.div`
-position: absolute;
-width: 100%;
-text-align: center;
-
-color: black;
-font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-font-size: 16px;
-font-weight: 900;
-line-height: 0;
-`;
-const ChartLabelX = styled(ChartLabel)`
-bottom: 100%;
-left: 0%;
-transform: translateY(-40px);
-`;
-const ChartLabelY = styled(ChartLabel)`
-top: 50%;
-left: -50%;
-transform: rotate(-90deg) translateY(-40px);
-`;
-
-const Rule = styled.div`
-position: absolute;
-left: 0;
-width: 100%;
-height: 0;
-border-top: 1px dashed black;
-border-top: ${ ({dark}:{dark:boolean}):string => dark ? "1px solid black" : "1px solid #ddd" };
-`;
-
-const Shaded = styled.div`
-position: absolute;
-left: 0;
-width: 100%;
-background: black;
-opacity: 0.05;
-`;
-
-const Label = styled.div`
-position: absolute;
-right: 100%;
-padding-right: 10px;
-color: black;
-font-size: 10px;
-font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-text-align: right;
-line-height: 0;
-`;
-
-type Marked = {index:number, sample:Store.Sample}
-type PercentCoords = {x1:string, y1:string, x2:string, y2:string}
-const Contiguous = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answer"):Array<PercentCoords> =>
+// mapping
+const MapFreqScalar = 1/6;
+const MapFreq =
 {
-    /* reduce the list of frequencies to only those with marked responses for requested SamplePair */
-    let points:Array<Marked> = [];
-    test.Plot.forEach( (p:Store.Frequency, index:number) =>
-    {
-        let pair = p[pairKey];
-        if(pair)
-        {
-            let sample = pair[sampleKey]
-            if(sample)
-            {
-                points.push({index:index, sample:sample});
-            }
-        }
-    });
-
-    /* output a list of *adjacent* of marks with *positive* responses */
-    let output:Array<PercentCoords> = [];
-    for(let i=0; i<points.length-1; i++)
-    {
-        let from:Marked = points[i];
-        let to:Marked = points[i+1];
-        if(from.sample[2] && to.sample[2])
-        {
-            output.push({
-                x1: Perc(from.index, 0, test.Plot.length-1),
-                y1: Perc(from.sample[0], ...test.Clip),
-                x2: Perc(to.index, 0, test.Plot.length-1),
-                y2: Perc(to.sample[0], ...test.Clip),
-            });
-        }
-    }
-    return output;
+    125: MapFreqScalar*0,
+    250: MapFreqScalar*1,
+    500: MapFreqScalar*2,
+   1000: MapFreqScalar*3,
+   2000: MapFreqScalar*4,
+   3000: MapFreqScalar*4.5,
+   4000: MapFreqScalar*5,
+   6000: MapFreqScalar*5.5,
+   8000: MapFreqScalar*6
+};
+const MapdBHL = (inValue:number):number => (inValue+10)/130;
+const MapPercent = (inValue:number):string => `${((inValue*0.9)+0.05) * 100}%`;
+const MapPercentCoords = (inFreq:number, indBHL:number):[string, string] =>
+{
+    return [
+        MapPercent( MapFreq[inFreq] ),
+        MapPercent( MapdBHL(indBHL) )
+    ];
 };
 
-const Preview = styled.svg`
+// plots
+type ChartMark = {Freq:number, dBHL:number, Chan:number, Resp:boolean, Perc:[string, string]};
+type ChartLine = {From:ChartMark, To:ChartMark};
+const ChartGetMarks = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answer"):Array<ChartMark> =>
+{
+    /* reduce the list of frequencies to only those with marked responses for requested SamplePair */
+    const marks:Array<ChartMark> = [];
+    test.Plot.forEach( (p:Store.Frequency) =>
+    {
+        let sample = p[pairKey][sampleKey];
+        if(sample)
+        {
+            marks.push({
+                Freq:p.Hz,
+                dBHL:sample[0],
+                Resp:sample[2],
+                Chan:pairKey == "AR" ? 1 : 0,
+                Perc:MapPercentCoords(p.Hz, sample[0])
+            });
+        }
+    });
+    return marks;
+};
+const ChartGetLines = (marks:Array<ChartMark>):Array<ChartLine> =>
+{
+    /* output a list of *adjacent* of marks with *positive* responses */
+    const lines:Array<ChartLine> = [];
+    for(let i=0; i<marks.length-1; i++)
+    {
+        const line:ChartLine = {From:marks[i], To:marks[i+1]};
+        if(line.From.Resp && line.To.Resp)
+        {
+            lines.push(line);
+        }
+    }
+    return lines;
+};
+
+// components
+const Grid = styled.div`
+    position: relative;
+    left: 40px;
+    width: calc(100% - 40px);
+    top: 72px;
+    height: calc(100% - 72px);
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    &::before
+    {
+        content: " ";
+        position: absolute;
+        top: ${MapPercent(MapdBHL(-10))};
+        left: 0;
+        width: 100%;
+        height: ${ parseFloat(MapPercent(MapdBHL(25))) - parseFloat(MapPercent(MapdBHL(-10))) }%;
+        background: rgba(0, 0, 0, 0.05);
+    }
+`;
+const GridYLabel = styled.div`
+    position: absolute;
+    width: 200px;
+    height: 0px;
+    top: 50%;
+    left: -140px;
+    transform: rotate(-90deg);
+    white-space: nowrap;
+    text-align: center;
+    color: black;
+    font-family: sans-serif;
+    font-weight: 600;
+`;
+const GridXLabel = styled.div`
+    position: absolute;
+    width: 200px;
+    height: 0px;
+    top: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    text-align: center;
+    color: black;
+    font-family: sans-serif;
+    font-weight: 600;
+`;
+const GridYRule = styled.div`
+    position: absolute;
+    width: 100%;
+    height: 0px;
+    top: ${props => MapPercent( MapdBHL(props.value) )};
+    border-top: ${props => props.bold ? `2px solid black` : `1px solid #b9b9b9`};
+    &::before
+    {
+        content: "${props => props.value}";
+        display: block;
+        width: 20px;
+        height: 0px;
+        position: absolute;
+        left: -25px;
+        top: -5px;
+        color: black;
+        font-size: 10px;
+        font-family: sans-serif;
+        text-align: right;
+    }
+`;
+const GridXRule = styled.div`
+    position: absolute;
+    height: 100%;
+    width: 0px;
+    left: ${props => MapPercent( MapFreq[props.value] )};
+    border-right: ${props => props.bold ? `1px solid #aaa` : `1px dashed #aaa`};
+    &::before
+    {
+        content: "${props => props.value}";
+        display: block;
+        width: 100px;
+        height: 10px;
+        position: absolute;
+        left: -50px;
+        top: ${props => props.bold ? -25 : -15}px;
+        color: black;
+        font-family: sans-serif;
+        font-size: 10px;
+        text-align: center;
+    }
+`;
+const GridLayer = styled.svg`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    stroke-width: 3px;
+    ${ (props:any):any => props.style }
+
+    &:not(:root){ overflow:visible; }
+`;
+const GridCursor = styled.svg`
     position: absolute;
     width: 20px;
     height: 20px;
+    ${ props => `top:${props.coords[1]}; left:${props.coords[0]};`}
     overflow: visible;
     transition: all 0.4s;
     transform-origin: 0 0;
@@ -135,93 +176,77 @@ const Preview = styled.svg`
     &:not(:root){ overflow:visible; }
 `;
 
-export default ( ) =>
+// main
+export default () =>
 {
-    const {State}:Store.Binding = Store.Consume();
-    const currentTest:Store.Test = State.List[State.Test];
-    const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
+    const {State} = Store.Consume();
+    const currentTest = State.List[State.Test];
+    const currentFreq = currentTest.Plot[State.Freq];
 
-    const lines:Array<React.ReactElement> = useMemo(()=>{
-        let stride:number = 10;
-        let start:number = Math.ceil(currentTest.Clip[0]/stride)*stride;
-        let stop:number = Math.floor(currentTest.Clip[1]/stride)*stride;
-        let lines = [];
-        for(let i=start; i<=stop; i+=stride)
-        {
-            lines.push(<Rule style={{top: Perc(i, ...currentTest.Clip)}} dark={ i==0 }><Label>{i}</Label></Rule>)
-        }
-        return lines;
-    }, [State.Test]);
+    const  leftAnswerMarks = ChartGetMarks(currentTest, "AL", "Answer");
+    const  leftAnswerLines = ChartGetLines( leftAnswerMarks);
+    const rightAnswerMarks = ChartGetMarks(currentTest, "AR", "Answer");
+    const rightAnswerLines = ChartGetLines(rightAnswerMarks);
 
-    type Paths = {Left:Array<PercentCoords>, Right:Array<PercentCoords>}
-    const path:{Sample:Paths, Answer:Paths} = useMemo(() =>
-    {
-        let mode:"Sample" | "Answer" = State.Show ? "Answer" : "Sample";
+    const  leftSampleMarks = ChartGetMarks(currentTest, "AL", "Sample");
+    const  leftSampleLines = ChartGetLines( leftSampleMarks);
+    const rightSampleMarks = ChartGetMarks(currentTest, "AR", "Sample");
+    const rightSampleLines = ChartGetLines(rightSampleMarks);
 
-        return {
-            Sample:{
-                 Left: Contiguous(currentTest, "AL", "Sample"),
-                Right: Contiguous(currentTest, "AR", "Sample")
-            },
-            Answer:{
-                 Left: State.Show ? Contiguous(currentTest, "AL", "Answer") : [],
-                Right: State.Show ? Contiguous(currentTest, "AR", "Answer") : []
-            }
-        };
-    },
-    [State.Draw, State.Show]);
+    const iterMarks = (m:ChartMark) => <Mark channel={m.Chan} response={m.Resp} style={{strokeWidth:currentFreq.Hz == m.Freq ? "4px" : "2px"}} coords={m.Perc} />;
+    const iterLines = (l:ChartLine) => <line x1={l.From.Perc[0]} y1={l.From.Perc[1]} x2={l.To.Perc[0]} y2={l.To.Perc[1]} />;
 
-    const SVGCSS:{left:string, width:string} = useMemo(() =>
-    {
-        const scalar = 100 / currentTest.Plot.length;
-        return {
-            left: scalar/2 + "%",
-            width: (100 - scalar) + "%" 
-        };
-    },
-    [State.Draw, State.Show]);
+    return <Grid>
 
-    const frequencies:Array<typeof Frequency> = currentTest.Plot.map( (f:Store.Frequency, i:number)=>
-    {
-        return <Frequency freq={f} active={currentFreq == f} clip={currentTest.Clip} chan={State.Chan} mode={State.Show} />;
-    });
-    
-    const shaded = useMemo(()=>{
-        let min:number = Math.max(-10, currentTest.Clip[0]);
-        let max:number = Math.min( 25, currentTest.Clip[1]);
+        <GridXLabel>Frequency in Hz</GridXLabel>
+        <GridXRule value={ 125} bold/>
+        <GridXRule value={ 250} bold/>
+        <GridXRule value={ 500} bold/>
+        <GridXRule value={1000} bold/>
+        <GridXRule value={2000} bold/>
+        <GridXRule value={3000} />
+        <GridXRule value={4000} bold/>
+        <GridXRule value={6000} />
+        <GridXRule value={8000} bold/>
 
-        return <Shaded style={{top:Perc(min, ...currentTest.Clip), height:Perc(max-min, 0, currentTest.Clip[1] - currentTest.Clip[0])}}/>
-        
-    }, [currentTest.Clip]);
+        <GridYLabel>Hearing Level (dBHL)</GridYLabel>
+        <GridYRule value={-10}/>
+        <GridYRule value={  0} bold/>
+        <GridYRule value={ 10}/>
+        <GridYRule value={ 20}/>
+        <GridYRule value={ 30}/>
+        <GridYRule value={ 40}/>
+        <GridYRule value={ 50}/>
+        <GridYRule value={ 60}/>
+        <GridYRule value={ 70}/>
+        <GridYRule value={ 80}/>
+        <GridYRule value={ 90}/>
+        <GridYRule value={100}/>
+        <GridYRule value={110}/>
+        <GridYRule value={120}/>
+
+        { State.Show == 1 && <GridLayer key={"1"+State.Draw} style={{stroke:"blue", strokeWidth:"5px", opacity:0.3}}>{  leftAnswerLines.map( iterLines ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"2"+State.Draw} style={{stroke:"blue", strokeWidth:"4px", opacity:0.3}}>{  leftAnswerMarks.map( iterMarks ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"3"+State.Draw} style={{stroke:"red",  strokeWidth:"5px", opacity:0.3}}>{ rightAnswerLines.map( iterLines ) }</GridLayer> }
+        { State.Show == 1 && <GridLayer key={"4"+State.Draw} style={{stroke:"red",  strokeWidth:"4px", opacity:0.3}}>{ rightAnswerMarks.map( iterMarks ) }</GridLayer> }
+
+        <GridLayer key={"5"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:0.6}}>{  leftSampleLines.map( iterLines ) }</GridLayer>
+        <GridLayer key={"6"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:1.0}}>{  leftSampleMarks.map( iterMarks ) }</GridLayer>
+        <GridLayer key={"7"+State.Draw} style={{stroke:"red",  strokeWidth:"2px", opacity:0.6}}>{ rightSampleLines.map( iterLines ) }</GridLayer>
+        <GridLayer key={"8"+State.Draw} style={{stroke:"red",  strokeWidth:"2px", opacity:1.0}}>{ rightSampleMarks.map( iterMarks ) }</GridLayer>
+
+        { State.View == 1 && <GridCursor coords={MapPercentCoords(currentFreq.Hz, State.dBHL)}>
+            <ellipse cx="0" cy="0" rx="5" ry="30" fill="url(#glow)"/>
+            <ellipse cx="0" cy="0" rx="30" ry="5" fill="url(#glow)"/>
+            <defs>
+                <radialGradient id="glow">
+                    <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.6" offset="0.0"/>
+                    <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.3" offset="0.2"/>
+                    <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.0" offset="1.0"/>
+                </radialGradient>
+            </defs>
+        </GridCursor> }
 
 
-
-    return <ChartGap>
-        <ChartOuter>
-            { shaded }
-            { lines }
-            <ChartInner>
-                { frequencies }
-                <ChartSVG style={SVGCSS} preserveAspectRatio="none" key={State.Draw}>
-                    {  path.Answer.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.2, strokeWidth:3.5}}/> ) }
-                    { path.Answer.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.2, strokeWidth:3.5}}/> ) }
-                    {  path.Sample.Left.map( (m:PercentCoords) => <line {...m}  style={{stroke:'blue', opacity:0.5, strokeWidth:1.5}}/> ) }
-                    { path.Sample.Right.map( (m:PercentCoords) => <line {...m}  style={{stroke:'red',  opacity:0.5, strokeWidth:1.5}}/> ) }
-                </ChartSVG>
-                { State.View == 1 && <Preview style={{top: Perc(State.dBHL, ...currentTest.Clip), left: Perc(State.Freq+0.5, 0, currentTest.Plot.length) }} >
-                    <ellipse cx="0" cy="0" rx="5" ry="30" fill="url(#glow)"/>
-                    <ellipse cx="0" cy="0" rx="30" ry="5" fill="url(#glow)"/>
-                    <defs>
-                        <radialGradient id="glow">
-                            <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.6" offset="0.0"/>
-                            <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.3" offset="0.2"/>
-                            <stop stop-color={ State.Chan == 0 ? "blue" : "red" } stop-opacity="0.0" offset="1.0"/>
-                        </radialGradient>
-                    </defs>
-                </Preview> }
-            </ChartInner>
-            <ChartLabelX>Frequency in Hz</ChartLabelX>
-            <ChartLabelY>Hearing Level (dB HL)</ChartLabelY>
-        </ChartOuter>
-    </ChartGap>;
+    </Grid>;
 }
