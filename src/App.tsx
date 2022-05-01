@@ -3,10 +3,22 @@ import { render } from "react-dom";
 import styled from "styled-components";
 import Controls from "./Controls";
 import * as Store from "./Store";
-import { Button, Select } from "./Controls";
+import { Button, } from "./Controls";
 import Logo from "./logo.png";
 
 import ChartFixed from "./Chart";
+
+export const Select = styled.select`
+    max-width: 500px;
+    max-height: 30px;
+    width:100%;
+    box-shadow: inset 0px 3px 5px lightgrey;
+    padding: 7px;
+    color: #556b7e;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+`;
 
 const Columns = styled.div`
 display: flex;
@@ -87,7 +99,7 @@ const App = () =>
     return <div>
         <Header>
             <span><img style={{maxWidth:"200px"}} src={Logo}/></span>
-            <Select onChange={ e=>Dispatch(Store.Actions.Test, parseInt(e.target.value)) } value={State.Test}>
+            <Select onChange={ e=>{ Dispatch(Store.Actions.Test, parseInt(e.target.value)); e.target.blur(); } } value={State.Test}>
                 { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
             </Select>
             <div>

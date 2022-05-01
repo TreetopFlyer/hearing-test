@@ -103,17 +103,6 @@ dl
 }
 `;
 
-export const Select = styled.select`
-    max-width: 500px;
-    max-height: 30px;
-    width:100%;
-    box-shadow: inset 0px 3px 5px lightgrey;
-    padding: 7px;
-    color: #556b7e;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-`;
 const _Button = ( props:any ) =>
 {
     const [showGet, showSet] = useState(-1);
