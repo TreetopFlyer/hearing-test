@@ -428,7 +428,7 @@ export default () =>
                 <dd>
                     <ButtonMajor onClick={()=>Dispatch(Store.Actions.Mark, 1)}>
                         <span className="dark">
-                            <Marker style={{left:"5px", top:"5px", fill:"none"}} channel={State.Chan} response={true} active={false}/>
+                            <Marker style={{left:"5px", top:"5px", fill:"none"}} channel={State.Chan} response={true}/>
                         </span><span className="text">Accept</span>
                     </ButtonMajor>
                     <ButtonMajor onClick={()=>Dispatch(Store.Actions.Mark, 0)}>
