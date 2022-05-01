@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer } from "react";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
-export enum Actions { Test, Freq, dBHL, Chan, Tone, Show, Mark, View, Load };
+export enum Actions { Test, Freq, dBHL, Chan, Tone, Show, Mark, View, Load, Play };
 export type Action = 
 { Type:Actions.Test, Payload:number } |
 { Type:Actions.Freq, Payload:number } |
@@ -12,7 +12,8 @@ export type Action =
 { Type:Actions.Show, Payload:number } |
 { Type:Actions.Mark, Payload:number } |
 { Type:Actions.View, Payload:number } |
-{ Type:Actions.Load, Payload:Session }
+{ Type:Actions.Load, Payload:Session } |
+{ Type:Actions.Play, Payload: 0 | 1 | 2 }
 
 
 export type Session =
@@ -25,6 +26,7 @@ export type Session =
   Draw: number, // svg update rand
   Show: number, // sample | answer ,
   View: number, // preview crosshairs
+  Play: number, // tone play state
   List: Array<Test>
 };
 export type Test =
@@ -59,6 +61,9 @@ const reducer = (state:Session, action:Action):Session =>
 {
   switch(action.Type)
   {
+    case Actions.Play :
+      return { ...state, Play:action.Payload}
+
     case Actions.Load :
       return action.Payload;
 
@@ -120,54 +125,44 @@ const model:Session =
   List:
   [
     {
-      Name:"CHL / Flat / Mid / Symmetric",
+      Name:"Patient D Normal Hearing",
       Clip:[-10, 120],
       Plot:
       [
         {
-          Hz: 125,
-          AL: {Answer:[35, null, true], Sample:null},
-          AR: {Answer:[35, null, true], Sample:null},
+          "Hz": 500,
+          "AL": { "Sample": null, "Answer": [5, null, true] },
+          "AR": { "Sample": null, "Answer": [10, null, true] }
         },
         {
-          Hz: 250,
-          AL: {Answer:[35, null, true], Sample:null},
-          AR: {Answer:[35, null, true], Sample:null},
+          "Hz": 1000,
+          "AL": { "Sample": null, "Answer": [0, null, true] },
+          "AR": { "Sample": null, "Answer": [5, null, true] }
         },
         {
-          Hz: 500,
-          AL: {Answer:[35, null, true], Sample:null},
-          AR: {Answer:[35, null, true], Sample:null},
+          "Hz": 2000,
+          "AL": { "Sample": null, "Answer": [5, null, true] },
+          "AR": { "Sample": null, "Answer": [5, null, true] }
         },
         {
-          Hz: 1000,
-          AL: {Answer:[35, null, true], Sample:null},
-          AR: {Answer:[35, null, true], Sample:null},
+          "Hz": 3000,
+          "AL": { "Sample": null, "Answer": [15, null, true] },
+          "AR": { "Sample": null, "Answer": [10, null, true] }
         },
         {
-          Hz: 2000,
-          AL: {Answer:[40, null, true], Sample:null},
-          AR: {Answer:[30, null, true], Sample:null},
+          "Hz": 4000,
+          "AL": { "Sample": null, "Answer": [15, null, true] },
+          "AR": { "Sample": null, "Answer": [15, null, true] }
         },
         {
-          Hz: 3000,
-          AL: {Answer:[30, null, true], Sample:null},
-          AR: {Answer:[35, null, true], Sample:null},
+          "Hz": 6000,
+          "AL": { "Sample": null, "Answer": [5, null, true] },
+          "AR": { "Sample": null, "Answer": [10, null, true] }
         },
         {
-          Hz: 4000,
-          AL: {Answer:[35, null, true], Sample:null},
-          AR: {Answer:[30, null, true], Sample:null},
-        },
-        {
-          Hz: 6000,
-          AL: {Answer:[30, null, true], Sample:null},
-          AR: {Answer:[30, null, true], Sample:null},
-        },
-        {
-          Hz: 8000,
-          AL: {Answer:[40, null, true], Sample:null},
-          AR: {Answer:[30, null, true], Sample:null},
+          "Hz": 8000,
+          "AL": { "Sample": null, "Answer": [0, null, true] },
+          "AR": { "Sample": null, "Answer": [5, null, true] }
         }
       ]
     },
