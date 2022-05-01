@@ -355,8 +355,8 @@ export default () =>
     };
     useEffect(()=>
     {
-        document.addEventListener("keydown", handler);
-        return ()=> document.removeEventListener("keydown", handler);
+        window.addEventListener("keydown", handler);
+        return ()=> window.removeEventListener("keydown", handler);
     });
 
     return <UI>
