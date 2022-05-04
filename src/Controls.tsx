@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import * as Store from "./Store";
 import styled, { keyframes, css } from "styled-components";
 import Marker from "./Mark";
+import Play from "./Tone";
 
 const UI = styled.div`
 
@@ -330,10 +331,13 @@ export default () =>
         let timer:number | undefined = undefined;
         if(State.Play == 1)
         {
+            let volNorm = (State.dBHL-10)/ 130;
+            Play(1, State.Tone, State.Chan, currentFreq.Hz, (volNorm*0.8) + 0.2);
             responseSet(State.dBHL - currentChan.Answer[0]);
             timer = setTimeout(()=>{Dispatch(Store.Actions.Play, 2);}, 300 + Math.random()*1000);
         }
         return () => clearTimeout(timer);
+        
     }, [State.Play]);
 
     const handler = (inEvent)=>
