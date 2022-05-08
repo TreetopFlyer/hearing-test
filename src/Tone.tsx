@@ -26,8 +26,8 @@ GainRight.gain.value = 0;
 GainVolume.gain.value = 0;
 Oscillator.start(Context.currentTime+0.0);
 
-const beep = [ 0.0, 1.0, 0.1, 0.0, 1.0, 0.1, 0.0, 1.0, 0.1, 0.0, 0.0, 0.0 ];
-const hold = [ 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0 ];
+const beep = [ 0.0, 1.0, 0.1, 0.0, 0.0, 0.0, 1.0, 0.1, 0.0, 0.0, 0.0, 1.0, 0.1, 0.0, 0.0, 0.0 ];
+const hold = [ 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.1, 0.0 ];
 
 const change = (inNode, inValue, inDelay) => inNode.linearRampToValueAtTime(inValue, Context.currentTime+inDelay);
 
@@ -37,7 +37,7 @@ const Start = (inDuration:number, inContinuous:number, inChannel:number, inFreq:
     GainBeep.gain.cancelScheduledValues(Context.currentTime);
     GainBeep.gain.setValueAtTime(0, Context.currentTime);
 
-    const pad = 0.01;
+    const pad = 0.1;
     change(GainLeft.gain,        1-inChannel, pad);
     change(GainRight.gain,       inChannel,   pad);
     change(Oscillator.frequency, inFreq,      pad);
