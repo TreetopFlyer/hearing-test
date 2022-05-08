@@ -26,10 +26,15 @@ GainRight.gain.value = 0;
 GainVolume.gain.value = 0;
 Oscillator.start(Context.currentTime+0.0);
 
-const beep = [ 0.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.1, 0.0, 0.0, 0.0, 0.0];
-const hold = [ 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.1, 0.0 ];
-
-const change = (inNode, inValue, inDelay) => inNode.linearRampToValueAtTime(inValue, Context.currentTime+inDelay);
+const pad = 0.0015;
+const change = (inNode, inValue:number, inDelay:number):void => inNode.linearRampToValueAtTime(inValue, Context.currentTime+inDelay);
+const pulse = (inNode, inStart:number, inDuration:number):void =>
+{
+    change(inNode, 0, inStart);
+    change(inNode, 1, inStart+pad);
+    change(inNode, 1, (inStart+inDuration)-pad );
+    change(inNode, 0, (inStart+inDuration) );
+};
 
 const Start = (inDuration:number, inContinuous:number, inChannel:number, inFreq:number, indBHL:number):void =>
 {
@@ -37,15 +42,22 @@ const Start = (inDuration:number, inContinuous:number, inChannel:number, inFreq:
     GainBeep.gain.cancelScheduledValues(Context.currentTime);
     GainBeep.gain.setValueAtTime(0, Context.currentTime);
 
-    const pad = 0.1;
     change(GainLeft.gain,        1-inChannel, pad);
     change(GainRight.gain,       inChannel,   pad);
     change(Oscillator.frequency, inFreq,      pad);
     change(GainVolume.gain,      indBHL,      pad);
 
-    const pattern = inContinuous == 1 ? hold : beep;
-    const slice = inDuration/(pattern.length-1);
-    pattern.forEach( (item, i)=> change(GainBeep.gain, item, (i*slice)+pad) )
+    if (inContinuous)
+    {
+        pulse(GainBeep.gain, 0.01, 0.8);
+    }
+    else
+    {
+        pulse(GainBeep.gain, 0.01, 0.2);
+        pulse(GainBeep.gain, 0.33, 0.2);
+        pulse(GainBeep.gain, 0.66, 0.2);
+    }
+
 };
 
 export default Start;
