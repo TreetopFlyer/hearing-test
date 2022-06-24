@@ -3,7 +3,8 @@ import * as Store from "./Store";
 import styled, { keyframes } from "styled-components";
 import Mark from "./Mark";
 
-// mapping
+//// Mapping
+// X-Axis: maps enumerated frequencies to screen position
 const MapFreqScalar = 1/6;
 const MapFreq =
 {
@@ -17,8 +18,11 @@ const MapFreq =
    6000: MapFreqScalar*5.5,
    8000: MapFreqScalar*6
 };
+// Y-Axis: maps dBHL to screen position
 const MapdBHL = (inValue:number):number => (inValue+10)/130;
+// converts a mapped position to a css percent string that has an adjusted 5% inset
 const MapPercent = (inValue:number):string => `${((inValue*0.9)+0.05) * 100}%`;
+// combines the above mappers to convert a frequency and dBHL into a tuple of css strings
 const MapPercentCoords = (inFreq:number, indBHL:number):[string, string] =>
 {
     return [
@@ -27,7 +31,7 @@ const MapPercentCoords = (inFreq:number, indBHL:number):[string, string] =>
     ];
 };
 
-// plots
+//// Plots
 type ChartMark = {Freq:number, dBHL:number, Chan:number, Resp:boolean, Type:string, Perc:[string, string]};
 type ChartLine = {From:ChartMark, To:ChartMark};
 const ChartGetMarks = (test:Store.Test, pairKey:"AL"|"AR", sampleKey:"Sample"|"Answer"):Array<ChartMark> =>

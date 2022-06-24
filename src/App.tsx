@@ -5,6 +5,7 @@ import Controls from "./Controls";
 import * as Store from "./Store";
 import { Button, } from "./Controls";
 import Logo from "./logo.png";
+import Score from "./Score";
 
 import ChartFixed from "./Chart";
 
@@ -109,6 +110,7 @@ const App = () =>
                 <Button onClick={()=>refLoad.current.click()}>Load Session</Button>
             </div>
         </Header>
+        <Score/>
         <Columns>
             <ColumnLeft>
                 <Controls/>
