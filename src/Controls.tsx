@@ -320,10 +320,8 @@ const Light = ( { on }:{ on:boolean } ) => <svg width="60" height="60" viewBox="
 
 export default () =>
 {
-    const {State, Dispatch}:Store.Binding = Store.Consume();
-    const currentTest:Store.Test = State.List[State.Test];
-    const currentFreq:Store.Frequency = currentTest.Plot[State.Freq];
-    const currentChan:Store.SamplePair = State.Chan == 0 ? currentFreq.AL : currentFreq.AR;
+    const { State, Dispatch } = Store.Consume();
+    const current = Store.useCurrent(State);
 
     const [responseGet, responseSet] = useState(0);
     useEffect(()=>
@@ -332,8 +330,8 @@ export default () =>
         if(State.Play == 1)
         {
             let volNorm = (State.dBHL-10)/ 130;
-            Play(1, State.Tone, State.Chan, currentFreq.Hz, (volNorm*0.8) + 0.2);
-            responseSet(State.dBHL - currentChan.Answer[0]);
+            Play(1, State.Tone, State.Chan, current.Freq.Hz, (volNorm*0.8) + 0.2);
+            responseSet(State.dBHL - current.Chan.Answer[0]);
             timer = setTimeout(()=>{Dispatch(Store.Actions.Play, 2);}, 300 + Math.random()*1000);
         }
         return () => clearTimeout(timer);
@@ -376,12 +374,12 @@ export default () =>
             </dl>
             <dl>
                 <dt>Frequency:</dt>
-                <dd><strong>{ currentFreq.Hz }</strong> Hz</dd>
+                <dd><strong>{ current.Freq.Hz }</strong> Hz</dd>
                 <dd>
                     <Button disabled={State.Freq == 0} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq-1)}>
                         <IconMinus/>
                     </Button>
-                    <Button disabled={State.Freq == currentTest.Plot.length-1} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>
+                    <Button disabled={State.Freq == current.Test.Plot.length-1} onClick={()=>Dispatch(Store.Actions.Freq, State.Freq+1)}>
                         <IconPlus/>
                     </Button>
                 </dd>
@@ -390,10 +388,10 @@ export default () =>
                 <dt>Stimulus:</dt>
                 <dd><strong>{ State.dBHL }</strong> dBHL</dd>
                 <dd>
-                    <Button disabled={State.dBHL == currentTest.Clip[0]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>
+                    <Button disabled={State.dBHL == current.Test.Clip[0]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL-5)}>
                         <IconMinus/>
                     </Button >
-                    <Button disabled={State.dBHL == currentTest.Clip[1]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>
+                    <Button disabled={State.dBHL == current.Test.Clip[1]} onClick={()=>Dispatch(Store.Actions.dBHL, State.dBHL+5)}>
                         <IconPlus/>
                     </Button>
                 </dd>
@@ -424,7 +422,7 @@ export default () =>
                 <dt>Mark:</dt>
                 <dd>
                     <span><strong>{ State.Chan == 1 ? "Right" : "Left" }</strong> ear</span> /
-                    <span><strong>{ currentFreq.Hz }</strong> Hz</span> /
+                    <span><strong>{ current.Freq.Hz }</strong> Hz</span> /
                     <span><strong>{ State.dBHL }</strong> dBHL</span>
                 </dd>
             </dl>
@@ -438,7 +436,7 @@ export default () =>
                     <ButtonMajor onClick={()=>Dispatch(Store.Actions.Mark, 0)}>
                         <span className="dark">NR</span><span className="text">No Response</span>
                     </ButtonMajor>
-                    <ButtonMajor onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!currentChan.Sample}>
+                    <ButtonMajor onClick={()=>{Dispatch(Store.Actions.Mark, -1)}} disabled={!current.Chan.Sample}>
                         <span className="dark"><IconClear/></span><span className="text">Clear Threshold</span>
                     </ButtonMajor>
                 </dd>

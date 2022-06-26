@@ -125,7 +125,7 @@ const GridYRule = styled.div`
     width: 100%;
     height: 0px;
     top: ${props => MapPercent( MapdBHL(props.value) )};
-    border-top: ${props => props.bold ? `2px solid black` : `1px solid #b9b9b9`};
+    border-top: ${props => props.bold ? `2px solid black` : `1px solid #c4c4c4`};
     &::before
     {
         content: "${props => props.value}";
@@ -147,7 +147,12 @@ const GridXRule = styled.div`
     height: 100%;
     width: 0px;
     left: ${props => MapPercent( MapFreq[props.value] )};
-    border-right: ${props => props.bold ? `1px solid #aaa` : `1px dashed #aaa`};
+    border-right: ${props =>
+    {
+        const color = props.fade ? `#ccc` : `#999`;
+        const style = props.dash ? `1px dashed` : `1px solid`;
+        return color + " " + style;
+    }};
     &::before
     {
         content: "${props => props.value}";
@@ -191,23 +196,22 @@ const GridCursor = styled.svg`
 export default () =>
 {
     const {State} = Store.Consume();
-    const currentTest = State.List[State.Test];
-    const currentFreq = currentTest.Plot[State.Freq];
+    const current = Store.useCurrent(State);
 
-    const  leftAnswerMarks = ChartGetMarks(currentTest, "AL", "Answer");
+    const  leftAnswerMarks = ChartGetMarks(current.Test, "AL", "Answer");
     const  leftAnswerLines = ChartGetLines( leftAnswerMarks);
-    const rightAnswerMarks = ChartGetMarks(currentTest, "AR", "Answer");
+    const rightAnswerMarks = ChartGetMarks(current.Test, "AR", "Answer");
     const rightAnswerLines = ChartGetLines(rightAnswerMarks);
 
-    const  leftSampleMarks = ChartGetMarks(currentTest, "AL", "Sample");
+    const  leftSampleMarks = ChartGetMarks(current.Test, "AL", "Sample");
     const  leftSampleLines = ChartGetLines( leftSampleMarks);
-    const rightSampleMarks = ChartGetMarks(currentTest, "AR", "Sample");
+    const rightSampleMarks = ChartGetMarks(current.Test, "AR", "Sample");
     const rightSampleLines = ChartGetLines(rightSampleMarks);
 
     const iterMarks = (m:ChartMark) =>
     {
         let style:any = {};
-        if ( State.Chan == m.Chan && m.Type == "Sample" && currentFreq.Hz == m.Freq )
+        if ( State.Chan == m.Chan && m.Type == "Sample" && current.Freq.Hz == m.Freq )
         {
             style.strokeWidth = "4px";
         }
@@ -218,15 +222,15 @@ export default () =>
     return <Grid>
 
         <GridXLabel>Frequency in Hz</GridXLabel>
-        <GridXRule value={ 125} bold/>
-        <GridXRule value={ 250} bold/>
-        <GridXRule value={ 500} bold/>
-        <GridXRule value={1000} bold/>
-        <GridXRule value={2000} bold/>
-        <GridXRule value={3000} />
-        <GridXRule value={4000} bold/>
-        <GridXRule value={6000} />
-        <GridXRule value={8000} bold/>
+        <GridXRule value={ 125} fade />
+        <GridXRule value={ 250} fade />
+        <GridXRule value={ 500} />
+        <GridXRule value={1000} />
+        <GridXRule value={2000} />
+        <GridXRule value={3000} dash/>
+        <GridXRule value={4000} />
+        <GridXRule value={6000} dash/>
+        <GridXRule value={8000} />
 
         <GridYLabel>Hearing Level (dBHL)</GridYLabel>
         <GridYRule value={-10}/>
@@ -244,17 +248,17 @@ export default () =>
         <GridYRule value={110}/>
         <GridYRule value={120}/>
 
-        { State.Show == 1 && <GridLayer key={"1"+State.Draw} style={{stroke:"blue", strokeWidth:"5px", opacity:0.3}}>{  leftAnswerLines.map( iterLines ) }</GridLayer> }
-        { State.Show == 1 && <GridLayer key={"2"+State.Draw} style={{stroke:"blue", strokeWidth:"4px", opacity:0.3}}>{  leftAnswerMarks.map( iterMarks ) }</GridLayer> }
-        { State.Show == 1 && <GridLayer key={"3"+State.Draw} style={{stroke:"red",  strokeWidth:"5px", opacity:0.3}}>{ rightAnswerLines.map( iterLines ) }</GridLayer> }
-        { State.Show == 1 && <GridLayer key={"4"+State.Draw} style={{stroke:"red",  strokeWidth:"4px", opacity:0.3}}>{ rightAnswerMarks.map( iterMarks ) }</GridLayer> }
+        { State.Show == 1 && <><GridLayer key={"1"+State.Draw} style={{stroke:"blue", strokeWidth:"5px", opacity:0.3}}>{  leftAnswerLines.map( iterLines ) }</GridLayer> 
+                               <GridLayer key={"2"+State.Draw} style={{stroke:"blue", strokeWidth:"4px", opacity:0.3}}>{  leftAnswerMarks.map( iterMarks ) }</GridLayer> 
+                               <GridLayer key={"3"+State.Draw} style={{stroke:"red",  strokeWidth:"5px", opacity:0.3}}>{ rightAnswerLines.map( iterLines ) }</GridLayer> 
+                               <GridLayer key={"4"+State.Draw} style={{stroke:"red",  strokeWidth:"4px", opacity:0.3}}>{ rightAnswerMarks.map( iterMarks ) }</GridLayer></> }
 
         <GridLayer key={"5"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:0.6}}>{  leftSampleLines.map( iterLines ) }</GridLayer>
         <GridLayer key={"6"+State.Draw} style={{stroke:"blue", strokeWidth:"2px", opacity:1.0}}>{  leftSampleMarks.map( iterMarks ) }</GridLayer>
         <GridLayer key={"7"+State.Draw} style={{stroke:"red",  strokeWidth:"2px", opacity:0.6}}>{ rightSampleLines.map( iterLines ) }</GridLayer>
         <GridLayer key={"8"+State.Draw} style={{stroke:"red",  strokeWidth:"2px", opacity:1.0}}>{ rightSampleMarks.map( iterMarks ) }</GridLayer>
 
-        { State.View == 1 && <GridCursor coords={MapPercentCoords(currentFreq.Hz, State.dBHL)}>
+        { State.View == 1 && <GridCursor coords={MapPercentCoords(current.Freq.Hz, State.dBHL)}>
             <ellipse cx="0" cy="0" rx="5" ry="30" fill="url(#glow)"/>
             <ellipse cx="0" cy="0" rx="30" ry="5" fill="url(#glow)"/>
             <defs>

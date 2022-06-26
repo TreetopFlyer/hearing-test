@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useReducer, useMemo } from "react";
 
 const CTX:React.Context<any> = createContext("default value"); 
 
@@ -317,4 +317,96 @@ export const Consume = ():Binding =>
           dispatch({Type:inType, Payload:inPayload});
         }
     };
+}
+
+export type ScoreMark = number | false;
+export type ScoreTally = {
+    Total:number,
+    Complete:number,
+    Points:number,
+    List:Array<ScoreMark>
+};
+const ScoreChannel = (inTest:Test,  inKey:"AL"|"AR"):ScoreTally =>
+{
+    let scores:ScoreTally = {
+        Total:0,
+        Complete:0,
+        Points:0,
+        List:[]
+    };
+
+    inTest.Plot.forEach((f) =>
+    {
+        scores.Total++;
+
+        let sample = f[inKey].Sample;
+        let answer = f[inKey].Answer;
+        let score:ScoreMark;
+
+        if(sample)
+        {
+            scores.Complete++;
+
+            let error = Math.abs(answer[0] - sample[0]);
+            if(error == 0)
+            {
+                score = 7;
+            }
+            else if(error <= 5) 
+            {
+                score = 5;
+            }
+            else
+            {
+                score = 0;
+            }
+            scores.Points += score;
+        }
+        else
+        {
+            score = false;
+        }
+        scores.List.push(score);
+    });
+
+    return scores;
+};
+const ScoreConcat = (...scores:Array<ScoreTally>):ScoreTally =>
+{
+    let total:ScoreTally = {
+        Total:0,
+        Complete:0,
+        Points:0,
+        List:[]
+    };
+
+    scores.forEach(s =>
+    {
+        total.Total += s.Total;
+        total.Complete += s.Complete;
+        total.Points += s.Points,
+        total.List = [...total.List, ...s.List];
+    });
+
+    return total;
+};
+export const useScore = (inState:Session, inTest:Test):{Left:ScoreTally, Right:ScoreTally, Total:ScoreTally} =>
+{
+    return useMemo(()=>
+    {
+        const Left  = ScoreChannel(inTest, "AL");
+        const Right = ScoreChannel(inTest, "AR");
+        const Total = ScoreConcat(Left, Right);
+        return { Left, Right, Total };
+
+    }, [inState.Draw]);
+};
+
+export const useCurrent = (inState:Session):{Test:Test, Freq:Frequency, Chan:SamplePair} =>
+{
+  const Test = inState.List[inState.Test];
+  const Freq = Test.Plot[inState.Freq];
+  const Chan = inState.Chan == 0 ? Freq.AL : Freq.AR
+  return {Test, Freq, Chan};
+
 }
