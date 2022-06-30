@@ -1,11 +1,10 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { render } from "react-dom";
 import styled from "styled-components";
 import Controls from "./Controls";
 import * as Store from "./Store";
 import { Button, } from "./Controls";
 import Logo from "./logo.png";
-import Score from "./Score";
 
 import ChartFixed from "./Chart";
 
@@ -75,10 +74,24 @@ font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida San
 }
 `;
 
+const TestOverview = ({test, active, open, toggle}:{test:Store.Test, active:boolean, open:boolean, toggle:()=>void}) =>
+{
+    const {State} = Store.Consume();
+    const score = Store.useScore(State, test);
+    const hasStarted = score.Total.Complete != 0;
+    const label = active&&!open ? "Change" : (hasStarted ? "Continue" : "Start");
+    return <div>
+        <h3>{test.Name}</h3>
+        { hasStarted && <>
+            <p>Progress: {score.Total.Complete} of {score.Total.Total}</p>
+            <p>Accuracy: {score.Total.Points} out of 100</p>
+        </>}
+        <button onClick={toggle}>{ label } Test</button>
+    </div>;
+}
+
 const App = () =>
 {
-    const {State, Dispatch}:Store.Binding = Store.Consume();
-
     const refSave = useRef(null);
     const handleSave = () =>
     {
@@ -97,6 +110,10 @@ const App = () =>
         reader.readAsText(refLoad.current.files[0]);
     };
 
+    const {State, Dispatch}:Store.Binding = Store.Consume();
+    const current = Store.useCurrent(State);
+    const [menuGet, menuSet] = useState(false);
+
     return <div>
         <Header>
             <span><img style={{maxWidth:"200px"}} src={Logo}/></span>
@@ -110,7 +127,28 @@ const App = () =>
                 <Button onClick={()=>refLoad.current.click()}>Load Session</Button>
             </div>
         </Header>
-        <Score/>
+        {
+            menuGet && <>
+                <h3>Select Test:</h3>
+                {
+                    State.List.map( (t, i)=><TestOverview test={t} active={t==current.Test} open={menuGet} toggle=
+                    {
+                        ()=>
+                        {
+                            Dispatch(Store.Actions.Test, i);
+                            menuSet(false);
+                        }
+                    }
+                    />)
+                }
+            </>
+        }
+        {
+            !menuGet && <>
+                <h3>Current Test:</h3>
+                <TestOverview test={current.Test} active={true} open={menuGet} toggle={()=>menuSet(true)}/>
+            </>
+        }
         <Columns>
             <ColumnLeft>
                 <Controls/>
