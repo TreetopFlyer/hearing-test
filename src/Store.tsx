@@ -321,23 +321,25 @@ export const Consume = ():Binding =>
 
 export type ScoreMark = number | false;
 export type ScoreTally = {
-    Total:number,
-    Complete:number,
-    Points:number,
+    AnswerTotal:number,
+    AnswerComplete:number,
+    PointsTotal:number,
+    PointsComplete:number,
     List:Array<ScoreMark>
 };
 const ScoreChannel = (inTest:Test,  inKey:"AL"|"AR"):ScoreTally =>
 {
     let scores:ScoreTally = {
-        Total:0,
-        Complete:0,
-        Points:0,
+        AnswerTotal:0,
+        AnswerComplete:0,
+        PointsTotal:0,
+        PointsComplete:0,
         List:[]
     };
 
     inTest.Plot.forEach((f) =>
     {
-        scores.Total++;
+        scores.AnswerTotal++;
 
         let sample = f[inKey].Sample;
         let answer = f[inKey].Answer;
@@ -345,7 +347,7 @@ const ScoreChannel = (inTest:Test,  inKey:"AL"|"AR"):ScoreTally =>
 
         if(sample)
         {
-            scores.Complete++;
+            scores.AnswerComplete++;
 
             let error = Math.abs(answer[0] - sample[0]);
             if(error == 0)
@@ -360,12 +362,13 @@ const ScoreChannel = (inTest:Test,  inKey:"AL"|"AR"):ScoreTally =>
             {
                 score = 0;
             }
-            scores.Points += score;
+            scores.PointsComplete += score;
         }
         else
         {
             score = false;
         }
+        scores.PointsTotal += 7;
         scores.List.push(score);
     });
 
@@ -374,17 +377,19 @@ const ScoreChannel = (inTest:Test,  inKey:"AL"|"AR"):ScoreTally =>
 const ScoreConcat = (...scores:Array<ScoreTally>):ScoreTally =>
 {
     let total:ScoreTally = {
-        Total:0,
-        Complete:0,
-        Points:0,
+        AnswerTotal:0,
+        AnswerComplete:0,
+        PointsTotal:0,
+        PointsComplete:0,
         List:[]
     };
 
     scores.forEach(s =>
     {
-        total.Total += s.Total;
-        total.Complete += s.Complete;
-        total.Points += s.Points,
+        total.AnswerTotal += s.AnswerTotal;
+        total.AnswerComplete += s.AnswerComplete;
+        total.PointsTotal += s.PointsTotal,
+        total.PointsComplete += s.PointsComplete,
         total.List = [...total.List, ...s.List];
     });
 

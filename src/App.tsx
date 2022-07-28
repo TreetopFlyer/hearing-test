@@ -74,20 +74,42 @@ font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida San
 }
 `;
 
+const ListItem = styled.div`
+display: flex;
+align-items: center;
+flex-direction: row;
+gap: 10px;
+max-width: 700px;
+margin: 0 auto;
+font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+button
+{
+    max-width: 150px;
+}
+h3, p
+{
+    margin: 0;
+}
+`;
+
 const TestOverview = ({test, active, open, toggle}:{test:Store.Test, active:boolean, open:boolean, toggle:()=>void}) =>
 {
     const {State} = Store.Consume();
     const score = Store.useScore(State, test);
-    const hasStarted = score.Total.Complete != 0;
+    const hasStarted = score.Total.AnswerComplete != 0;
     const label = active&&!open ? "Change" : (hasStarted ? "Continue" : "Start");
-    return <div>
-        <h3>{test.Name}</h3>
-        { hasStarted && <>
-            <p>Progress: {score.Total.Complete} of {score.Total.Total}</p>
-            <p>Accuracy: {score.Total.Points} out of 100</p>
-        </>}
-        <button onClick={toggle}>{ label } Test</button>
-    </div>;
+    return <ListItem>
+        <Button onClick={toggle}>{ label } Test</Button>
+        <div>
+            <h3>{test.Name}</h3>
+            <p>
+                <span>Complete: {score.Total.AnswerComplete} of {score.Total.AnswerTotal}</span>
+                &nbsp;
+                <span>Score: {Math.floor(score.Total.PointsComplete/score.Total.PointsTotal*100)}%</span>
+            </p>
+        </div>
+
+    </ListItem>;
 }
 
 const App = () =>
@@ -112,7 +134,8 @@ const App = () =>
 
     const {State, Dispatch}:Store.Binding = Store.Consume();
     const current = Store.useCurrent(State);
-    const [menuGet, menuSet] = useState(false);
+    const [menuGet, menuSet] = useState(true);
+    const [interactedGet, interactedSet] = useState(false);
 
     return <div>
         <Header>
@@ -129,7 +152,6 @@ const App = () =>
         </Header>
         {
             menuGet && <>
-                <h3>Select Test:</h3>
                 {
                     State.List.map( (t, i)=><TestOverview test={t} active={t==current.Test} open={menuGet} toggle=
                     {
@@ -137,6 +159,7 @@ const App = () =>
                         {
                             Dispatch(Store.Actions.Test, i);
                             menuSet(false);
+                            interactedSet(true);
                         }
                     }
                     />)
@@ -145,18 +168,20 @@ const App = () =>
         }
         {
             !menuGet && <>
-                <h3>Current Test:</h3>
                 <TestOverview test={current.Test} active={true} open={menuGet} toggle={()=>menuSet(true)}/>
             </>
         }
-        <Columns>
-            <ColumnLeft>
-                <Controls/>
-            </ColumnLeft>
-            <ColumnRight>
-                <ChartFixed/>
-            </ColumnRight>
-        </Columns>
+        {
+            (interactedGet && !menuGet) && <Columns>
+                <ColumnLeft>
+                    <Controls/>
+                </ColumnLeft>
+                <ColumnRight>
+                    <ChartFixed/>
+                </ColumnRight>
+            </Columns>
+        }
+
     </div>
 }
 
