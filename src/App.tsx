@@ -9,7 +9,6 @@ import Logo from "./logo.png";
 import ChartFixed from "./Chart";
 
 export const Select = styled.select`
-    max-width: 500px;
     max-height: 30px;
     width:100%;
     box-shadow: inset 0px 3px 5px lightgrey;
@@ -19,6 +18,10 @@ export const Select = styled.select`
     border: none;
     cursor: pointer;
 `;
+
+const Center = styled.div`
+    flex:1;
+`
 
 const Columns = styled.div`
 display: flex;
@@ -82,10 +85,6 @@ gap: 10px;
 max-width: 700px;
 margin: 0 auto;
 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-button
-{
-    max-width: 150px;
-}
 h3, p
 {
     margin: 0;
@@ -134,15 +133,21 @@ const App = () =>
 
     const {State, Dispatch}:Store.Binding = Store.Consume();
     const current = Store.useCurrent(State);
-    const [menuGet, menuSet] = useState(true);
-    const [interactedGet, interactedSet] = useState(false);
+    const score = Store.useScore(State, current.Test);
 
     return <div>
         <Header>
             <span><img style={{maxWidth:"200px"}} src={Logo}/></span>
-            <Select onChange={ e=>{ Dispatch(Store.Actions.Test, parseInt(e.target.value)); e.target.blur(); } } value={State.Test}>
-                { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
-            </Select>
+            <Center>
+                <Select onChange={ e=>{ Dispatch(Store.Actions.Test, parseInt(e.target.value)); e.target.blur(); } } value={State.Test}>
+                    { State.List.map( (t:Store.Test, i:number)=> <option value={i}>{ t.Name }</option> ) }
+                </Select>
+                <div>
+                    <span>Complete: {score.Total.AnswerComplete} of {score.Total.AnswerTotal}</span>
+                    &nbsp;
+                    <span>Score: {Math.floor(score.Total.PointsComplete/score.Total.PointsTotal*100)}%</span>
+                </div>
+            </Center>
             <div>
                 <a     ref={refSave} style={{display:"none"}}  />
                 <input ref={refLoad} style={{display:"none"}} onInput={()=>handleLoad()}type="file"></input>
@@ -150,37 +155,14 @@ const App = () =>
                 <Button onClick={()=>refLoad.current.click()}>Load Session</Button>
             </div>
         </Header>
-        {
-            menuGet && <>
-                {
-                    State.List.map( (t, i)=><TestOverview test={t} active={t==current.Test} open={menuGet} toggle=
-                    {
-                        ()=>
-                        {
-                            Dispatch(Store.Actions.Test, i);
-                            menuSet(false);
-                            interactedSet(true);
-                        }
-                    }
-                    />)
-                }
-            </>
-        }
-        {
-            !menuGet && <>
-                <TestOverview test={current.Test} active={true} open={menuGet} toggle={()=>menuSet(true)}/>
-            </>
-        }
-        {
-            (interactedGet && !menuGet) && <Columns>
-                <ColumnLeft>
-                    <Controls/>
-                </ColumnLeft>
-                <ColumnRight>
-                    <ChartFixed/>
-                </ColumnRight>
-            </Columns>
-        }
+        <Columns>
+            <ColumnLeft>
+                <Controls/>
+            </ColumnLeft>
+            <ColumnRight>
+                <ChartFixed/>
+            </ColumnRight>
+        </Columns>
 
     </div>
 }

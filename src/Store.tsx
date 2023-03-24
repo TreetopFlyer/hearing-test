@@ -48,7 +48,7 @@ export type SamplePair =
 };
 
 export type Range = [ number, number];
-export type Sample = [ number | null, number | null, boolean ] | null; /* [ stim, mask, resp ] */
+export type Sample = [ stim:number | null, mask: number | null, resp: boolean ]; /* [ stim, mask, resp ] */
 
 export const Clip = (val:number, min:number, max:number):number =>
 {
@@ -349,7 +349,10 @@ const ScoreChannel = (inTest:Test,  inKey:"AL"|"AR"):ScoreTally =>
         {
             scores.AnswerComplete++;
 
-            let error = Math.abs(answer[0] - sample[0]);
+            const stimSample = sample[0]??0;
+            const stimAnswer = answer[0]??0;
+
+            let error = Math.abs(stimAnswer - stimSample);
             if(error == 0)
             {
                 score = 7;
